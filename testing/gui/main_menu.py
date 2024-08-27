@@ -17,7 +17,7 @@ class MainMenu(QWidget):
         self.setStyleSheet("background-color: black;")
 
         # Set title and buttons
-        self.set_title_and_buttons(
+        self.set_layout(
             self.set_title(),
             self.create_single_player_button(),
             self.create_multiplayer_button(),
@@ -43,14 +43,14 @@ class MainMenu(QWidget):
         single_player_button.setStyleSheet("""
             background-color: green; 
             color: white; 
-            border-radius: 140px; 
-            font-size: 30px; 
+            border-radius: 120px; 
+            font-size: 26px; 
             font-weight: bold;
-            width: 280px; 
-            height: 280px; 
+            width: 240px;
+            height: 240px;
             padding: 0;
             text-align: center;
-            line-height: 280px;
+            line-height: 240px;
         """)
         single_player_button.clicked.connect(self.show_SP_screen)
         return single_player_button
@@ -61,14 +61,14 @@ class MainMenu(QWidget):
         multiplayer_button.setStyleSheet("""
             background-color: blue; 
             color: white; 
-            border-radius: 140px; 
-            font-size: 30px; 
+            border-radius: 120px; 
+            font-size: 26px; 
             font-weight: bold;
-            width: 280px; 
-            height: 280px; 
+            width: 240px; 
+            height: 240px; 
             padding: 0;
             text-align: center;
-            line-height: 280px;
+            line-height: 240px;
         """)
         multiplayer_button.clicked.connect(self.show_MP_screen)
         return multiplayer_button
@@ -97,19 +97,19 @@ class MainMenu(QWidget):
         exit_button.setStyleSheet("""
             background-color: red; 
             color: white; 
-            border-radius: 30px; 
+            border-radius: 25px; 
             font-size: 16px; 
             font-weight: bold;
-            width: 60px; 
-            height: 60px; 
+            width: 50px; 
+            height: 50px; 
             padding: 0;
             text-align: center;
-            line-height: 60px;
+            line-height: 50px;
         """)
         exit_button.clicked.connect(QApplication.instance().quit)
         return exit_button
 
-    def set_title_and_buttons(self, title, single_player_button, multiplayer_button, settings_button, exit_button):
+    def set_layout(self, title, single_player_button, multiplayer_button, settings_button, exit_button):
         # Layout for single player and multiplayer buttons
         button_layout = QHBoxLayout()
         button_layout.addStretch()
@@ -129,14 +129,15 @@ class MainMenu(QWidget):
         exit_layout.addWidget(exit_button)
         exit_layout.addStretch()  # Add space to push exit button to the bottom
         exit_layout.addWidget(exit_button)
-        # exit_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the lay
+        settings_layout.addStretch()
+        exit_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the lay
 
         # Main layout
         main_layout = QVBoxLayout()
         main_layout.addWidget(title)  # Add title at the top
         main_layout.addStretch()  # Add space between title and buttons
         main_layout.addLayout(button_layout)  # Add buttons layout
-        main_layout.addSpacing(1)  # Space between button row and settings button
+        main_layout.addSpacing(20)  # Space between button row and settings button
         main_layout.addLayout(settings_layout)  # Add settings button layout
         main_layout.addStretch()  # Add space below settings button
 
@@ -144,6 +145,7 @@ class MainMenu(QWidget):
         final_layout = QVBoxLayout()
         final_layout.addLayout(main_layout)  # Add main content
         final_layout.addLayout(exit_layout)  # Add exit button
+        final_layout.addStretch()  # Add space below settings button
         self.setLayout(final_layout)  # Set the final layout for the main menu
     
     def show_SP_screen(self):
@@ -153,4 +155,4 @@ class MainMenu(QWidget):
         self.stacked_widget.setCurrentIndex(2)
 
     def show_SETTINGS_screen(self):
-        self.stacked_widget.setCurrentIndex(3)
+        self.stacked_widget.setCurrentIndex(1)
