@@ -97,10 +97,10 @@ class MainMenu(QWidget):
         exit_button.setStyleSheet("""
             background-color: red; 
             color: white; 
-            border-radius: 25px; 
+            border-radius: 0px; 
             font-size: 16px; 
             font-weight: bold;
-            width: 50px; 
+            width: 150px; 
             height: 50px; 
             padding: 0;
             text-align: center;
@@ -128,8 +128,6 @@ class MainMenu(QWidget):
         exit_layout = QHBoxLayout()
         exit_layout.addWidget(exit_button)
         exit_layout.addStretch()  # Add space to push exit button to the bottom
-        exit_layout.addWidget(exit_button)
-        settings_layout.addStretch()
         exit_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the lay
 
         # Main layout

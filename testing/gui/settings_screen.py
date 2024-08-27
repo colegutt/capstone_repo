@@ -48,21 +48,22 @@ class SettingsScreen(QWidget):
         self.sound_percentage.setStyleSheet("color: white; font-size: 30px; font-weight: bold;")
         self.sound_percentage.setAlignment(Qt.AlignCenter)
 
-        # "+" and "-" buttons
+        # "-" button
         minus_button = QPushButton('-', self)
         minus_button.setStyleSheet(self.button_style())
         minus_button.clicked.connect(self.decrease_sound_level)
         
+        # "+" button
         plus_button = QPushButton('+', self)
         plus_button.setStyleSheet(self.button_style())
         plus_button.clicked.connect(self.increase_sound_level)
 
+        # Layout of sound control
         button_and_percent_layout = QHBoxLayout()
         button_and_percent_layout.addWidget(minus_button)
         button_and_percent_layout.addWidget(self.sound_percentage)
         button_and_percent_layout.addWidget(plus_button)
 
-        # Layout for sound control
         sound_control_layout = QVBoxLayout()
         sound_control_layout.addWidget(sound_label)
         sound_control_layout.addLayout(button_and_percent_layout)
@@ -104,11 +105,11 @@ class SettingsScreen(QWidget):
         return """
             background-color: gray; 
             color: white; 
-            border-radius: 30px; 
+            border-radius: 25px; 
             font-size: 24px; 
             font-weight: bold;
-            width: 60px; 
-            height: 60px; 
+            width: 50px; 
+            height: 70px; 
             padding: 0;
             text-align: center;
             line-height: 60px;
@@ -179,14 +180,14 @@ class SettingsScreen(QWidget):
         back_button.setStyleSheet("""
             background-color: red; 
             color: white; 
-            border-radius: 30px; 
+            border-radius: 0px; 
             font-size: 16px; 
             font-weight: bold;
-            width: 60px; 
-            height: 60px; 
+            width: 150px; 
+            height: 50px; 
             padding: 0;
             text-align: center;
-            line-height: 60px;
+            line-height: 50px;
         """)
         back_button.clicked.connect(self.go_back)
         return back_button
