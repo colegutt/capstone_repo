@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 
 class SettingsScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -21,7 +21,7 @@ class SettingsScreen(QWidget):
         # Make background black
         self.setStyleSheet("background-color: black;")
 
-        # Set title and controls
+        # Set screen layout
         self.set_layout(
             self.set_title(),
             self.create_sound_control(),
@@ -125,7 +125,7 @@ class SettingsScreen(QWidget):
         self.off_button = QPushButton('Off', self)
         self.on_button = QPushButton('On', self)
 
-        self.set_button_styles()
+        self.narration_button_logic()
 
         self.off_button.clicked.connect(self.toggle_narration_off)
         self.on_button.clicked.connect(self.toggle_narration_on)
@@ -141,18 +141,18 @@ class SettingsScreen(QWidget):
 
         return narration_control_layout
 
-    def set_button_styles(self):
+    def narration_button_logic(self):
         # Set style for Off and On buttons
         self.off_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if not self.narration_on else 'gray'};")
         self.on_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if self.narration_on else 'gray'};")
     
     def toggle_narration_off(self):
         self.narration_on = False
-        self.set_button_styles()
+        self.narration_button_logic()
 
     def toggle_narration_on(self):
         self.narration_on = True
-        self.set_button_styles()
+        self.narration_button_logic()
 
     def increase_sound_level(self):
         if self.sound_level < 100:
