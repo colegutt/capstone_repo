@@ -30,4 +30,4 @@ class GeneralFunctions(QWidget):
         return back_layout
     
     def go_back(self, index):
-        self.stacked_widget.setCurrentIndex(0)
+        self.stacked_widget.setCurrentIndex(index)

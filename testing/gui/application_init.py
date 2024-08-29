@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
 from settings_screen import SettingsScreen
 from single_player_screen import SPScreen
-from memory_pregame_screen import MemoryPregameScreen
+from pregame_screens import MemoryPregameScreen # Add more classes here
 
 class ApplicationInit(QWidget):
     def __init__(self):
