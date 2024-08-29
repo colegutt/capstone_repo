@@ -153,4 +153,4 @@ class MainMenu(QWidget):
         self.stacked_widget.setCurrentIndex(2)
 
     def show_SETTINGS_screen(self):
-        self.stacked_widget.setCurrentIndex(1)
+        self.stacked_widget.setCurrentIndex(2)
