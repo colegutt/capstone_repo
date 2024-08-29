@@ -58,8 +58,8 @@ class SPScreen(QWidget):
         i = 0
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
-            temp_game_layout.setContentsMargins(20, 5, 20, 5)  # Margins for game buttons
-
+            hs_title = QLabel(f'{hs}', self)
+            hs_title.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
             # Game button
             game_button = QPushButton(game, self)
             game_button.setStyleSheet(f'''
@@ -75,7 +75,7 @@ class SPScreen(QWidget):
             temp_game_layout.addStretch()
             temp_game_layout.addWidget(game_button)
             temp_game_layout.addSpacing(400)  # Space between button and score
-            temp_game_layout.addWidget(QLabel(f'{hs}', self).setStyleSheet("color: white; font-size: 20px; font-weight: bold;"))
+            temp_game_layout.addWidget(hs_title)
             temp_game_layout.addStretch()
 
             game_layouts.append(temp_game_layout)

@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
 from settings_screen import SettingsScreen
-from gpt_single_player_screen import SPScreen
+from single_player_screen import SPScreen
 
 class ApplicationInit(QWidget):
     def __init__(self):
