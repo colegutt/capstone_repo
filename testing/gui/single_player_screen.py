@@ -1,10 +1,12 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
+from general_functions import GeneralFunctions
 
 class SPScreen(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
+        self.gen_funcs = GeneralFunctions(self.stacked_widget)
 
         # Initialize games and high scores
         self.games_and_high_scores = {
@@ -22,7 +24,7 @@ class SPScreen(QWidget):
         self.set_layout(
             self.set_title(),
             self.create_games_layout(),
-            self.create_back_button()
+            self.gen_funcs.create_back_layout(0)
         )
     
     def set_title(self):
@@ -94,43 +96,13 @@ class SPScreen(QWidget):
 
         return games_layout
 
-
-    def create_back_button(self):
-        back_button = QPushButton('Back', self)
-        back_button.setStyleSheet("""
-            background-color: red; 
-            color: white; 
-            border-radius: 0px; 
-            font-size: 16px; 
-            font-weight: bold;
-            width: 150px; 
-            height: 50px; 
-            padding: 0;
-            text-align: center;
-            line-height: 50px;
-        """)
-        back_button.clicked.connect(self.go_back)
-
-        back_layout = QHBoxLayout()
-        back_layout.addWidget(back_button)
-        back_layout.addStretch()
-        back_layout.setContentsMargins(20, 20, 20, 20)
-
-        return back_layout
-
-    def set_layout(self, title, games_layout, back_button):
+    def set_layout(self, title, games_layout, back_layout):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
-        final_layout.addSpacing(20)  # Space between title and content
         final_layout.addLayout(games_layout)
-        final_layout.addStretch()  # Push back button to the bottom
-        final_layout.addLayout(back_button)
-
+        final_layout.addLayout(back_layout)
         self.setLayout(final_layout)
-
-    def go_back(self):
-        self.stacked_widget.setCurrentIndex(0)
     
     def go_to_game(self, index):
         if index == 0:
-            self.stacked_widget.setCurrentIndex(0)
+            self.stacked_widget.setCurrentIndex(3)

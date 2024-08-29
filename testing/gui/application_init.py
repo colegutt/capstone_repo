@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
 from settings_screen import SettingsScreen
 from single_player_screen import SPScreen
+from memory_pregame_screen import MemoryPregameScreen
 
 class ApplicationInit(QWidget):
     def __init__(self):
@@ -11,10 +12,16 @@ class ApplicationInit(QWidget):
         self.setStyleSheet("background-color: black;")
 
         self.stacked_widget = QStackedWidget()
+        # Index   Screen
+        #   0     Main Menu
+        #   1     Single Player Screen
+        #   2     Settings Screen
+        #   3     Memory Pregame Screen 
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
         self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
-        # self.stacked_widget.addWidget(MP_Screen(self.stacked_widget))
         self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget))
+        self.stacked_widget.addWidget(MemoryPregameScreen(self.stacked_widget))
+        # self.stacked_widget.addWidget(MP_Screen(self.stacked_widget))
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)

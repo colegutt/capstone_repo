@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
+from general_functions import GeneralFunctions
 
 class SettingsScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -8,6 +9,7 @@ class SettingsScreen(QWidget):
 
         # For screen navigation
         self.stacked_widget = stacked_widget
+        self.gen_funcs = GeneralFunctions(self.stacked_widget)
 
         # Initialize state
         self.sound_level = 50
@@ -27,7 +29,7 @@ class SettingsScreen(QWidget):
             self.create_sound_control(),
             self.create_brightness_control(),
             self.create_narration_control(),
-            self.create_back_button()
+            self.gen_funcs.create_back_layout(0)
         )
     
     def set_title(self):
@@ -174,25 +176,7 @@ class SettingsScreen(QWidget):
             self.brightness_level -= 10
             self.brightness_percentage.setText(f'{self.brightness_level}%')
 
-    def create_back_button(self):
-        # Back button
-        back_button = QPushButton('Back', self)
-        back_button.setStyleSheet("""
-            background-color: red; 
-            color: white; 
-            border-radius: 0px; 
-            font-size: 16px; 
-            font-weight: bold;
-            width: 150px; 
-            height: 50px; 
-            padding: 0;
-            text-align: center;
-            line-height: 50px;
-        """)
-        back_button.clicked.connect(self.go_back)
-        return back_button
-
-    def set_layout(self, title, sound_control, brightness_control, narration_control, back_button):
+    def set_layout(self, title, sound_control, brightness_control, narration_control, back_layout):
         # Layout for sound, brightness, and narration controls
         control_layout = QVBoxLayout()
         control_layout.addLayout(sound_control)
@@ -208,17 +192,8 @@ class SettingsScreen(QWidget):
         main_layout.addStretch()
         main_layout.addLayout(control_layout)
 
-        # Layout for the back button
-        back_layout = QHBoxLayout()
-        back_layout.addWidget(back_button)
-        back_layout.addStretch()
-        back_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the back button
-
         # Combine main layout and back button layout
         final_layout = QVBoxLayout()
         final_layout.addLayout(main_layout)
         final_layout.addLayout(back_layout)
         self.setLayout(final_layout)
-
-    def go_back(self):
-        self.stacked_widget.setCurrentIndex(0)
