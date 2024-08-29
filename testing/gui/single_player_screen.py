@@ -9,7 +9,9 @@ class SPScreen(QWidget):
         # Initialize games and high scores
         self.games_and_high_scores = {
             'Memory': 10,
-            'Fast Tap': 12
+            'Fast Tap': 12,
+            'Game 3': 15,
+            'Game 4': 9
         }
 
         # Create screen
@@ -43,7 +45,7 @@ class SPScreen(QWidget):
         header_layout = QHBoxLayout()
         header_layout.addStretch()
         header_layout.addWidget(game_header_title)
-        header_layout.addSpacing(400)
+        header_layout.addSpacing(250)
         header_layout.addWidget(high_score_header_title)
         header_layout.addStretch()
 
@@ -54,29 +56,30 @@ class SPScreen(QWidget):
 
         # Game layouts
         game_layouts = []
-        colors = ['blue', 'green', 'purple', 'yellow']
+        colors = ['blue', 'green', 'purple', 'orange']
         i = 0
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
             hs_title = QLabel(f'{hs}', self)
-            hs_title.setStyleSheet("color: white; font-size: 20px; font-weight: bold;")
+            hs_title.setStyleSheet("color: white; font-size: 28px; font-weight: bold;")
             # Game button
             game_button = QPushButton(game, self)
             game_button.setStyleSheet(f'''
                 background-color: {colors[i % len(colors)]}; 
                 color: white; 
                 border-radius: 10px; 
-                width: 200px; 
-                height: 100px; 
+                width: 250px; 
+                height: 250px; 
                 font-size: 20px; 
                 font-weight: bold;
                 height: 50px;
             ''')
-            temp_game_layout.addStretch()
+            game_button.clicked.connect(lambda checked, i=i: self.go_to_game(i))
+            temp_game_layout.addSpacing(180) 
             temp_game_layout.addWidget(game_button)
-            temp_game_layout.addSpacing(400)  # Space between button and score
+            temp_game_layout.addSpacing(200)  # Space between button and score
             temp_game_layout.addWidget(hs_title)
-            temp_game_layout.addStretch()
+            temp_game_layout.addSpacing(300) 
 
             game_layouts.append(temp_game_layout)
             i += 1
@@ -84,9 +87,10 @@ class SPScreen(QWidget):
         # Main games layout
         games_layout = QVBoxLayout()
         games_layout.addLayout(header_layout)
-        games_layout.addSpacing(10)  # Space between headers and game layouts
+        games_layout.addSpacing(30)  # Space between headers and game layouts
         for game_layout in game_layouts:
             games_layout.addLayout(game_layout)
+            games_layout.addSpacing(30)  # Space between headers and game layouts
 
         return games_layout
 
@@ -126,3 +130,7 @@ class SPScreen(QWidget):
 
     def go_back(self):
         self.stacked_widget.setCurrentIndex(0)
+    
+    def go_to_game(self, index):
+        if index == 0:
+            self.stacked_widget.setCurrentIndex(0)
