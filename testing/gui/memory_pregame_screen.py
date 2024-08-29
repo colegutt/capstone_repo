@@ -14,7 +14,7 @@ class MemoryPregameScreen(QWidget):
         self.setStyleSheet("background-color: black;")
         self.set_layout(
             self.set_title(),
-            self.set_description(),
+            self.set_description_layout(),
             self.create_start_button(),
             self.create_back_button()
         )
@@ -25,22 +25,29 @@ class MemoryPregameScreen(QWidget):
         title.setAlignment(Qt.AlignCenter)
         return title
     
-    def set_description(self):
-        description = QLabel('This is an example of a description text that describes the game. '
-                             'It could talk about how to play, the rules, or what to expect in the game. '
-                             'Make sure to pay attention to the instructions. '
-                             'Good luck and have fun!', self)
-        description.setStyleSheet("color: white; font-size: 18px;")
+    def set_description_layout(self):
+        description_str = (
+            "Match the sequence by pressing the buttons that light up. "
+            "The sequence will get longer the better you do. How many "
+            "can you get? Good luck!"
+        )
+
+        description = QLabel(description_str, self)
+        description.setStyleSheet("color: white; font-size: 24px;")
         description.setAlignment(Qt.AlignCenter)
         description.setWordWrap(True)
-        return description
+        description_layout = QVBoxLayout()
+        description_layout.addStretch()
+        description_layout.addWidget(description)
+        description_layout.addStretch()
+        return description_layout
 
     def create_start_button(self):
         start_button = QPushButton('Start', self)
         start_button.setStyleSheet("""
             background-color: blue; 
             color: white; 
-            border-radius: 75px;  /* Circular button */
+            border-radius: 75px; 
             font-size: 24px; 
             font-weight: bold;
             width: 150px; 
@@ -58,11 +65,11 @@ class MemoryPregameScreen(QWidget):
     def create_back_button(self):
         return self.gen_funcs.create_back_layout(0)
 
-    def set_layout(self, title, description, start_button, back_button):
+    def set_layout(self, title, description_layout, start_button, back_button):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
         final_layout.addSpacing(20)  # Space between title and description
-        final_layout.addWidget(description)
+        final_layout.addLayout(description_layout)
         final_layout.addSpacing(40)  # Space between description and start button
         final_layout.addLayout(start_button)
         final_layout.addStretch()  # Push back button to the bottom
