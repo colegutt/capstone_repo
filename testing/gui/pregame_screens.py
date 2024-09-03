@@ -11,7 +11,7 @@ class MemoryPregameScreen(QWidget):
             "The sequence will get longer the better you do. "
             "How many can you get? Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 1))
+        self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 6))
 
 class PingPongPregameScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -41,7 +41,6 @@ class PregameScreenCreator(QWidget):
             self.create_start_button(button_color, in_game_screen_index),
             self.gen_funcs.create_back_layout(game_index)
         )
-        
     
     def set_title(self, game_title):
         title = QLabel(f'{game_title}', self)
@@ -74,7 +73,9 @@ class PregameScreenCreator(QWidget):
             width: 150px; 
             height: 150px;
         """)
-        start_button.clicked.connect(self.go_to_ingame_screen, in_game_screen_index)
+        start_button.clicked.connect(
+            lambda checked, in_game_screen_index=in_game_screen_index: self.go_to_ingame_screen(in_game_screen_index)
+        )
 
         start_layout = QHBoxLayout()
         start_layout.addWidget(start_button)
