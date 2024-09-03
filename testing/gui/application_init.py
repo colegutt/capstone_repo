@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
+from rot_main_menu import RotMainMenu
 from settings_screen import SettingsScreen
 from single_player_screen import SPScreen
 from pregame_screens import MemoryPregameScreen # Add more classes here
@@ -17,7 +18,7 @@ class ApplicationInit(QWidget):
         #   1     Single Player Screen
         #   2     Settings Screen
         #   3     Memory Pregame Screen 
-        self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
+        self.stacked_widget.addWidget(RotMainMenu(self.stacked_widget))
         self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MemoryPregameScreen(self.stacked_widget))
