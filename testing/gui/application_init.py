@@ -20,7 +20,7 @@ class ApplicationInit(QWidget):
         #   3     Settings Screen
         #   4     Memory Pregame Screen 
         #   5     Ping Pong Pregame Screen
-        self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
+        self.stacked_widget.addWidget(RotMainMenu(self.stacked_widget))
         self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget))

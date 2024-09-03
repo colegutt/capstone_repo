@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 
 # Custom button class with rotated text
 class RotatedButton(QPushButton):
-    def __init__(self, text, color=Qt.red, parent=None):
+    def __init__(self, text, color, parent=None):
         super().__init__(text, parent)
         self.color = color  # Store the color for later use
 
