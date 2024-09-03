@@ -2,17 +2,41 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 from general_functions import GeneralFunctions
 
+class SPScreen(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        games_and_high_scores = {
+            'Memory': 10,
+            'Game 2': 12,
+            'Game 3': 15,
+            'Game 4': 9
+        }
+        title = 'Single Player Games'
+        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, title, False)
+
+        self.setLayout(self.gl_creator.create_screen())
+
+class MPScreen(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        games_and_high_scores = {
+            'Ping Pong': 10,
+            'Game 2': 12,
+            'Game 3': 15,
+            'Game 4': 9
+        }
+        title = 'Multiplayer Games'
+        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, title, True)
+        self.setLayout(self.gl_creator.create_screen())
 
 class GameListScreenCreator(QWidget):
-    def __init__(self, stacked_widget, games_and_high_scores, multiplayer):
+    def __init__(self, stacked_widget, games_and_high_scores, title, multiplayer):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.games_and_high_scores = games_and_high_scores
-        if multiplayer:
-            self.index = 0 # Change
-        else:
-            self.index = 0
+        self.multiplayer = multiplayer
+        self.title = title
     
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
@@ -23,7 +47,7 @@ class GameListScreenCreator(QWidget):
         )
     
     def set_title(self):
-        title = QLabel('Single Player Games', self)
+        title = QLabel(self.title, self)
         title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
         title.setAlignment(Qt.AlignCenter)
         return title
@@ -54,7 +78,7 @@ class GameListScreenCreator(QWidget):
         # Game layouts
         game_layouts = []
         colors = ['blue', 'green', 'purple', 'orange']
-        i = self.index
+        i = 0
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
             hs_title = QLabel(f'{hs}', self)
@@ -99,34 +123,9 @@ class GameListScreenCreator(QWidget):
         return final_layout
     
     def go_to_game(self, index):
-        if index == 0:
-            self.stacked_widget.setCurrentIndex(4)
-        
-
-class SPScreen(QWidget):
-    def __init__(self, stacked_widget):
-        super().__init__()
-        games_and_high_scores = {
-            'Memory': 10,
-            'Game 2': 12,
-            'Game 3': 15,
-            'Game 4': 9
-        }
-
-        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, False)
-
-        self.setLayout(self.gl_creator.create_screen())
-
-class MPScreen(QWidget):
-    def __init__(self, stacked_widget):
-        super().__init__()
-        games_and_high_scores = {
-            'Ping Pong': 10,
-            'Game 2': 12,
-            'Game 3': 15,
-            'Game 4': 9
-        }
-
-        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, True)
-
-        self.setLayout(self.gl_creator.create_screen())
+        if self.multiplayer:
+            if index == 0:
+                self.stacked_widget.setCurrentIndex(5)
+        else:
+            if index == 0:
+                self.stacked_widget.setCurrentIndex(4)

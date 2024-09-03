@@ -13,7 +13,16 @@ class MemoryPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 1))
 
-
+class PingPongPregameScreen(QWidget):
+    def __init__(self, stacked_widget):
+        super().__init__()
+        self.ps_creator = PregameScreenCreator(stacked_widget)
+        description_str = (
+            "This is a new description for the multiplayer ping pong "
+            "game. I have no idea how this will be played."
+            "ROTATE SCREEN TO BEGIN!!!"
+        )
+        self.setLayout(self.ps_creator.create_pregame_screen('Ping Pong', description_str, 'blue', 2, 2))
 
 # Put classes for other pregame screens below!!!
 

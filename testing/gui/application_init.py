@@ -3,7 +3,7 @@ from main_menu import MainMenu
 from rot_main_menu import RotMainMenu
 from settings_screen import SettingsScreen
 from game_list_screens import SPScreen, MPScreen
-from pregame_screens import MemoryPregameScreen # Add more classes here
+from pregame_screens import MemoryPregameScreen, PingPongPregameScreen # Add more classes here
 
 class ApplicationInit(QWidget):
     def __init__(self):
@@ -19,11 +19,15 @@ class ApplicationInit(QWidget):
         #   2     Multiplayer Screen
         #   3     Settings Screen
         #   4     Memory Pregame Screen 
+        #   5     Ping Pong Pregame Screen
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
         self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MemoryPregameScreen(self.stacked_widget))
+        self.stacked_widget.addWidget(PingPongPregameScreen(self.stacked_widget))
+
+
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)
