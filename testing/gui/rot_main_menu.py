@@ -5,12 +5,16 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 
 # Custom button class with rotated text
 class RotatedButton(QPushButton):
+    def __init__(self, text, color=Qt.red, parent=None):
+        super().__init__(text, parent)
+        self.color = color  # Store the color for later use
+
     def paintEvent(self, event):
         painter = QPainter(self)
 
         # Set the background color to red
-        painter.setBrush(Qt.red)
-        painter.setPen(Qt.red)
+        painter.setBrush(self.color)
+        painter.setPen(self.color)
         painter.drawRect(self.rect())  # Draw the red background
 
         # Apply the transformation for rotating the text
@@ -87,7 +91,7 @@ class RotMainMenu(QWidget):
         # settings_button.move(0,0)
     
     def create_exit_button(self):
-        exit_button = RotatedButton('Exit', self)
+        exit_button = RotatedButton('Exit', color=Qt.red, parent=self)
         exit_button.setStyleSheet("""
             color: white; 
             border-radius: 0px; 
