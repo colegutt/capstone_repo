@@ -20,6 +20,15 @@ class ApplicationInit(QWidget):
         self.brightness_level = 50
         self.narration_on = False
 
+        main_menu = MainMenu(self.stacked_widget)
+        sp_screen = SPScreen(self.stacked_widget)
+        mp_screen = MPScreen(self.stacked_widget)
+        settings_screen = SettingsScreen(self.stacked_widget, self)
+        memory_pregame_screen = MemoryPregameScreen(self.stacked_widget)
+        ping_pong_pregame_screen = PingPongPregameScreen(self.stacked_widget)
+        memory_ingame_screen = MemoryInGameScreen(self.stacked_widget)
+        pause_screen = PauseScreen(self.stacked_widget)
+
         # Index   Screen
         #   0     Main Menu
         #   1     Single Player Screen
@@ -29,14 +38,14 @@ class ApplicationInit(QWidget):
         #   5     Ping Pong Pregame Screen
         #   6     Memory In-Game Screen
         #   7     Pause Screen
-        self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
-        self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(MPScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget, self))
-        self.stacked_widget.addWidget(MemoryPregameScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(PingPongPregameScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(MemoryInGameScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(PauseScreen(self.stacked_widget))
+        self.stacked_widget.addWidget(main_menu)
+        self.stacked_widget.addWidget(sp_screen)
+        self.stacked_widget.addWidget(mp_screen)
+        self.stacked_widget.addWidget(settings_screen)
+        self.stacked_widget.addWidget(memory_pregame_screen)
+        self.stacked_widget.addWidget(ping_pong_pregame_screen)
+        self.stacked_widget.addWidget(memory_ingame_screen)
+        self.stacked_widget.addWidget(pause_screen)
 
 
 
