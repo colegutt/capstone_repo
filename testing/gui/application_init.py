@@ -15,6 +15,11 @@ class ApplicationInit(QWidget):
         self.setStyleSheet("background-color: black;")
 
         self.stacked_widget = QStackedWidget()
+        
+        self.sound_level = 50
+        self.brightness_level = 50
+        self.narration_on = False
+
         # Index   Screen
         #   0     Main Menu
         #   1     Single Player Screen
@@ -27,7 +32,7 @@ class ApplicationInit(QWidget):
         self.stacked_widget.addWidget(MainMenu(self.stacked_widget))
         self.stacked_widget.addWidget(SPScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MPScreen(self.stacked_widget))
-        self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget))
+        self.stacked_widget.addWidget(SettingsScreen(self.stacked_widget, self))
         self.stacked_widget.addWidget(MemoryPregameScreen(self.stacked_widget))
         self.stacked_widget.addWidget(PingPongPregameScreen(self.stacked_widget))
         self.stacked_widget.addWidget(MemoryInGameScreen(self.stacked_widget))
@@ -40,3 +45,12 @@ class ApplicationInit(QWidget):
         self.setLayout(layout)
 
         self.showFullScreen()
+    
+    def get_sound_level(self):
+        return self.sound_level
+    
+    def get_brightness_level(self):
+        return self.brightness_level
+    
+    def get_narration_bool(self):
+        return self.narration_on

@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayo
 from general_functions import GeneralFunctions
 
 class SettingsScreen(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         # Initialize QWidget class
         super().__init__()
 
@@ -11,10 +11,7 @@ class SettingsScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
 
-        # Initialize state
-        self.sound_level = 50
-        self.brightness_level = 50
-        self.narration_on = False
+        self.app_init = app_init
 
         # Create screen
         self.create_screen()
@@ -46,7 +43,7 @@ class SettingsScreen(QWidget):
         sound_label.setAlignment(Qt.AlignCenter)
 
         # Sound percentage display
-        self.sound_percentage = QLabel(f'{self.sound_level}%', self)
+        self.sound_percentage = QLabel(f'{self.app_init.get_sound_level()}%', self)
         self.sound_percentage.setStyleSheet("color: white; font-size: 30px; font-weight: bold;")
         self.sound_percentage.setAlignment(Qt.AlignCenter)
 
@@ -79,7 +76,7 @@ class SettingsScreen(QWidget):
         brightness_label.setAlignment(Qt.AlignCenter)
 
         # Brightness percentage display
-        self.brightness_percentage = QLabel(f'{self.brightness_level}%', self)
+        self.brightness_percentage = QLabel(f'{self.app_init.get_brightness_level()}%', self)
         self.brightness_percentage.setStyleSheet("color: white; font-size: 30px; font-weight: bold;")
         self.brightness_percentage.setAlignment(Qt.AlignCenter)
 
@@ -145,36 +142,36 @@ class SettingsScreen(QWidget):
 
     def narration_button_logic(self):
         # Set style for Off and On buttons
-        self.off_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if not self.narration_on else 'gray'};")
-        self.on_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if self.narration_on else 'gray'};")
+        self.off_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if not self.app_init.get_narration_bool() else 'gray'};")
+        self.on_button.setStyleSheet(f"{self.button_style()} background-color: {'green' if self.app_init.get_narration_bool() else 'gray'};")
     
     def toggle_narration_off(self):
-        self.narration_on = False
+        self.app_init.narration_on = False
         self.narration_button_logic()
 
     def toggle_narration_on(self):
-        self.narration_on = True
+        self.app_init.narration_on = True
         self.narration_button_logic()
 
     def increase_sound_level(self):
-        if self.sound_level < 100:
-            self.sound_level += 10
-            self.sound_percentage.setText(f'{self.sound_level}%')
+        if self.app_init.sound_level < 100:
+            self.app_init.sound_level += 10
+            self.sound_percentage.setText(f'{self.app_init.get_sound_level()}%')
 
     def decrease_sound_level(self):
-        if self.sound_level > 0:
-            self.sound_level -= 10
-            self.sound_percentage.setText(f'{self.sound_level}%')
+        if self.app_init.sound_level > 0:
+            self.app_init.sound_level -= 10
+            self.sound_percentage.setText(f'{self.app_init.get_sound_level()}%')
             
     def increase_brightness_level(self):
-        if self.brightness_level < 100:
-            self.brightness_level += 10
-            self.brightness_percentage.setText(f'{self.brightness_level}%')
+        if self.app_init.brightness_level < 100:
+            self.app_init.brightness_level += 10
+            self.brightness_percentage.setText(f'{self.app_init.get_brightness_level()}%')
 
     def decrease_brightness_level(self):
-        if self.brightness_level > 0:
-            self.brightness_level -= 10
-            self.brightness_percentage.setText(f'{self.brightness_level}%')
+        if self.app_init.brightness_level > 0:
+            self.app_init.brightness_level -= 10
+            self.brightness_percentage.setText(f'{self.app_init.get_brightness_level()}%')
 
     def set_layout(self, title, sound_control, brightness_control, narration_control, back_layout):
         # Layout for sound, brightness, and narration controls
