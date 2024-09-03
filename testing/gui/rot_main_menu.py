@@ -7,10 +7,20 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
 class RotatedButton(QPushButton):
     def paintEvent(self, event):
         painter = QPainter(self)
+
+        # Set the background color to red
+        painter.setBrush(Qt.red)
+        painter.setPen(Qt.red)
+        painter.drawRect(self.rect())  # Draw the red background
+
+        # Apply the transformation for rotating the text
         transform = QTransform()
         transform.translate(self.width(), 0)  # Translate before rotating
         transform.rotate(90)  # Rotate 90 degrees
         painter.setTransform(transform)
+
+        # Set the text color to white
+        painter.setPen(Qt.white)
 
         metrics = QFontMetrics(self.font())
         text_width = metrics.width(self.text())
@@ -22,6 +32,7 @@ class RotatedButton(QPushButton):
             (self.width() + text_height) // 2,
             self.text()
         )
+
         painter.end()
 
 # Custom label class with rotated text
@@ -60,28 +71,34 @@ class RotMainMenu(QWidget):
         rotated_title = RotatedLabel('BEEPY', self)
         rotated_title.setStyleSheet("color: white; font-size: 48px; font-weight: bold; background: transparent;")
         rotated_title.resize(100, 300)
-        rotated_title.move(900, 150)
 
-        # Create rotated exit button
+        exit_button = self.create_exit_button()
+        # single_player_button = self.create_SP_button()
+        # multiplayer_button = self.create_MP_button()
+        # settings_button = self.create_SETTINGS_button()
+
+
+
+        # (-left/+right, -up/+down)
+        rotated_title.move(900, 150)
+        exit_button.move(0, 0) 
+        # single_player_button.move(0,0)
+        # multiplayer_button.move(0,0)
+        # settings_button.move(0,0)
+    
+    def create_exit_button(self):
         exit_button = RotatedButton('Exit', self)
         exit_button.setStyleSheet("""
-            background-color: red; 
             color: white; 
             border-radius: 0px; 
             font-size: 16px; 
             font-weight: bold;
-            width: 150px; 
-            height: 50px; 
             padding: 0;
             text-align: center;
             line-height: 50px;
         """)
         exit_button.clicked.connect(QApplication.instance().quit)
         exit_button.resize(50, 150)
-        exit_button.move(200, 400)  # Adjust position as needed
+        return exit_button
+        
 
-if __name__ == '__main__':
-    app = QApplication([])
-    main_win = RotMainMenu()
-    main_win.show()
-    sys.exit(app.exec_())
