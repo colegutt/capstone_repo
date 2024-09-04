@@ -21,8 +21,8 @@ class ApplicationInit(QWidget):
         self.narration_on = False
         
         self.main_menu = MainMenu(self.stacked_widget, self)
-        self.sp_screen = SPScreen(self.stacked_widget)
-        self.mp_screen = MPScreen(self.stacked_widget)
+        self.sp_screen = SPScreen(self.stacked_widget, self)
+        self.mp_screen = MPScreen(self.stacked_widget, self)
         self.settings_screen = SettingsScreen(self.stacked_widget, self, 0)
         self.memory_pregame_screen = MemoryPregameScreen(self.stacked_widget)
         self.ping_pong_pregame_screen = PingPongPregameScreen(self.stacked_widget)

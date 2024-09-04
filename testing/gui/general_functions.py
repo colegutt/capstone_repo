@@ -21,12 +21,10 @@ class GeneralFunctions(QWidget):
             line-height: 50px;
         """)
         back_button.clicked.connect(lambda checked, index=index: self.go_back(index))
-
         back_layout = QHBoxLayout()
         back_layout.addWidget(back_button)
         back_layout.addStretch()
         back_layout.setContentsMargins(20, 20, 20, 20)
-
         return back_layout
     
     def go_back(self, index):

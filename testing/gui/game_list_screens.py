@@ -3,8 +3,9 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLa
 from general_functions import GeneralFunctions
 
 class SPScreen(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
+        self.app_init = app_init
         games_and_high_scores = {
             'Memory': 10,
             'Game 2': 12,
@@ -12,13 +13,14 @@ class SPScreen(QWidget):
             'Game 4': 9
         }
         title = 'Single Player Games'
-        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, title, False)
+        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, games_and_high_scores, title, False)
 
         self.setLayout(self.gl_creator.create_screen())
 
 class MPScreen(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
+        self.app_init = app_init
         games_and_high_scores = {
             'Ping Pong': 10,
             'Game 2': 12,
@@ -26,16 +28,17 @@ class MPScreen(QWidget):
             'Game 4': 9
         }
         title = 'Multiplayer Games'
-        self.gl_creator = GameListScreenCreator(stacked_widget, games_and_high_scores, title, True)
+        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, games_and_high_scores, title, True)
         self.setLayout(self.gl_creator.create_screen())
 
 class GameListScreenCreator(QWidget):
-    def __init__(self, stacked_widget, games_and_high_scores, title, multiplayer):
+    def __init__(self, stacked_widget, app_init, games_and_high_scores, title, multiplayer):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.games_and_high_scores = games_and_high_scores
         self.multiplayer = multiplayer
+        self.app_init = app_init
         self.title = title
     
     def create_screen(self):
@@ -128,4 +131,5 @@ class GameListScreenCreator(QWidget):
                 self.stacked_widget.setCurrentIndex(5)
         else:
             if index == 0:
+                self.app_init.memory_ingame_screen.reset_game()
                 self.stacked_widget.setCurrentIndex(4)

@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 
 class MemoryInGameScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -8,7 +8,9 @@ class MemoryInGameScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.score = 0
         self.create_screen()
-        self.start_score_timer()
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_score)
+        self.resuming = False  # To track if the game is resuming
     
     def create_screen(self):
         # Make background black
@@ -26,7 +28,7 @@ class MemoryInGameScreen(QWidget):
         title = QLabel('Memory', self)
 
         # Title characteristics
-        title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
+        title.setStyleSheet("color: white; font-size: 72px; font-weight: bold;")
 
         # Title alignment
         title.setAlignment(Qt.AlignCenter)
@@ -38,7 +40,7 @@ class MemoryInGameScreen(QWidget):
         self.score_label = QLabel(f'Score: {self.score}', self)
 
         # Score characteristics
-        self.score_label.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
+        self.score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
 
         # Score alignment
         self.score_label.setAlignment(Qt.AlignCenter)
@@ -51,45 +53,58 @@ class MemoryInGameScreen(QWidget):
         pause_button.setStyleSheet("""
             background-color: orange; 
             color: white; 
-            border-radius: 120px; 
+            border-radius: 50px; 
             font-size: 26px; 
             font-weight: bold;
-            width: 240px;
-            height: 240px;
+            width: 100px;
+            height: 100px;
             padding: 0;
             text-align: center;
-            line-height: 240px;
+            line-height: 100px;
         """)
-        pause_button.clicked.connect(self.show_pause_screen)
+        pause_button.clicked.connect(self.pause_game)
         return pause_button
 
     def set_layout(self, title, score_label, pause_button):
         # Main layout
         main_layout = QVBoxLayout()
-        main_layout.addWidget(title)  # Add title at the top
+        
+        # Top layout for the pause button
+        top_layout = QHBoxLayout()
+        top_layout.addWidget(pause_button, alignment=Qt.AlignLeft)
+        top_layout.addStretch()  # Add stretch to push the pause button to the left
+
+        main_layout.addLayout(top_layout)  # Add top layout to main layout
+        main_layout.addWidget(title)  # Add title below the top layout
         main_layout.addStretch()  # Add space between title and score
-        main_layout.addWidget(score_label)  # Add score label
-        main_layout.addStretch()  # Add space between score and pause button
-        main_layout.addWidget(pause_button, alignment=Qt.AlignCenter)  # Add pause button
-        main_layout.addStretch()  # Add space below pause button
+        main_layout.addWidget(score_label, alignment=Qt.AlignCenter)  # Add centered score label
+        main_layout.addStretch()  # Add space below score label
+
         self.setLayout(main_layout)  # Set the final layout for the in-game screen
     
     def start_score_timer(self):
-        # Timer to update score every 5 seconds
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_score)
+        # Start the score timer to update score every 5 seconds
         self.timer.start(5000)  # 5000 milliseconds = 5 seconds
     
+    def stop_score_timer(self):
+        # Stop the score timer
+        self.timer.stop()
+
     def update_score(self):
         # Increment score by 1
         self.score += 1
         self.score_label.setText(f'Score: {self.score}')
 
-    def show_pause_screen(self):
+    def pause_game(self):
+        self.stop_score_timer()
         self.stacked_widget.setCurrentIndex(7)
+    
+    def resume_game(self):
+        self.start_score_timer()
+        self.resuming = True
 
-    def showEvent(self, event):
-        # Reset the score when the screen is shown
+    def reset_game(self):
         self.score = 0
         self.score_label.setText(f'Score: {self.score}')
-        super().showEvent(event)
+        self.resuming = False
+        self.start_score_timer()  # Start the timer when the game starts
