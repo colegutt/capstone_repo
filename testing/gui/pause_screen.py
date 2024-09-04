@@ -1,59 +1,58 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
-from general_functions import GeneralFunctions
+from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 
 class PauseScreen(QWidget):
-    def __init__(self, stacked_widget, game_index=1):
+    def __init__(self, stacked_widget, previous_index, app_init):
         super().__init__()
         self.stacked_widget = stacked_widget
-        self.game_index = game_index
-        self.gen_funcs = GeneralFunctions(self.stacked_widget)
-
+        self.previous_index = previous_index
+        self.app_init = app_init
         self.create_screen()
 
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
 
-        # Create title
-        title = QLabel('Pause', self)
-        title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
-        title.setAlignment(Qt.AlignCenter)
-
-        # Create buttons
-        settings_button = self.create_button("Settings", 3)
-        new_game_button = self.create_button("Select a New Game", self.game_index)
-        main_menu_button = self.create_button("Back to Main Menu", 0)
-
-        # Create layout
         layout = QVBoxLayout()
-        layout.addWidget(title)
+        layout.addWidget(self.set_title())
         layout.addStretch()
-        layout.addWidget(settings_button)
-        layout.addWidget(new_game_button)
-        layout.addWidget(main_menu_button)
-        layout.addStretch()
-
-        # Add back button at the bottom right
-        back_button_layout = self.gen_funcs.create_back_layout(6)
-        layout.addLayout(back_button_layout)
+        layout.addLayout(self.create_buttons_layout())
 
         self.setLayout(layout)
 
-    def create_button(self, text, index):
-        button = QPushButton(text, self)
-        button.setStyleSheet("""
-            background-color: gray; 
-            color: white; 
-            font-size: 24px; 
-            font-weight: bold;
-            height: 50px;
-        """)
-        button.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(index))
-        return button
+    def set_title(self):
+        title = QLabel('Pause', self)
+        title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
+        title.setAlignment(Qt.AlignCenter)
+        return title
 
-if __name__ == '__main__':
-    app = QApplication([])
-    stacked_widget = None  # Replace with actual QStackedWidget instance
-    pause_screen = PauseScreen(stacked_widget)
-    pause_screen.show()
-    sys.exit(app.exec_())
+    def create_buttons_layout(self):
+        settings_button = QPushButton('Settings', self)
+        settings_button.setStyleSheet("background-color: gray; color: white; font-size: 24px;")
+        settings_button.clicked.connect(self.go_to_settings)
+
+        new_game_button = QPushButton('Select a New Game', self)
+        new_game_button.setStyleSheet("background-color: gray; color: white; font-size: 24px;")
+        new_game_button.clicked.connect(self.select_new_game)
+
+        back_button = QPushButton('Back to Main Menu', self)
+        back_button.setStyleSheet("background-color: gray; color: white; font-size: 24px;")
+        back_button.clicked.connect(self.go_to_main_menu)
+
+        button_layout = QVBoxLayout()
+        button_layout.addWidget(settings_button)
+        button_layout.addWidget(new_game_button)
+        button_layout.addWidget(back_button)
+
+        return button_layout
+
+    def go_to_settings(self):
+        # Set settings_screen's previous_index to 7 (pause screen)
+        self.stacked_widget.setCurrentIndex(8)
+
+
+    def select_new_game(self):
+        # Example: Navigate to a specific screen for a new game selection
+        self.stacked_widget.setCurrentIndex(4)  # Example index for new game selection
+
+    def go_to_main_menu(self):
+        self.stacked_widget.setCurrentIndex(0)  # Go to main menu
