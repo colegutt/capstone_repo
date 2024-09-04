@@ -50,7 +50,6 @@ class PauseScreen(QWidget):
         self.app_init.update_pause_settings_screen() 
         self.stacked_widget.setCurrentIndex(8)
 
-
     def select_new_game(self):
         # Example: Navigate to a specific screen for a new game selection
         self.stacked_widget.setCurrentIndex(4)  # Example index for new game selection
