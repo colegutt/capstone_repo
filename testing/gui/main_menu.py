@@ -1,3 +1,4 @@
+import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 
@@ -108,8 +109,14 @@ class MainMenu(QWidget):
             text-align: center;
             line-height: 50px;
         """)
-        exit_button.clicked.connect(QApplication.instance().quit)
+        index = 0
+        exit_button.clicked.connect(self.exit_app)
         return exit_button
+
+    def exit_app(self):
+        self.app_init.save_settings()
+        sys.exit()
+
 
     def set_layout(self, title, single_player_button, multiplayer_button, settings_button, exit_button):
         # Layout for single player and multiplayer buttons

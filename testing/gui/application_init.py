@@ -6,6 +6,7 @@ from game_list_screens import SPScreen, MPScreen
 from pregame_screens import MemoryPregameScreen, PingPongPregameScreen
 from in_game_screens import MemoryInGameScreen
 from pause_screen import PauseScreen
+from PyQt5.QtCore import QSettings
 
 class ApplicationInit(QWidget):
     def __init__(self):
@@ -16,9 +17,11 @@ class ApplicationInit(QWidget):
 
         self.stacked_widget = QStackedWidget()
 
-        self.brightness_level = 50
-        self.sound_level = 50
-        self.narration_on = False
+        self.settings = QSettings("BEEPY", "BEEPY_GUI")
+
+        self.brightness_level = self.settings.value("brightness", 50, int)
+        self.sound_level = self.settings.value("sound", 50, int)
+        self.narration_on = self.settings.value("narration", False, bool)
         
         self.main_menu = MainMenu(self.stacked_widget, self)
         self.sp_screen = SPScreen(self.stacked_widget, self)
@@ -71,3 +74,9 @@ class ApplicationInit(QWidget):
     def update_pause_settings_screen(self):
         # This method is used to ensure the pause settings screen reflects the current values
         self.pause_settings_screen.update_displayed_values()
+    
+    def save_settings(self):
+        # Save the current settings
+        self.settings.setValue("brightness", self.brightness_level)
+        self.settings.setValue("sound", self.sound_level)
+        self.settings.setValue("narration", self.narration_on)
