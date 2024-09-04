@@ -2,12 +2,14 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 
 class MainMenu(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         # Initialize QWidget class
         super().__init__()
 
         # For screen navigation
         self.stacked_widget = stacked_widget
+
+        self.app_init = app_init
 
         # Create screen
         self.create_screen()
@@ -153,4 +155,5 @@ class MainMenu(QWidget):
         self.stacked_widget.setCurrentIndex(2)
 
     def show_SETTINGS_screen(self):
+        self.app_init.update_settings_screen() 
         self.stacked_widget.setCurrentIndex(3)

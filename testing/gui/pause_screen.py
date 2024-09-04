@@ -47,6 +47,7 @@ class PauseScreen(QWidget):
 
     def go_to_settings(self):
         # Set settings_screen's previous_index to 7 (pause screen)
+        self.app_init.update_pause_settings_screen() 
         self.stacked_widget.setCurrentIndex(8)
 
 

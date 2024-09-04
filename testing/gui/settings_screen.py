@@ -11,6 +11,7 @@ class SettingsScreen(QWidget):
 
         self.previous_index = previous_index
         self.create_screen()
+        self.update_displayed_values() 
 
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
@@ -159,3 +160,8 @@ class SettingsScreen(QWidget):
 
     def go_back(self):
         self.stacked_widget.setCurrentIndex(self.previous_index)
+    
+    def update_displayed_values(self):
+        self.sound_percentage.setText(f'{self.app_init.sound_level}%')
+        self.brightness_percentage.setText(f'{self.app_init.brightness_level}%')
+        self.narration_button_logic()

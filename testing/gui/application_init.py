@@ -20,7 +20,7 @@ class ApplicationInit(QWidget):
         self.sound_level = 50
         self.narration_on = False
         
-        self.main_menu = MainMenu(self.stacked_widget)
+        self.main_menu = MainMenu(self.stacked_widget, self)
         self.sp_screen = SPScreen(self.stacked_widget)
         self.mp_screen = MPScreen(self.stacked_widget)
         self.settings_screen = SettingsScreen(self.stacked_widget, self, 0)
@@ -63,3 +63,11 @@ class ApplicationInit(QWidget):
     
     def get_narration_bool(self):
         return self.narration_on
+    
+    def update_settings_screen(self):
+        # This method is used to ensure the settings screen reflects the current values
+        self.settings_screen.update_displayed_values()
+    
+    def update_pause_settings_screen(self):
+        # This method is used to ensure the pause settings screen reflects the current values
+        self.pause_settings_screen.update_displayed_values()
