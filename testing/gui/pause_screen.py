@@ -81,7 +81,7 @@ class PauseScreen(QWidget):
             height: 300px; 
             font-size: 20px; 
             font-weight: bold;
-            height: 50px;
+            height: 75px;
         ''')
         return button
 
