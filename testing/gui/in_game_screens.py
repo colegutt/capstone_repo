@@ -12,9 +12,14 @@ class GameThread(QThread):
     def run(self):
         def update_score(num_round):
             self.score_updated.emit(num_round)
-
-        # Run the game loop
+        
+        # Ensure the game is properly running
         self.memory_game.run_game(update_score)
+    
+    def stop(self):
+        if self.memory_game:
+            self.memory_game.stop()  # Stop the game if running
+
 
 class MemoryInGameScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -79,21 +84,26 @@ class MemoryInGameScreen(QWidget):
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score_from_game)
             self.game_thread.start()
-    
+
     def update_score_from_game(self, num_round):
         self.score = num_round
         self.score_label.setText(f'Score: {self.score}')
 
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
-            self.game_thread.quit()
-            self.game_thread.wait()  # Ensure the thread has stopped
-        self.stacked_widget.setCurrentIndex(7)
+            self.game_thread.memory_game.pause()  # Pause the game
+        self.stacked_widget.setCurrentIndex(7)  # Navigate to the pause screen
 
     def resume_game(self):
-        self.start_game()
+        if self.game_thread:
+            print('thread exists!')
+            self.game_thread.memory_game.resume()  # Resume the game
+        else:
+            print('thread does not exist!')
+            self.start_game()  # Start the game if it's not running
 
     def reset_game(self):
         self.score = 0
+        self.game_thread.stop()
         self.score_label.setText(f'Score: {self.score}')
-        self.start_game()
+

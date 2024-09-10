@@ -3,15 +3,12 @@ from time import sleep
 import random
 import threading
 
-# # Define global flag for stopping the game
-# PAUSE_GAME = False
+class MemoryGame:
+    def __init__(self):
+        self.pause_event = threading.Event()  # Event to handle pausing
 
-class MemoryGame():
     def stop(self):
-        # global PAUSE_GAME
-        # PAUSE_GAME = True
-        if self.game_thread and self.game_thread.is_alive():
-            self.game_thread.join()
+        self.pause_event.set()  # Ensure the game is stopped
 
     def light_up_led(self, pin, sleep_time):
         GPIO.output(pin, GPIO.HIGH)
@@ -19,11 +16,7 @@ class MemoryGame():
         GPIO.output(pin, GPIO.LOW)
 
     def run_game(self, update_score_callback):
-        print(update_score_callback)
-        print('starting game')
-        # global PAUSE_GAME
-        # PAUSE_GAME = False
-
+        print('running game!!')
         GPIO.setmode(GPIO.BCM)
 
         yellow_led = 17
@@ -65,21 +58,18 @@ class MemoryGame():
             # Light up LED sequence
             print("Showing LED sequence")
             for led in led_sequence:
-                # if PAUSE_GAME:
-                #     GPIO.cleanup()
-                #     return
-                sleep(0.5)
+                while self.pause_event.is_set():
+                    sleep(0.25)
                 self.light_up_led(led, 0.5)
             
             # Get user input
             print("Repeat LED sequence")
             i = 0
             while True:
+                while self.pause_event.is_set():
+                    sleep(0.25)
                 user_input = False
                 while not user_input:
-                    # if PAUSE_GAME:
-                    #     GPIO.cleanup()
-                    #     return
                     if GPIO.input(yellow_button) == GPIO.LOW:
                         self.light_up_led(yellow_led, 0.25)
                         user_input = True
@@ -124,3 +114,13 @@ class MemoryGame():
                     sleep(0.05)
         
         GPIO.cleanup()
+
+    def pause(self):
+        self.pause_event.set()  # Pause the game
+
+    def resume(self):
+        self.pause_event.clear()  # Resume the game
+
+if __name__ == '__main__':
+    memory_game = MemoryGame()
+    memory_game.run_game(None)

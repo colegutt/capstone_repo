@@ -90,7 +90,11 @@ class PauseScreen(QWidget):
         self.stacked_widget.setCurrentIndex(8)
 
     def select_new_game(self):
+        # Change to save data
+        self.app_init.memory_ingame_screen.reset_game() 
         self.stacked_widget.setCurrentIndex(1) 
 
     def go_to_main_menu(self):
+        # Change to save data
+        self.app_init.memory_ingame_screen.reset_game()
         self.stacked_widget.setCurrentIndex(0)
