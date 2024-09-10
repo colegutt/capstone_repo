@@ -3,9 +3,10 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLa
 from general_functions import GeneralFunctions
 
 class MemoryPregameScreen(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.ps_creator = PregameScreenCreator(stacked_widget)
+        self.app_init = app_init
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
             "Match the sequence by pressing the buttons that light up. "
             "The sequence will get longer the better you do. "
@@ -16,7 +17,8 @@ class MemoryPregameScreen(QWidget):
 class PingPongPregameScreen(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
-        self.ps_creator = PregameScreenCreator(stacked_widget)
+        self.game_obj = None
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.game_obj)
         description_str = (
             "This is a new description for the multiplayer ping pong "
             "game. I have no idea how this will be played."
@@ -28,9 +30,10 @@ class PingPongPregameScreen(QWidget):
 
 
 class PregameScreenCreator(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
+        self.app_init = app_init
         super().__init__()
     
     def create_pregame_screen(self, game_title, game_desc, button_color, game_index, in_game_screen_index):
@@ -98,3 +101,4 @@ class PregameScreenCreator(QWidget):
 
     def go_to_ingame_screen(self, in_game_screen_index):
         self.stacked_widget.setCurrentIndex(in_game_screen_index)
+        self.app_init.memory_ingame_screen.start_game()

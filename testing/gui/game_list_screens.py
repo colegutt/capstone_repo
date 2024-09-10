@@ -131,5 +131,4 @@ class GameListScreenCreator(QWidget):
                 self.stacked_widget.setCurrentIndex(5)
         else:
             if index == 0:
-                self.app_init.memory_ingame_screen.reset_game()
                 self.stacked_widget.setCurrentIndex(4)

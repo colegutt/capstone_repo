@@ -19,6 +19,8 @@ class MemoryGame():
         GPIO.output(pin, GPIO.LOW)
 
     def run_game(self, update_score_callback):
+        print(update_score_callback)
+        print('starting game')
         # global PAUSE_GAME
         # PAUSE_GAME = False
 
