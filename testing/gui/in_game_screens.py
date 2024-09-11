@@ -93,7 +93,7 @@ class MemoryInGameScreen(QWidget):
             height: 75px;
         """)
         self.play_again_button.clicked.connect(self.reset_game)
-        self.play_again_button.setVisible(False)  # Initially hidden
+        self.play_again_button.setVisible(False)
         return self.play_again_button
 
     def create_go_back_button(self):
