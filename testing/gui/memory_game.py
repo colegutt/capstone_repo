@@ -17,8 +17,7 @@ class MemoryGame:
         sleep(sleep_time)
         GPIO.output(pin, GPIO.LOW)
 
-    def run_game(self, update_score_callback):
-        print('running game!!')
+    def run_game(self, update_score_callback, on_game_over_callback):
         GPIO.setmode(GPIO.BCM)
         yellow_led = 17
         red_led = 27
@@ -49,27 +48,20 @@ class MemoryGame:
         user_input = False
         led_sequence = []
 
-        print("BEGIN GAME")
-
         while game_is_playing:
             num_round += 1
-            print("ROUND", num_round)
             led_sequence.append(random.choice(list(pin_dict.keys())))
 
             # Light up LED sequence
-            print("Showing LED sequence")
             for led in led_sequence:
-                print(self.end_game)
                 if self.wait_to_resume() == 1:
                     return
                 self.light_up_led(led, 0.5)
                 sleep(0.5)
             
             # Get user input
-            print("Repeat LED sequence")
             i = 0
             while True:
-                print(self.end_game)
                 if self.wait_to_resume() == 1:
                     return
                 user_input = False
@@ -101,7 +93,6 @@ class MemoryGame:
             
             sleep(0.5)
             if game_is_playing:
-                print("CORRECT")
                 for _ in range(3):
                     GPIO.output(yellow_led, GPIO.HIGH)
                     GPIO.output(red_led, GPIO.HIGH)
@@ -118,6 +109,7 @@ class MemoryGame:
                 for _ in range(5):
                     self.light_up_led(red_led, 0.05)
                     sleep(0.05)
+                on_game_over_callback() 
         
         GPIO.cleanup()
     
