@@ -2,9 +2,11 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 from memory_game import MemoryGame
 
+from PyQt5.QtCore import pyqtSignal, QThread
+
 class GameThread(QThread):
     score_updated = pyqtSignal(int)
-    game_over = pyqtSignal(int)
+    game_over = pyqtSignal()  # Add a signal for game over
 
     def __init__(self):
         super().__init__()
@@ -15,15 +17,21 @@ class GameThread(QThread):
             self.score_updated.emit(num_round)
         
         def on_game_over():
-            self.game_over.emit() 
+            self.game_over.emit()  # Emit the game over signal
         
-        # Ensure the game is properly running
         self.memory_game.run_game(update_score, on_game_over)
     
     def stop(self):
         if self.memory_game:
             self.memory_game.stop()  # Stop the game if running
 
+    
+    def stop(self):
+        if self.memory_game:
+            self.memory_game.stop()  # Stop the game if running
+
+
+from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 
 class MemoryInGameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
@@ -49,9 +57,6 @@ class MemoryInGameScreen(QWidget):
         self.game_over_label.setAlignment(Qt.AlignCenter)
         self.game_over_label.setVisible(False)  # Initially hidden
         return self.game_over_label
-    
-    def show_game_over_label(self):
-        self.game_over_label.setVisible(True) 
 
     def set_title(self):
         title = QLabel('Memory', self)
@@ -97,35 +102,34 @@ class MemoryInGameScreen(QWidget):
         self.setLayout(main_layout)
     
     def start_game(self):
-        print('start game called')
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score_from_game)
+            self.game_thread.game_over.connect(self.show_game_over_label)  # Connect game over signal
             self.game_thread.start()
+        self.game_over_label.setVisible(False)  # Hide the label when the game starts
 
+    def show_game_over_label(self):
+        self.game_over_label.setVisible(True)  # Show the "GAME OVER!" label when the game ends
+    
     def update_score_from_game(self, num_round):
         self.score = num_round
         self.score_label.setText(f'Score: {self.score}')
-
+    
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
-            print('pausing game')
             self.game_thread.memory_game.pause()  # Pause the game
         self.stacked_widget.setCurrentIndex(7)  # Navigate to the pause screen
 
     def resume_game(self):
         if self.game_thread:
-            print('thread exists!')
             self.game_thread.memory_game.resume()  # Resume the game
         else:
-            print('thread does not exist!')
             self.start_game()  # Start the game if it's not running
     
     def end_game(self):
-        if self.game_thread.isRunning():
-            # Set the pause event or stop event (if you have one)
+        if self.game_thread and self.game_thread.isRunning():
             self.game_thread.memory_game.stop() 
-            # Quit the thread and wait for it to finish its work
             self.game_thread.quit()
             self.game_thread.wait()
     
@@ -136,10 +140,7 @@ class MemoryInGameScreen(QWidget):
             self.app_init.save_memory_high_score()
 
     def reset_game(self):
-        # End game
         self.end_game()
-        # Save high score if needed
         self.save_high_score()
-        # Reset game-related variables
         self.score = 0
         self.score_label.setText(f'Score: {self.score}')
