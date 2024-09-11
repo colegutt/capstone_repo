@@ -6,16 +6,26 @@ class SPScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
         self.app_init = app_init
-        games_and_high_scores = {
-            'Memory': 10,
+        self.games_and_high_scores = {
+            'Memory': self.app_init.memory_hs,
             'Game 2': 12,
             'Game 3': 15,
             'Game 4': 9
         }
+        # Storing Qlabels for each high score
+        self.hs_qlabels = {
+            'Memory': None,
+            'Game 2': None,
+            'Game 3': None,
+            'Game 4': None
+        }
         title = 'Single Player Games'
-        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, games_and_high_scores, title, False)
+        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, self.games_and_high_scores, title, False, self.hs_qlabels)
 
         self.setLayout(self.gl_creator.create_screen())
+
+    def update_displayed_values(self):
+        self.hs_qlabels['Memory'].setText(f'{self.app_init.memory_hs}')
 
 class MPScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
@@ -27,16 +37,23 @@ class MPScreen(QWidget):
             'Game 3': 15,
             'Game 4': 9
         }
+        self.hs_qlabels = {
+            'Memory': None,
+            'Game 2': None,
+            'Game 3': None,
+            'Game 4': None
+        }
         title = 'Multiplayer Games'
-        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, games_and_high_scores, title, True)
+        self.gl_creator = GameListScreenCreator(stacked_widget, self.app_init, games_and_high_scores, title, True, self.hs_qlabels)
         self.setLayout(self.gl_creator.create_screen())
 
 class GameListScreenCreator(QWidget):
-    def __init__(self, stacked_widget, app_init, games_and_high_scores, title, multiplayer):
+    def __init__(self, stacked_widget, app_init, games_and_high_scores, title, multiplayer, hs_qlabels):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.games_and_high_scores = games_and_high_scores
+        self.hs_qlabels = hs_qlabels
         self.multiplayer = multiplayer
         self.app_init = app_init
         self.title = title
@@ -84,8 +101,8 @@ class GameListScreenCreator(QWidget):
         i = 0
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
-            hs_title = QLabel(f'{hs}', self)
-            hs_title.setStyleSheet("color: white; font-size: 28px; font-weight: bold;")
+            self.hs_qlabels[game] = QLabel(f'{hs}', self)
+            self.hs_qlabels[game].setStyleSheet("color: white; font-size: 28px; font-weight: bold;")
             # Game button
             game_button = QPushButton(game, self)
             game_button.setStyleSheet(f'''
@@ -102,7 +119,7 @@ class GameListScreenCreator(QWidget):
             temp_game_layout.addSpacing(180) 
             temp_game_layout.addWidget(game_button)
             temp_game_layout.addSpacing(200)  # Space between button and score
-            temp_game_layout.addWidget(hs_title)
+            temp_game_layout.addWidget(self.hs_qlabels[game])
             temp_game_layout.addSpacing(300) 
 
             game_layouts.append(temp_game_layout)

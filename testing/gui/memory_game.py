@@ -6,8 +6,10 @@ import threading
 class MemoryGame:
     def __init__(self):
         self.pause_event = threading.Event()  # Event to handle pausing
+        self.end_game = False
 
     def stop(self):
+        self.end_game = True
         self.pause_event.set()  # Ensure the game is stopped
 
     def light_up_led(self, pin, sleep_time):
@@ -18,7 +20,6 @@ class MemoryGame:
     def run_game(self, update_score_callback):
         print('running game!!')
         GPIO.setmode(GPIO.BCM)
-
         yellow_led = 17
         red_led = 27
         green_led = 22
@@ -58,18 +59,23 @@ class MemoryGame:
             # Light up LED sequence
             print("Showing LED sequence")
             for led in led_sequence:
-                while self.pause_event.is_set():
-                    sleep(0.25)
+                print(self.end_game)
+                if self.wait_to_resume() == 1:
+                    return
                 self.light_up_led(led, 0.5)
+                sleep(0.5)
             
             # Get user input
             print("Repeat LED sequence")
             i = 0
             while True:
-                while self.pause_event.is_set():
-                    sleep(0.25)
+                print(self.end_game)
+                if self.wait_to_resume() == 1:
+                    return
                 user_input = False
                 while not user_input:
+                    if self.wait_to_resume() == 1:
+                        return
                     if GPIO.input(yellow_button) == GPIO.LOW:
                         self.light_up_led(yellow_led, 0.25)
                         user_input = True
@@ -114,6 +120,15 @@ class MemoryGame:
                     sleep(0.05)
         
         GPIO.cleanup()
+    
+    def wait_to_resume(self):
+        while self.pause_event.is_set():
+            print('waiting...(2)')
+            if self.end_game:
+                print('GAME IS ENDING')
+                return 1
+            sleep(0.25)
+        return 0
 
     def pause(self):
         self.pause_event.set()  # Pause the game
