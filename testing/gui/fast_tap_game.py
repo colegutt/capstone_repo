@@ -2,10 +2,12 @@ import RPi.GPIO as GPIO
 from time import sleep, time
 import random
 import threading
+from general_functions import GeneralFunctions
 
 class FastTapGame:
     def __init__(self):
         self.pause_event = threading.Event()  # Event to handle pausing
+        self.gen_funcs = GeneralFunctions()
         self.end_game = False
         self.time_remaining = 30  # 30 seconds for the game duration
         self.start_time = None
@@ -22,26 +24,7 @@ class FastTapGame:
             GPIO.output(led, GPIO.LOW)
 
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
-        GPIO.setmode(GPIO.BCM)
-        yellow_led = 17
-        red_led = 27
-        green_led = 22
-        yellow_button = 18
-        red_button = 15
-        green_button = 14
-
-        pin_dict = {
-            yellow_led: yellow_button,
-            red_led: red_button,
-            green_led: green_button
-        }
-
-        GPIO.setup(yellow_led, GPIO.OUT)
-        GPIO.setup(red_led, GPIO.OUT)
-        GPIO.setup(green_led, GPIO.OUT)
-        GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        pin_dict = self.gen_funcs.set_up_gpio_and_get_pin_dict()
 
         self.turn_off_leds(pin_dict.keys())
 

@@ -2,10 +2,12 @@ import RPi.GPIO as GPIO
 from time import sleep
 import random
 import threading
+from general_functions import GeneralFunctions
 
 class MemoryGame:
     def __init__(self):
         self.pause_event = threading.Event()  # Event to handle pausing
+        self.gen_funcs = GeneralFunctions()
         self.end_game = False
 
     def stop(self):
@@ -18,30 +20,10 @@ class MemoryGame:
         GPIO.output(pin, GPIO.LOW)
 
     def run_game(self, update_score_callback, on_game_over_callback):
-        GPIO.setmode(GPIO.BCM)
-        yellow_led = 17
-        red_led = 27
-        green_led = 22
-        yellow_button = 18
-        red_button = 15
-        green_button = 14
+        pin_dict = self.gen_funcs.set_up_gpio_and_get_pin_dict()
 
-        pin_dict = {
-            yellow_led: yellow_button,
-            red_led: red_button,
-            green_led: green_button
-        }
-        
-        GPIO.setup(yellow_led, GPIO.OUT)
-        GPIO.setup(red_led, GPIO.OUT)
-        GPIO.setup(green_led, GPIO.OUT)
-        GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        
-        GPIO.output(yellow_led, GPIO.LOW)
-        GPIO.output(red_led, GPIO.LOW)
-        GPIO.output(green_led, GPIO.LOW)
+        buttons = list(pin_dict.values())
+        leds = list(pin_dict.keys())
 
         game_is_playing = True
         num_round = 0
@@ -68,18 +50,18 @@ class MemoryGame:
                 while not user_input:
                     if self.wait_to_resume() == 1:
                         return
-                    if GPIO.input(yellow_button) == GPIO.LOW:
-                        self.light_up_led(yellow_led, 0.25)
+                    if GPIO.input(buttons[0]) == GPIO.LOW:
+                        self.light_up_led(leds[0], 0.25)
                         user_input = True
-                        pressed_button = yellow_button
-                    elif GPIO.input(green_button) == GPIO.LOW:
-                        self.light_up_led(green_led, 0.25)
+                        pressed_button = buttons[0]
+                    elif GPIO.input(buttons[1]) == GPIO.LOW:
+                        self.light_up_led(leds[1], 0.25)
                         user_input = True
-                        pressed_button = green_button
-                    elif GPIO.input(red_button) == GPIO.LOW:
-                        self.light_up_led(red_led, 0.25)
+                        pressed_button = buttons[1]
+                    elif GPIO.input(buttons[2]) == GPIO.LOW:
+                        self.light_up_led(leds[2], 0.25)
                         user_input = True
-                        pressed_button = red_button
+                        pressed_button = buttons[2]
                 
                 if pin_dict[led_sequence[i]] != pressed_button:
                     game_is_playing = False
@@ -94,20 +76,20 @@ class MemoryGame:
             sleep(0.5)
             if game_is_playing:
                 for _ in range(3):
-                    GPIO.output(yellow_led, GPIO.HIGH)
-                    GPIO.output(red_led, GPIO.HIGH)
-                    GPIO.output(green_led, GPIO.HIGH)
+                    GPIO.output(leds[0], GPIO.HIGH)
+                    GPIO.output(leds[1], GPIO.HIGH)
+                    GPIO.output(leds[2], GPIO.HIGH)
                     sleep(0.1)
-                    GPIO.output(yellow_led, GPIO.LOW)
-                    GPIO.output(red_led, GPIO.LOW)
-                    GPIO.output(green_led, GPIO.LOW)
+                    GPIO.output(leds[0], GPIO.LOW)
+                    GPIO.output(leds[1], GPIO.LOW)
+                    GPIO.output(leds[2], GPIO.LOW)
                     sleep(0.1)
                 # Call the callback to update the score
                 update_score_callback(num_round)
             else:
                 print("INCORRECT SEQUENCE. GAME OVER!")
                 for _ in range(5):
-                    self.light_up_led(red_led, 0.05)
+                    self.light_up_led(leds[1], 0.05)
                     sleep(0.05)
                 on_game_over_callback() 
         
