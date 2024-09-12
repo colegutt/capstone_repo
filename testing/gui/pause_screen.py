@@ -45,7 +45,10 @@ class PauseScreen(QWidget):
         return resume_layout
 
     def resume_game(self):
-        self.app_init.memory_ingame_screen.resume_game()
+        if self.previous_index == 5:
+            self.app_init.memory_ingame_screen.resume_game()
+        elif self.previous_index == 9:
+            self.app_init.fast_tap_ingame_screen.resume_game()
         self.stacked_widget.setCurrentIndex(self.previous_index)
 
     def set_title(self):

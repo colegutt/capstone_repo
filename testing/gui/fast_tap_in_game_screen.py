@@ -37,6 +37,11 @@ class FastTapInGameScreen(QWidget):
         self.app_init = app_init
         self.create_screen()
         self.game_thread = None
+        
+        # Initialize the QTimer
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_timer)
+        self.timer.setInterval(1000)  # Update every 1000 ms (1 second)
 
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
@@ -145,25 +150,34 @@ class FastTapInGameScreen(QWidget):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score)
-            self.game_thread.time_updated.connect(self.update_timer)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
+
+        # Start the countdown timer
+        self.timer.start()
 
     def update_score(self, score):
         self.score = score
         self.score_label.setText(f'Score: {self.score}')
 
-    def update_timer(self, time_remaining):
-        self.time_remaining = time_remaining
-        self.timer_label.setText(f'{self.time_remaining}')
-        if self.time_remaining <= 0:
+    def update_timer(self):
+        if self.time_remaining > 0:
+            self.time_remaining -= 1
+            self.timer_label.setText(f'{self.time_remaining}')
+        else:
             self.end_game()
 
     def pause_game(self):
         if self.game_thread and self.game_thread.fast_tap_game:
             self.game_thread.fast_tap_game.pause()
+        self.timer.stop()  # Pause the timer
         print('going to index 10')
         self.stacked_widget.setCurrentIndex(10)
+
+    def resume_game(self):
+        if self.game_thread and self.game_thread.fast_tap_game:
+            self.game_thread.fast_tap_game.resume()
+        self.timer.start()  # Resume the timer
 
     def reset_game(self):
         if self.game_thread:
@@ -178,6 +192,7 @@ class FastTapInGameScreen(QWidget):
     def end_game(self):
         if self.game_thread:
             self.game_thread.stop()
+        self.timer.stop()  # Stop the timer
         self.game_over_label.setVisible(True)
         self.play_again_button.setVisible(True)
         self.go_back_button.setVisible(True)
