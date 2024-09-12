@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
-from rot_main_menu import RotMainMenu
 from settings_screen import SettingsScreen
 from game_list_screens import SPScreen, MPScreen
 from pregame_screens import MemoryPregameScreen, FastTapPregameScreen
