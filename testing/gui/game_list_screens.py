@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 from general_functions import GeneralFunctions
 
@@ -31,12 +31,12 @@ class MPScreen(QWidget):
         super().__init__()
         self.app_init = app_init
         games_and_high_scores = {
-            'Pass-It': 10,
-            'Game 2': 12,
+            'Tennis': 10,
+            'Memory': 12,
         }
         self.hs_qlabels = {
-            'Pass-It': None,
-            'Game 2': None,
+            'Tennis': None,
+            'Memory': None,
         }
         title = 'Multiplayer Games'
         colors = ['orange', 'purple']
@@ -149,3 +149,5 @@ class GameListScreenCreator(QWidget):
         else:
             if index == 0:
                 self.stacked_widget.setCurrentIndex(4)
+            elif index == 1:
+                self.stacked_widget.setCurrentIndex(8)

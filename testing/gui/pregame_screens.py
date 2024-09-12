@@ -17,14 +17,14 @@ class MemoryPregameScreen(QWidget):
 class FastTapPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.game_obj = None
-        self.ps_creator = PregameScreenCreator(stacked_widget, self.game_obj)
+        self.app_init = app_init
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "This is a new description for the multiplayer ping pong "
-            "game. I have no idea how this will be played."
-            "ROTATE SCREEN TO BEGIN!!!"
+            "Press every button that lights up. Try"
+            " to get as many as you can before the"
+            "time runs out!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'blue', 2, 2))
+        self.setLayout(self.ps_creator.create_pregame_screen('Fast Tap', description_str, 'green', 1, 9))
 
 class PingPongPregameScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -113,4 +113,7 @@ class PregameScreenCreator(QWidget):
 
     def go_to_ingame_screen(self, in_game_screen_index):
         self.stacked_widget.setCurrentIndex(in_game_screen_index)
-        self.app_init.memory_ingame_screen.start_game()
+        if in_game_screen_index == 5:
+            self.app_init.memory_ingame_screen.start_game()
+        elif in_game_screen_index == 9:
+            self.app_init.fast_tap_ingame_screen.start_game()

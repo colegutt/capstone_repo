@@ -3,10 +3,11 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayo
 from general_functions import GeneralFunctions
 
 class PauseScreen(QWidget):
-    def __init__(self, stacked_widget, previous_index, app_init):
+    def __init__(self, stacked_widget, pause_settings_screen_index, previous_index, app_init):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.previous_index = previous_index
+        self.pause_settings_screen = pause_settings_screen_index
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
         self.create_screen()
@@ -19,10 +20,10 @@ class PauseScreen(QWidget):
         layout.addStretch()
         layout.addLayout(self.create_buttons_layout())
         layout.addStretch()
-        layout.addLayout(self.create_back_layout(5))
+        layout.addLayout(self.create_back_layout())
         self.setLayout(layout)
 
-    def create_back_layout(self, index):
+    def create_back_layout(self):
         resume_button = QPushButton('Resume', self)
         resume_button.setStyleSheet("""
             background-color: green; 
@@ -36,16 +37,16 @@ class PauseScreen(QWidget):
             text-align: center;
             line-height: 50px;
         """)
-        resume_button.clicked.connect(lambda checked, index=index: self.resume_game(index))
+        resume_button.clicked.connect(self.resume_game)
         resume_layout = QHBoxLayout()
         resume_layout.addWidget(resume_button)
         resume_layout.addStretch()
         resume_layout.setContentsMargins(20, 20, 20, 20)
         return resume_layout
 
-    def resume_game(self, index):
+    def resume_game(self):
         self.app_init.memory_ingame_screen.resume_game()
-        self.stacked_widget.setCurrentIndex(index)
+        self.stacked_widget.setCurrentIndex(self.previous_index)
 
     def set_title(self):
         title = QLabel('Pause', self)
@@ -86,8 +87,8 @@ class PauseScreen(QWidget):
         return button
 
     def go_to_settings(self):
-        self.app_init.update_pause_settings_screen() 
-        self.stacked_widget.setCurrentIndex(7)
+        self.app_init.update_pause_settings_screen(self.previous_index) 
+        self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
 
     def select_new_game(self):
         # Change to save data
