@@ -8,12 +8,12 @@ class SPScreen(QWidget):
         self.app_init = app_init
         self.games_and_high_scores = {
             'Memory': self.app_init.memory_hs,
-            'Free Play': ' ',
+            'Fast Tap': ' ',
         }
         # Storing Qlabels for each high score
         self.hs_qlabels = {
-            'Memory': None,
-            'Free Play': None,
+            'Tennis': 10,
+            'Memory': 10,
         }
         title = 'Single Player Games'
         colors = ['blue', 'green']

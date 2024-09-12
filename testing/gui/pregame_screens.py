@@ -12,7 +12,19 @@ class MemoryPregameScreen(QWidget):
             "The sequence will get longer the better you do. "
             "How many can you get? Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 6))
+        self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 5))
+
+class FastTapPregameScreen(QWidget):
+    def __init__(self, stacked_widget, app_init):
+        super().__init__()
+        self.game_obj = None
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.game_obj)
+        description_str = (
+            "This is a new description for the multiplayer ping pong "
+            "game. I have no idea how this will be played."
+            "ROTATE SCREEN TO BEGIN!!!"
+        )
+        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'blue', 2, 2))
 
 class PingPongPregameScreen(QWidget):
     def __init__(self, stacked_widget):

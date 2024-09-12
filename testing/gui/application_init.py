@@ -3,7 +3,7 @@ from main_menu import MainMenu
 from rot_main_menu import RotMainMenu
 from settings_screen import SettingsScreen
 from game_list_screens import SPScreen, MPScreen
-from pregame_screens import MemoryPregameScreen, PingPongPregameScreen
+from pregame_screens import MemoryPregameScreen, FastTapPregameScreen
 from in_game_screens import MemoryInGameScreen
 from pause_screen import PauseScreen
 from PyQt5.QtCore import QSettings
@@ -32,10 +32,10 @@ class ApplicationInit(QWidget):
         self.mp_screen = MPScreen(self.stacked_widget, self)
         self.settings_screen = SettingsScreen(self.stacked_widget, self, 0)
         self.memory_pregame_screen = MemoryPregameScreen(self.stacked_widget, self)
-        self.ping_pong_pregame_screen = PingPongPregameScreen(self.stacked_widget)
+        self.fast_tap_pregame_screen = FastTapPregameScreen(self.stacked_widget, self)
         self.memory_ingame_screen = MemoryInGameScreen(self.stacked_widget, self)
         self.pause_screen = PauseScreen(self.stacked_widget, 7, self)
-        self.pause_settings_screen = SettingsScreen(self.stacked_widget, self, 7)
+        self.pause_settings_screen = SettingsScreen(self.stacked_widget, self, 6)
 
         # Index   Screen
         #   0     Main Menu
@@ -43,19 +43,19 @@ class ApplicationInit(QWidget):
         #   2     Multiplayer Screen
         #   3     Settings Screen
         #   4     Memory Pregame Screen 
-        #   5     Ping Pong Pregame Screen
-        #   6     Memory In-Game Screen
-        #   7     Pause Screen
-        #   8     Pause Settings Screen
+        #   5     Memory In-Game Screen
+        #   6     Pause Screen
+        #   7     Pause Settings Screen
+        #   8     Fast Tap Pregame Screen
         self.stacked_widget.addWidget(self.main_menu)
         self.stacked_widget.addWidget(self.sp_screen)
         self.stacked_widget.addWidget(self.mp_screen)
         self.stacked_widget.addWidget(self.settings_screen)
         self.stacked_widget.addWidget(self.memory_pregame_screen)
-        self.stacked_widget.addWidget(self.ping_pong_pregame_screen)
         self.stacked_widget.addWidget(self.memory_ingame_screen)
         self.stacked_widget.addWidget(self.pause_screen)
         self.stacked_widget.addWidget(self.pause_settings_screen)
+        self.stacked_widget.addWidget(self.fast_tap_pregame_screen)
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)

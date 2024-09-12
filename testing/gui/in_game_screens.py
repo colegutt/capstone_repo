@@ -148,7 +148,7 @@ class MemoryInGameScreen(QWidget):
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.memory_game.pause()  # Pause the game
-        self.stacked_widget.setCurrentIndex(7)  # Navigate to the pause screen
+        self.stacked_widget.setCurrentIndex(6)  # Navigate to the pause screen
 
     def resume_game(self):
         if self.game_thread:

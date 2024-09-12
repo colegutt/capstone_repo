@@ -19,7 +19,7 @@ class PauseScreen(QWidget):
         layout.addStretch()
         layout.addLayout(self.create_buttons_layout())
         layout.addStretch()
-        layout.addLayout(self.create_back_layout(6))
+        layout.addLayout(self.create_back_layout(5))
         self.setLayout(layout)
 
     def create_back_layout(self, index):
@@ -87,7 +87,7 @@ class PauseScreen(QWidget):
 
     def go_to_settings(self):
         self.app_init.update_pause_settings_screen() 
-        self.stacked_widget.setCurrentIndex(8)
+        self.stacked_widget.setCurrentIndex(7)
 
     def select_new_game(self):
         # Change to save data
