@@ -1,4 +1,4 @@
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 from general_functions import GeneralFunctions
 
@@ -8,7 +8,7 @@ class SPScreen(QWidget):
         self.app_init = app_init
         self.games_and_high_scores = {
             'Memory': self.app_init.memory_hs,
-            'Fast Tap': ' ',
+            'Fast Tap': self.app_init.fast_tap_hs,
         }
         # Storing Qlabels for each high score
         self.hs_qlabels = {
@@ -25,6 +25,8 @@ class SPScreen(QWidget):
 
     def update_displayed_values(self):
         self.hs_qlabels['Memory'].setText(f'{self.app_init.memory_hs}')
+        self.hs_qlabels['Fast Tap'].setText(f'{self.app_init.fast_tap_hs}')
+    
 
 class MPScreen(QWidget):
     def __init__(self, stacked_widget, app_init):

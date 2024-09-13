@@ -4,12 +4,14 @@ import random
 import threading
 from general_functions import GeneralFunctions
 
+GAME_RUN_TIME = 30
+
 class FastTapGame:
     def __init__(self):
         self.pause_event = threading.Event()  # Event to handle pausing
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
-        self.time_remaining = 5  # 30 seconds for the game duration
+        self.time_remaining = GAME_RUN_TIME
         self.start_time = None
 
     def stop(self):
@@ -25,12 +27,9 @@ class FastTapGame:
 
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
         pin_dict, buttons, leds = self.gen_funcs.set_up_gpio_and_get_pin_dict()
-
         self.turn_off_leds(leds)
-
         score = 0
         self.start_time = time()
-
         while not self.end_game and self.time_remaining > 0:
             # Light up a random LED
             current_led = random.choice(leds)
@@ -38,7 +37,7 @@ class FastTapGame:
             user_input = False
             while not user_input:
                 # Wait for user to press the corresponding button
-                if self.wait_to_resume() == 1:  # If the resume condition is met, exit
+                if self.wait_to_resume() == 1:
                     GPIO.cleanup()
                     return
                 if GPIO.input(pin_dict[current_led]) == GPIO.LOW:
@@ -51,9 +50,8 @@ class FastTapGame:
                     user_input = True
                     self.incorrect_button_delay(leds) 
 
-            # Update the timer
             elapsed_time = time() - self.start_time
-            self.time_remaining = 5 - int(elapsed_time)
+            self.time_remaining = GAME_RUN_TIME - int(elapsed_time)
             if update_timer_callback:
                 update_timer_callback(self.time_remaining)
 

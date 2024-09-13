@@ -1,7 +1,7 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
 from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 
-from fast_tap_game import FastTapGame
+from fast_tap_game import FastTapGame, GAME_RUN_TIME
 
 class GameThread(QThread):
     score_updated = pyqtSignal(int)
@@ -33,7 +33,7 @@ class FastTapInGameScreen(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.score = 0
-        self.time_remaining = 5  # Initialize the countdown
+        self.time_remaining = GAME_RUN_TIME 
         self.app_init = app_init
         self.create_screen()
         self.game_thread = None
@@ -180,12 +180,19 @@ class FastTapInGameScreen(QWidget):
         self.timer.start()  # Resume the timer
 
     def reset_game(self):
-        self.time_remaining = 5
+        self.save_high_score()
+        self.time_remaining = GAME_RUN_TIME
         self.score = 0
         self.timer_label.setText(f'{self.time_remaining}')
         self.score_label.setText(f'Score: {self.score}')
         self.hide_end_game_buttons()
         self.show_timer_label()
+    
+    def save_high_score(self):
+        if self.app_init.fast_tap_hs < self.score:
+            self.app_init.fast_tap_hs = self.score
+            self.app_init.sp_screen.update_displayed_values()
+            self.app_init.save_fast_tap_high_score()
     
     def play_game_again(self):
         self.reset_game()

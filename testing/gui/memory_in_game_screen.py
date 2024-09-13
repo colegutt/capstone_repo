@@ -31,7 +31,7 @@ class MemoryInGameScreen(QWidget):
         self.score = 0
         self.app_init = app_init
         self.create_screen()
-        self.game_thread = None  # Initialize as None
+        self.game_thread = None
     
     def create_screen(self):
         self.setStyleSheet("background-color: black;")

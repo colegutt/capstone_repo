@@ -25,6 +25,7 @@ class ApplicationInit(QWidget):
 
         # High scores for games
         self.memory_hs = self.settings.value("memory_hs", 0, int)
+        self.fast_tap_hs = self.settings.value("fast_tap_hs", 0, int)
 
         
         self.main_menu = MainMenu(self.stacked_widget, self)
@@ -101,3 +102,6 @@ class ApplicationInit(QWidget):
     def save_memory_high_score(self):
         # Save the current settings
         self.settings.setValue("memory_hs", self.memory_hs)
+    
+    def save_fast_tap_high_score(self):
+        self.settings.setValue("fast_tap_hs", self.fast_tap_hs)
