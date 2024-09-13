@@ -12,21 +12,52 @@ class MainMenu(QWidget):
 
         self.app_init = app_init
 
+        self.title = self.set_title()
+        self.single_player_button = self.create_single_player_button()
+        self.multiplayer_button = self.create_multiplayer_button()
+        self.settings_button = self.create_settings_button()
+        self.exit_button = self.create_exit_button()
+
         # Create screen
         self.create_screen()
         
     def create_screen(self):
-        # Make background black
         self.setStyleSheet("background-color: black;")
+        # Layout for single player and multiplayer buttons
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()
+        button_layout.addWidget(self.single_player_button)
+        button_layout.addStretch()
+        button_layout.addWidget(self.multiplayer_button)
+        button_layout.addStretch()
 
-        # Set title and buttons
-        self.set_layout(
-            self.set_title(),
-            self.create_single_player_button(),
-            self.create_multiplayer_button(),
-            self.create_settings_button(),
-            self.create_exit_button()
-        )
+        # Layout for settings button
+        settings_layout = QVBoxLayout()
+        settings_layout.addStretch()
+        settings_layout.addWidget(self.settings_button, alignment=Qt.AlignCenter)
+        settings_layout.addStretch()
+
+        # # Layout for exit button
+        exit_layout = QHBoxLayout()
+        exit_layout.addWidget(self.exit_button)
+        exit_layout.addStretch()  # Add space to push exit button to the bottom
+        exit_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the lay
+
+        # Main layout
+        main_layout = QVBoxLayout()
+        main_layout.addWidget(self.title)  # Add title at the top
+        main_layout.addStretch()  # Add space between title and buttons
+        main_layout.addLayout(button_layout)  # Add buttons layout
+        main_layout.addSpacing(20)  # Space between button row and settings button
+        main_layout.addLayout(settings_layout)  # Add settings button layout
+        main_layout.addStretch()  # Add space below settings button
+
+        # Combine main layout and exit button layout
+        final_layout = QVBoxLayout()
+        final_layout.addLayout(main_layout)  # Add main content
+        final_layout.addLayout(exit_layout)  # Add exit button
+        final_layout.addStretch()  # Add space below settings button
+        self.setLayout(final_layout)  # Set the final layout for the main menu
     
     def set_title(self):
         # Title name
@@ -116,44 +147,6 @@ class MainMenu(QWidget):
     def exit_app(self):
         self.app_init.save_settings()
         sys.exit()
-
-
-    def set_layout(self, title, single_player_button, multiplayer_button, settings_button, exit_button):
-        # Layout for single player and multiplayer buttons
-        button_layout = QHBoxLayout()
-        button_layout.addStretch()
-        button_layout.addWidget(single_player_button)
-        button_layout.addStretch()
-        button_layout.addWidget(multiplayer_button)
-        button_layout.addStretch()
-
-        # Layout for settings button
-        settings_layout = QVBoxLayout()
-        settings_layout.addStretch()
-        settings_layout.addWidget(settings_button, alignment=Qt.AlignCenter)
-        settings_layout.addStretch()
-
-        # # Layout for exit button
-        exit_layout = QHBoxLayout()
-        exit_layout.addWidget(exit_button)
-        exit_layout.addStretch()  # Add space to push exit button to the bottom
-        exit_layout.setContentsMargins(20, 20, 20, 20)  # Margin around the lay
-
-        # Main layout
-        main_layout = QVBoxLayout()
-        main_layout.addWidget(title)  # Add title at the top
-        main_layout.addStretch()  # Add space between title and buttons
-        main_layout.addLayout(button_layout)  # Add buttons layout
-        main_layout.addSpacing(20)  # Space between button row and settings button
-        main_layout.addLayout(settings_layout)  # Add settings button layout
-        main_layout.addStretch()  # Add space below settings button
-
-        # Combine main layout and exit button layout
-        final_layout = QVBoxLayout()
-        final_layout.addLayout(main_layout)  # Add main content
-        final_layout.addLayout(exit_layout)  # Add exit button
-        final_layout.addStretch()  # Add space below settings button
-        self.setLayout(final_layout)  # Set the final layout for the main menu
     
     def show_SP_screen(self):
         self.stacked_widget.setCurrentIndex(1)

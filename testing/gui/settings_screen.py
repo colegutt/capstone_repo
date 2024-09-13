@@ -8,7 +8,6 @@ class SettingsScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
-
         self.previous_index = previous_index
         self.create_screen()
         self.update_displayed_values() 
