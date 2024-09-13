@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 from memory_game import MemoryGame
+from general_functions import GeneralFunctions
 
 class GameThread(QThread):
     score_updated = pyqtSignal(int)
@@ -30,56 +31,21 @@ class MemoryInGameScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.score = 0
         self.app_init = app_init
+        self.gen_funcs = GeneralFunctions()
+        self.title = self.gen_funcs.set_title('Memory')
+        self.game_over_label = self.gen_funcs.create_game_over_label()
+        self.score_label = self.gen_funcs.create_score_label(self.score)
+        self.pause_button = self.gen_funcs.create_pause_button(self.pause_game)
         self.create_screen()
         self.game_thread = None
     
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         self.set_layout(
-            self.set_title(),
-            self.create_score_label(),
-            self.create_pause_button(),
-            self.create_game_over_label(),
             self.create_play_again_button(),
             self.create_go_back_button()
         )
         self.hide_end_game_buttons()  # Initially hide the end game buttons
-
-    def set_title(self):
-        title = QLabel('Memory', self)
-        title.setStyleSheet("color: white; font-size: 72px; font-weight: bold;")
-        title.setAlignment(Qt.AlignCenter)
-        return title
-
-    def create_score_label(self):
-        self.score_label = QLabel(f'Score: {self.score}', self)
-        self.score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
-        self.score_label.setAlignment(Qt.AlignCenter)
-        return self.score_label
-
-    def create_pause_button(self):
-        pause_button = QPushButton('Pause', self)
-        pause_button.setStyleSheet("""
-            background-color: orange; 
-            color: white; 
-            border-radius: 50px; 
-            font-size: 26px; 
-            font-weight: bold;
-            width: 100px;
-            height: 100px;
-            padding: 0;
-            text-align: center;
-            line-height: 100px;
-        """)
-        pause_button.clicked.connect(self.pause_game)
-        return pause_button
-
-    def create_game_over_label(self):
-        self.game_over_label = QLabel(f'GAME OVER!', self)
-        self.game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
-        self.game_over_label.setAlignment(Qt.AlignCenter)
-        self.game_over_label.setVisible(False)  # Initially hidden
-        return self.game_over_label
 
     def create_play_again_button(self):
         self.play_again_button = QPushButton('Play Again', self)
@@ -111,17 +77,17 @@ class MemoryInGameScreen(QWidget):
         self.go_back_button.setVisible(False)  # Initially hidden
         return self.go_back_button
 
-    def set_layout(self, title, score_label, pause_button, game_over_label, play_again_button, go_back_button):
+    def set_layout(self, play_again_button, go_back_button):
         main_layout = QVBoxLayout()
         top_layout = QHBoxLayout()
-        top_layout.addWidget(pause_button, alignment=Qt.AlignLeft)
+        top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)
         top_layout.addStretch()
         main_layout.addLayout(top_layout)
-        main_layout.addWidget(title)
+        main_layout.addWidget(self.title)
         main_layout.addStretch()
-        main_layout.addWidget(score_label, alignment=Qt.AlignCenter)
+        main_layout.addWidget(self.score_label, alignment=Qt.AlignCenter)
         main_layout.addSpacing(10)
-        main_layout.addWidget(game_over_label, alignment=Qt.AlignCenter)
+        main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
         main_layout.addSpacing(10)
         main_layout.addWidget(play_again_button, alignment=Qt.AlignCenter)
         main_layout.addWidget(go_back_button, alignment=Qt.AlignCenter)

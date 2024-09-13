@@ -105,3 +105,69 @@ class GeneralFunctions(QWidget):
             sleep(0.05)
             self.turn_off_led(self.leds[1])
             sleep(0.05)
+    
+    def set_title(self, label):
+        title = QLabel(label, self)
+        title.setStyleSheet("color: white; font-size: 72px; font-weight: bold;")
+        title.setAlignment(Qt.AlignCenter)
+        return title
+    
+    def create_game_over_label(self):
+        game_over_label = QLabel(f'GAME OVER!', self)
+        game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
+        game_over_label.setAlignment(Qt.AlignCenter)
+        game_over_label.setVisible(False)  # Initially hidden
+        return game_over_label
+    
+    def create_pause_button(self, pause_game_func):
+        pause_button = QPushButton('Pause', self)
+        pause_button.setStyleSheet("""
+            background-color: orange; 
+            color: white; 
+            border-radius: 50px; 
+            font-size: 26px; 
+            font-weight: bold;
+            width: 100px;
+            height: 100px;
+            padding: 0;
+            text-align: center;
+            line-height: 100px;
+        """)
+        pause_button.clicked.connect(pause_game_func)
+        return pause_button
+    
+    def create_score_label(self, score):
+        score_label = QLabel(f'Score: {score}', self)
+        score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
+        score_label.setAlignment(Qt.AlignCenter)
+        return score_label
+
+    def create_play_again_button(self, play_game_again_func):
+        play_again_button = QPushButton('Play Again', self)
+        play_again_button.setStyleSheet("""
+            background-color: green; 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 24px; 
+            font-weight: bold;
+            width: 300px;
+            height: 75px;
+        """)
+        play_again_button.clicked.connect(play_game_again_func)
+        play_again_button.setVisible(False)
+        return play_again_button
+    
+    def create_go_back_button(self, select_new_game_func):
+        go_back_button = QPushButton('Go Back', self)
+        go_back_button.setStyleSheet("""
+            background-color: red; 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 24px; 
+            font-weight: bold;
+            width: 300px;
+            height: 75px;
+        """)
+        go_back_button.clicked.connect(select_new_game_func)
+        go_back_button.setVisible(False)
+        return go_back_button
