@@ -35,7 +35,7 @@ class GeneralFunctions(QWidget):
     def go_back(self, index):
         self.stacked_widget.setCurrentIndex(index)
     
-    def set_up_gpio_and_get_pin_dict(self):
+    def init_gpio(self):
         GPIO.setmode(GPIO.BCM)
         yellow_led = 17
         red_led = 27
@@ -81,6 +81,19 @@ class GeneralFunctions(QWidget):
     def light_up_led(self, led):
         GPIO.output(led, GPIO.HIGH)
     
+    def light_up_led_w_sleep(self, led, sleep_time):
+        self.light_up_led(led)
+        sleep(sleep_time)
+        self.turn_off_led(led)
+    
+    def light_up_led_as_long_as_pressed(self, led, button):
+        self.light_up_led(led) 
+        while GPIO.input(button) == GPIO.LOW:
+            sleep(0.01)
+
+        self.turn_off_led(led)
+        sleep(0.1)
+        
     def turn_off_led(self, led):
         GPIO.output(led, GPIO.LOW)
     

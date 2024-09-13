@@ -4,7 +4,7 @@ import random
 import threading
 from general_functions import GeneralFunctions
 
-# Game parameters
+# Game Parameters
 GAME_RUN_TIME = 30
 SPEED = 0.25
 
@@ -15,7 +15,7 @@ class FastTapGame:
         self.end_game = False
         self.time_remaining = GAME_RUN_TIME
         self.start_time = None
-        self.pin_dict, self.buttons, self.leds = self.gen_funcs.set_up_gpio_and_get_pin_dict()
+        self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.gen_funcs.turn_off_all_leds()
 
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
