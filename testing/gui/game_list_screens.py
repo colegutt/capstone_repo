@@ -102,7 +102,7 @@ class GameListScreenCreator(QWidget):
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
             self.hs_qlabels[game] = QLabel(f'{hs}', self)
-            self.hs_qlabels[game].setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
+            self.hs_qlabels[game].setStyleSheet("color: white; font-size: 40px; font-weight: bold;")
             # Game button
             game_button = QPushButton(game, self)
             game_button.setStyleSheet(f'''

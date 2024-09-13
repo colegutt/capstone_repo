@@ -1,10 +1,14 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout 
 import RPi.GPIO as GPIO
+from time import sleep
 
 class GeneralFunctions(QWidget):
     def __init__(self, stacked_widget=None):
         self.stacked_widget = stacked_widget
+        self.pin_dict = None
+        self.leds = None
+        self.buttons = None
         super().__init__()
     
     def create_back_layout(self, index):
@@ -40,7 +44,7 @@ class GeneralFunctions(QWidget):
         red_button = 15
         green_button = 14
 
-        pin_dict = {
+        self.pin_dict = {
             yellow_led: yellow_button,
             red_led: red_button,
             green_led: green_button
@@ -53,7 +57,38 @@ class GeneralFunctions(QWidget):
         GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        buttons = list(pin_dict.values())
-        leds = list(pin_dict.keys())
+        self.buttons = list(self.pin_dict.values())
+        self.leds = list(self.pin_dict.keys())
 
-        return pin_dict, buttons, leds
+        return self.pin_dict, self.buttons, self.leds
+
+    def turn_off_all_leds(self):
+        for led in self.leds:
+            GPIO.output(led, GPIO.LOW)
+    
+    def light_up_all_leds(self):
+        GPIO.output(self.leds[0], GPIO.HIGH)
+        GPIO.output(self.leds[1], GPIO.HIGH)
+        GPIO.output(self.leds[2], GPIO.HIGH)
+    
+    def flash_all_leds(self):
+        for _ in range(3):
+            self.light_up_all_leds()
+            sleep(0.1)
+            self.turn_off_all_leds()
+            sleep(0.1)
+    
+    def light_up_led(self, led):
+        GPIO.output(led, GPIO.HIGH)
+    
+    def turn_off_led(self, led):
+        GPIO.output(led, GPIO.LOW)
+    
+    def game_over_flash(self):
+        self.turn_off_all_leds()
+        print('flashing led')
+        for _ in range(5):
+            self.light_up_led(self.leds[1])
+            sleep(0.05)
+            self.turn_off_led(self.leds[1])
+            sleep(0.05)
