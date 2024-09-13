@@ -181,6 +181,7 @@ class MemoryInGameScreen(QWidget):
         self.start_game()
     
     def select_new_game(self):
+        self.reset_game()
         self.stacked_widget.setCurrentIndex(1)
 
     def hide_end_game_buttons(self):

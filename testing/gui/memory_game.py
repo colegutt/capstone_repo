@@ -20,10 +20,7 @@ class MemoryGame:
         GPIO.output(pin, GPIO.LOW)
 
     def run_game(self, update_score_callback, on_game_over_callback):
-        pin_dict = self.gen_funcs.set_up_gpio_and_get_pin_dict()
-
-        buttons = list(pin_dict.values())
-        leds = list(pin_dict.keys())
+        pin_dict, buttons, leds = self.gen_funcs.set_up_gpio_and_get_pin_dict()
 
         game_is_playing = True
         num_round = 0
@@ -32,7 +29,7 @@ class MemoryGame:
 
         while game_is_playing:
             num_round += 1
-            led_sequence.append(random.choice(list(pin_dict.keys())))
+            led_sequence.append(random.choice(leds))
 
             # Light up LED sequence
             for led in led_sequence:

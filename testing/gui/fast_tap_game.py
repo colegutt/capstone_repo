@@ -9,7 +9,7 @@ class FastTapGame:
         self.pause_event = threading.Event()  # Event to handle pausing
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
-        self.time_remaining = 30  # 30 seconds for the game duration
+        self.time_remaining = 5  # 30 seconds for the game duration
         self.start_time = None
 
     def stop(self):
@@ -24,29 +24,31 @@ class FastTapGame:
             GPIO.output(led, GPIO.LOW)
 
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
-        pin_dict = self.gen_funcs.set_up_gpio_and_get_pin_dict()
+        pin_dict, buttons, leds = self.gen_funcs.set_up_gpio_and_get_pin_dict()
 
-        self.turn_off_leds(pin_dict.keys())
+        self.turn_off_leds(leds)
 
         score = 0
         self.start_time = time()
 
         while not self.end_game and self.time_remaining > 0:
             if self.wait_to_resume() == 1:
+                GPIO.cleanup()
                 return
             
             # Light up a random LED
-            current_led = random.choice(list(pin_dict.keys()))
+            current_led = random.choice(list(leds))
             self.light_up_led(current_led)
 
             # Wait for user to press the corresponding button
             user_input = False
             while not user_input:
                 if self.wait_to_resume() == 1:
+                    GPIO.cleanup()
                     return
                 if GPIO.input(pin_dict[current_led]) == GPIO.LOW:
                     user_input = True
-                    self.turn_off_leds(pin_dict.keys())  # Turn off all LEDs
+                    self.turn_off_leds(leds)  # Turn off all LEDs
                     sleep(0.2)  # Brief pause before lighting up the next LED
                     score += 1  # Increment the score
                     if update_score_callback:
@@ -54,7 +56,7 @@ class FastTapGame:
 
             # Update the timer
             elapsed_time = time() - self.start_time
-            self.time_remaining = 30 - int(elapsed_time)
+            self.time_remaining = 5 - int(elapsed_time)
             if update_timer_callback:
                 update_timer_callback(self.time_remaining)
 
@@ -64,10 +66,11 @@ class FastTapGame:
         # Game over actions
         print("GAME OVER!")
         for _ in range(5):
-            self.light_up_led(red_led)
+            light_up_led(leds[1])
             sleep(0.05)
-            GPIO.output(red_led, GPIO.LOW)
+            turn_off_leds(leds)
             sleep(0.05)
+
 
         if on_game_over_callback:
             on_game_over_callback()

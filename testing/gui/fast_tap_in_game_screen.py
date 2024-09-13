@@ -33,7 +33,7 @@ class FastTapInGameScreen(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.score = 0
-        self.time_remaining = 30  # Initialize the countdown
+        self.time_remaining = 5  # Initialize the countdown
         self.app_init = app_init
         self.create_screen()
         self.game_thread = None
@@ -66,6 +66,7 @@ class FastTapInGameScreen(QWidget):
         self.timer_label = QLabel(f'{self.time_remaining}', self)
         self.timer_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
         self.timer_label.setAlignment(Qt.AlignCenter)
+        self.timer_label.setVisible(True)
         return self.timer_label
 
     def create_score_label(self):
@@ -109,7 +110,7 @@ class FastTapInGameScreen(QWidget):
             width: 300px;
             height: 75px;
         """)
-        self.play_again_button.clicked.connect(self.reset_game)
+        self.play_again_button.clicked.connect(self.play_game_again)
         self.play_again_button.setVisible(False)
         return self.play_again_button
 
@@ -135,12 +136,11 @@ class FastTapInGameScreen(QWidget):
         top_layout.addStretch()
         main_layout.addLayout(top_layout)
         main_layout.addWidget(title)
-        main_layout.addStretch()
+        main_layout.addSpacing(10)
         main_layout.addWidget(timer_label, alignment=Qt.AlignCenter)
         main_layout.addWidget(score_label, alignment=Qt.AlignCenter)
-        main_layout.addSpacing(10)
         main_layout.addWidget(game_over_label, alignment=Qt.AlignCenter)
-        main_layout.addSpacing(10)
+        main_layout.addStretch()
         main_layout.addWidget(play_again_button, alignment=Qt.AlignCenter)
         main_layout.addWidget(go_back_button, alignment=Qt.AlignCenter)
         main_layout.addStretch()
@@ -152,6 +152,7 @@ class FastTapInGameScreen(QWidget):
             self.game_thread.score_updated.connect(self.update_score)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
+        self.game_over_label.setVisible(False)
 
         # Start the countdown timer
         self.timer.start()
@@ -171,7 +172,6 @@ class FastTapInGameScreen(QWidget):
         if self.game_thread and self.game_thread.fast_tap_game:
             self.game_thread.fast_tap_game.pause()
         self.timer.stop()  # Pause the timer
-        print('going to index 10')
         self.stacked_widget.setCurrentIndex(10)
 
     def resume_game(self):
@@ -180,19 +180,22 @@ class FastTapInGameScreen(QWidget):
         self.timer.start()  # Resume the timer
 
     def reset_game(self):
-        if self.game_thread:
-            self.game_thread.stop()
-        self.time_remaining = 30
+        self.time_remaining = 5
         self.score = 0
         self.timer_label.setText(f'{self.time_remaining}')
         self.score_label.setText(f'Score: {self.score}')
         self.hide_end_game_buttons()
+        self.show_timer_label()
+    
+    def play_game_again(self):
+        self.reset_game()
         self.start_game()
 
     def end_game(self):
         if self.game_thread:
             self.game_thread.stop()
         self.timer.stop()  # Stop the timer
+        self.timer_label.setVisible(False)
         self.game_over_label.setVisible(True)
         self.play_again_button.setVisible(True)
         self.go_back_button.setVisible(True)
@@ -201,6 +204,10 @@ class FastTapInGameScreen(QWidget):
         self.game_over_label.setVisible(False)
         self.play_again_button.setVisible(False)
         self.go_back_button.setVisible(False)
+    
+    def show_timer_label(self):
+        self.timer_label.setVisible(True)
 
     def select_new_game(self):
+        self.reset_game()
         self.stacked_widget.setCurrentIndex(1)

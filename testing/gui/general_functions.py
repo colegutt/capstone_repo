@@ -53,4 +53,7 @@ class GeneralFunctions(QWidget):
         GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        return pin_dict
+        buttons = list(pin_dict.values())
+        leds = list(pin_dict.keys())
+
+        return pin_dict, buttons, leds
