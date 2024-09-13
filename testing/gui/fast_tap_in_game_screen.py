@@ -56,7 +56,7 @@ class FastTapInGameScreen(QWidget):
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         self.set_layout()
-        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
 
     def create_timer_label(self):
         self.timer_label = QLabel(f'{self.time_remaining}', self)
@@ -121,8 +121,8 @@ class FastTapInGameScreen(QWidget):
         self.score = 0
         self.timer_label.setText(f'{self.time_remaining}')
         self.score_label.setText(f'Score: {self.score}')
-        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)
-        self.show_timer_label()
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
+        self.show_or_hide_timer_label(True)
     
     def save_high_score(self):
         if self.app_init.fast_tap_hs < self.score:
@@ -134,10 +134,8 @@ class FastTapInGameScreen(QWidget):
         if self.game_thread:
             self.game_thread.stop()
         self.timer.stop()  # Stop the timer
-        self.timer_label.setVisible(False)
-        self.game_over_label.setVisible(True)
-        self.play_again_button.setVisible(True)
-        self.go_back_button.setVisible(True)
+        self.show_or_hide_timer_label(False)
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
         
-    def show_timer_label(self):
-        self.timer_label.setVisible(True)
+    def show_or_hide_timer_label(self, show):
+        self.timer_label.setVisible(show)

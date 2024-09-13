@@ -46,7 +46,7 @@ class MemoryInGameScreen(QWidget):
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         self.set_layout()
-        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
 
     def set_layout(self):
         main_layout = QVBoxLayout()
@@ -69,14 +69,9 @@ class MemoryInGameScreen(QWidget):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score_from_game)
-            self.game_thread.game_over.connect(self.show_end_game_buttons)  # Connect game over signal
+            self.game_thread.game_over.connect(self.end_game)  # Connect game over signal
             self.game_thread.start()
         self.game_over_label.setVisible(False)  # Hide the label when the game starts
-
-    def show_end_game_buttons(self):
-        self.game_over_label.setVisible(True) 
-        self.play_again_button.setVisible(True) 
-        self.go_back_button.setVisible(True)  
     
     def update_score_from_game(self, num_round):
         self.score = num_round
@@ -98,7 +93,7 @@ class MemoryInGameScreen(QWidget):
             self.game_thread.memory_game.stop() 
             self.game_thread.quit()
             self.game_thread.wait()
-        self.show_end_game_buttons()  # Ensure end game buttons are shown
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
     
     def save_high_score(self):
         if self.app_init.memory_hs < self.score:
@@ -111,4 +106,4 @@ class MemoryInGameScreen(QWidget):
         self.save_high_score()
         self.score = 0
         self.score_label.setText(f'Score: {self.score}')
-        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)

@@ -176,10 +176,10 @@ class GeneralFunctions(QWidget):
         go_back_button.setVisible(False)
         return go_back_button
     
-    def hide_end_game_buttons(self, game_over_label, play_again_button, go_back_button):
-        game_over_label.setVisible(False)
-        play_again_button.setVisible(False)
-        go_back_button.setVisible(False)
+    def hide_or_show_end_game_buttons(self, game_over_label, play_again_button, go_back_button, show):
+        game_over_label.setVisible(show)
+        play_again_button.setVisible(show)
+        go_back_button.setVisible(show)
     
     def play_game_again(self):
         self.reset_game_func()
