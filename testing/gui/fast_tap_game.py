@@ -32,27 +32,24 @@ class FastTapGame:
         self.start_time = time()
 
         while not self.end_game and self.time_remaining > 0:
-            if self.wait_to_resume() == 1:
-                GPIO.cleanup()
-                return
-            
             # Light up a random LED
-            current_led = random.choice(list(leds))
+            current_led = random.choice(leds)
             self.light_up_led(current_led)
-
-            # Wait for user to press the corresponding button
             user_input = False
             while not user_input:
-                if self.wait_to_resume() == 1:
+                # Wait for user to press the corresponding button
+                if self.wait_to_resume() == 1:  # If the resume condition is met, exit
                     GPIO.cleanup()
                     return
                 if GPIO.input(pin_dict[current_led]) == GPIO.LOW:
                     user_input = True
-                    self.turn_off_leds(leds)  # Turn off all LEDs
-                    sleep(0.2)  # Brief pause before lighting up the next LED
-                    score += 1  # Increment the score
-                    if update_score_callback:
-                        update_score_callback(score)
+                    self.turn_off_leds(leds)
+                    sleep(0.2)
+                    score += 1  
+                    update_score_callback(score)
+                elif any(GPIO.input(pin_dict[led]) == GPIO.LOW for led in pin_dict if led != current_led):
+                    user_input = True
+                    self.incorrect_button_delay(leds) 
 
             # Update the timer
             elapsed_time = time() - self.start_time
@@ -66,9 +63,9 @@ class FastTapGame:
         # Game over actions
         print("GAME OVER!")
         for _ in range(5):
-            light_up_led(leds[1])
+            self.light_up_led(leds[1])
             sleep(0.05)
-            turn_off_leds(leds)
+            self.turn_off_leds(leds)
             sleep(0.05)
 
 
@@ -76,6 +73,17 @@ class FastTapGame:
             on_game_over_callback()
 
         GPIO.cleanup()
+
+    def incorrect_button_delay(self, leds):
+        for _ in range(3):
+            GPIO.output(leds[0], GPIO.HIGH)
+            GPIO.output(leds[1], GPIO.HIGH)
+            GPIO.output(leds[2], GPIO.HIGH)
+            sleep(0.1)
+            GPIO.output(leds[0], GPIO.LOW)
+            GPIO.output(leds[1], GPIO.LOW)
+            GPIO.output(leds[2], GPIO.LOW)
+            sleep(0.1)
 
     def wait_to_resume(self):
         while self.pause_event.is_set():

@@ -72,15 +72,7 @@ class MemoryGame:
             
             sleep(0.5)
             if game_is_playing:
-                for _ in range(3):
-                    GPIO.output(leds[0], GPIO.HIGH)
-                    GPIO.output(leds[1], GPIO.HIGH)
-                    GPIO.output(leds[2], GPIO.HIGH)
-                    sleep(0.1)
-                    GPIO.output(leds[0], GPIO.LOW)
-                    GPIO.output(leds[1], GPIO.LOW)
-                    GPIO.output(leds[2], GPIO.LOW)
-                    sleep(0.1)
+                self.correct_sequence_lighting(leds)
                 # Call the callback to update the score
                 update_score_callback(num_round)
             else:
@@ -91,6 +83,17 @@ class MemoryGame:
                 on_game_over_callback() 
         
         GPIO.cleanup()
+    
+    def correct_sequence_lighting(self, leds):
+        for _ in range(3):
+            GPIO.output(leds[0], GPIO.HIGH)
+            GPIO.output(leds[1], GPIO.HIGH)
+            GPIO.output(leds[2], GPIO.HIGH)
+            sleep(0.1)
+            GPIO.output(leds[0], GPIO.LOW)
+            GPIO.output(leds[1], GPIO.LOW)
+            GPIO.output(leds[2], GPIO.LOW)
+            sleep(0.1)
     
     def wait_to_resume(self):
         while self.pause_event.is_set():
