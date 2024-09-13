@@ -76,6 +76,7 @@ class MemoryGame:
         GPIO.cleanup()
     
     def wait_to_resume(self):
+        self.gen_funcs.turn_off_all_leds()
         while self.pause_event.is_set():
             print('waiting...(2)')
             if self.end_game:

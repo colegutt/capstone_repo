@@ -31,53 +31,24 @@ class MemoryInGameScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.score = 0
         self.app_init = app_init
-        self.gen_funcs = GeneralFunctions()
+        self.gen_funcs = GeneralFunctions(
+            self.stacked_widget, self.score, self.reset_game, self.start_game, self.pause_game
+        )
         self.title = self.gen_funcs.set_title('Memory')
         self.game_over_label = self.gen_funcs.create_game_over_label()
-        self.score_label = self.gen_funcs.create_score_label(self.score)
-        self.pause_button = self.gen_funcs.create_pause_button(self.pause_game)
+        self.score_label = self.gen_funcs.create_score_label()
+        self.pause_button = self.gen_funcs.create_pause_button()
+        self.play_again_button = self.gen_funcs.create_play_again_button()
+        self.go_back_button = self.gen_funcs.create_go_back_button()
         self.create_screen()
         self.game_thread = None
     
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
-        self.set_layout(
-            self.create_play_again_button(),
-            self.create_go_back_button()
-        )
-        self.hide_end_game_buttons()  # Initially hide the end game buttons
+        self.set_layout()
+        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)
 
-    def create_play_again_button(self):
-        self.play_again_button = QPushButton('Play Again', self)
-        self.play_again_button.setStyleSheet("""
-            background-color: green; 
-            color: white; 
-            border-radius: 10px; 
-            font-size: 24px; 
-            font-weight: bold;
-            width: 300px;
-            height: 75px;
-        """)
-        self.play_again_button.clicked.connect(self.play_game_again)
-        self.play_again_button.setVisible(False)
-        return self.play_again_button
-
-    def create_go_back_button(self):
-        self.go_back_button = QPushButton('Go Back', self)
-        self.go_back_button.setStyleSheet("""
-            background-color: red; 
-            color: white; 
-            border-radius: 10px; 
-            font-size: 24px; 
-            font-weight: bold;
-            width: 300px;
-            height: 75px;
-        """)
-        self.go_back_button.clicked.connect(self.select_new_game)
-        self.go_back_button.setVisible(False)  # Initially hidden
-        return self.go_back_button
-
-    def set_layout(self, play_again_button, go_back_button):
+    def set_layout(self):
         main_layout = QVBoxLayout()
         top_layout = QHBoxLayout()
         top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)
@@ -89,8 +60,8 @@ class MemoryInGameScreen(QWidget):
         main_layout.addSpacing(10)
         main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
         main_layout.addSpacing(10)
-        main_layout.addWidget(play_again_button, alignment=Qt.AlignCenter)
-        main_layout.addWidget(go_back_button, alignment=Qt.AlignCenter)
+        main_layout.addWidget(self.play_again_button, alignment=Qt.AlignCenter)
+        main_layout.addWidget(self.go_back_button, alignment=Qt.AlignCenter)
         main_layout.addStretch()
         self.setLayout(main_layout)
     
@@ -140,17 +111,4 @@ class MemoryInGameScreen(QWidget):
         self.save_high_score()
         self.score = 0
         self.score_label.setText(f'Score: {self.score}')
-        self.hide_end_game_buttons()
-        
-    def play_game_again(self):
-        self.reset_game()
-        self.start_game()
-    
-    def select_new_game(self):
-        self.reset_game()
-        self.stacked_widget.setCurrentIndex(1)
-
-    def hide_end_game_buttons(self):
-        self.game_over_label.setVisible(False)
-        self.play_again_button.setVisible(False)
-        self.go_back_button.setVisible(False)
+        self.gen_funcs.hide_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button)

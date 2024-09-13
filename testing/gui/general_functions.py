@@ -4,12 +4,16 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 class GeneralFunctions(QWidget):
-    def __init__(self, stacked_widget=None):
+    def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None):
+        super().__init__()
         self.stacked_widget = stacked_widget
+        self.game_score = game_score
+        self.reset_game_func = reset_game_func
+        self.start_game_func = start_game_func
+        self.pause_game_func = pause_game_func
         self.pin_dict = None
         self.leds = None
         self.buttons = None
-        super().__init__()
     
     def create_back_layout(self, index):
         back_button = QPushButton('Back', self)
@@ -119,7 +123,7 @@ class GeneralFunctions(QWidget):
         game_over_label.setVisible(False)  # Initially hidden
         return game_over_label
     
-    def create_pause_button(self, pause_game_func):
+    def create_pause_button(self):
         pause_button = QPushButton('Pause', self)
         pause_button.setStyleSheet("""
             background-color: orange; 
@@ -133,16 +137,16 @@ class GeneralFunctions(QWidget):
             text-align: center;
             line-height: 100px;
         """)
-        pause_button.clicked.connect(pause_game_func)
+        pause_button.clicked.connect(self.pause_game_func)
         return pause_button
     
-    def create_score_label(self, score):
-        score_label = QLabel(f'Score: {score}', self)
+    def create_score_label(self):
+        score_label = QLabel(f'Score: {self.game_score}', self)
         score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
         score_label.setAlignment(Qt.AlignCenter)
         return score_label
 
-    def create_play_again_button(self, play_game_again_func):
+    def create_play_again_button(self):
         play_again_button = QPushButton('Play Again', self)
         play_again_button.setStyleSheet("""
             background-color: green; 
@@ -153,11 +157,11 @@ class GeneralFunctions(QWidget):
             width: 300px;
             height: 75px;
         """)
-        play_again_button.clicked.connect(play_game_again_func)
+        play_again_button.clicked.connect(self.play_game_again)
         play_again_button.setVisible(False)
         return play_again_button
     
-    def create_go_back_button(self, select_new_game_func):
+    def create_go_back_button(self):
         go_back_button = QPushButton('Go Back', self)
         go_back_button.setStyleSheet("""
             background-color: red; 
@@ -168,6 +172,19 @@ class GeneralFunctions(QWidget):
             width: 300px;
             height: 75px;
         """)
-        go_back_button.clicked.connect(select_new_game_func)
+        go_back_button.clicked.connect(self.select_new_game)
         go_back_button.setVisible(False)
         return go_back_button
+    
+    def hide_end_game_buttons(self, game_over_label, play_again_button, go_back_button):
+        game_over_label.setVisible(False)
+        play_again_button.setVisible(False)
+        go_back_button.setVisible(False)
+    
+    def play_game_again(self):
+        self.reset_game_func()
+        self.start_game_func()
+    
+    def select_new_game(self):
+        self.reset_game_func()
+        self.stacked_widget.setCurrentIndex(1)
