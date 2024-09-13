@@ -92,7 +92,7 @@ class MemoryInGameScreen(QWidget):
             width: 300px;
             height: 75px;
         """)
-        self.play_again_button.clicked.connect(self.reset_game)
+        self.play_again_button.clicked.connect(self.play_game_again)
         self.play_again_button.setVisible(False)
         return self.play_again_button
 
@@ -175,6 +175,9 @@ class MemoryInGameScreen(QWidget):
         self.score = 0
         self.score_label.setText(f'Score: {self.score}')
         self.hide_end_game_buttons()
+        
+    def play_game_again(self):
+        self.reset_game()
         self.start_game()
     
     def select_new_game(self):

@@ -37,6 +37,7 @@ class MemoryGame:
             # Light up LED sequence
             for led in led_sequence:
                 if self.wait_to_resume() == 1:
+                    GPIO.cleanup()
                     return
                 self.light_up_led(led, 0.5)
                 sleep(0.5)
@@ -44,11 +45,10 @@ class MemoryGame:
             # Get user input
             i = 0
             while True:
-                if self.wait_to_resume() == 1:
-                    return
                 user_input = False
                 while not user_input:
                     if self.wait_to_resume() == 1:
+                        GPIO.cleanup()
                         return
                     if GPIO.input(buttons[0]) == GPIO.LOW:
                         self.light_up_led(leds[0], 0.25)
