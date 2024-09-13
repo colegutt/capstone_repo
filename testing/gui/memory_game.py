@@ -15,10 +15,6 @@ class MemoryGame:
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.gen_funcs.turn_off_all_leds()
 
-    def stop(self):
-        self.end_game = True
-        self.pause_event.set()  # Ensure the game is stopped
-
     def run_game(self, update_score_callback, on_game_over_callback):
         game_is_playing = True
         num_round = 0
@@ -87,6 +83,10 @@ class MemoryGame:
                 return 1
             sleep(0.25)
         return 0
+    
+    def stop(self):
+        self.end_game = True
+        self.pause_event.set()  # Ensure the game is stopped
 
     def pause(self):
         self.pause_event.set()  # Pause the game
