@@ -141,10 +141,10 @@ class GeneralFunctions(QWidget):
         return pause_button
     
     def create_score_label(self):
-        score_label = QLabel(f'Score: {self.game_score}', self)
-        score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
-        score_label.setAlignment(Qt.AlignCenter)
-        return score_label
+        self.score_label = QLabel(f'Score: {self.game_score}', self)
+        self.score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
+        self.score_label.setAlignment(Qt.AlignCenter)
+        return self.score_label
 
     def create_play_again_button(self):
         play_again_button = QPushButton('Play Again', self)
@@ -188,3 +188,6 @@ class GeneralFunctions(QWidget):
     def select_new_game(self):
         self.reset_game_func()
         self.stacked_widget.setCurrentIndex(1)
+    
+    def update_score(self, score_label, score):
+        score_label.setText(f'Score: {score}')
