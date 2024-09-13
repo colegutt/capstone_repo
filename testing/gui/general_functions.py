@@ -103,7 +103,6 @@ class GeneralFunctions(QWidget):
     
     def game_over_flash(self):
         self.turn_off_all_leds()
-        print('flashing led')
         for _ in range(5):
             self.light_up_led(self.leds[1])
             sleep(0.05)
@@ -189,5 +188,6 @@ class GeneralFunctions(QWidget):
         self.reset_game_func()
         self.stacked_widget.setCurrentIndex(1)
     
-    def update_score(self, score_label, score):
-        score_label.setText(f'Score: {score}')
+    def update_score(self, score):
+        self.score = num_round
+        self.score_label.setText(f'Score: {score}')

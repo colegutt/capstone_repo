@@ -48,10 +48,9 @@ class FastTapInGameScreen(QWidget):
         self.create_screen()
         self.game_thread = None
         
-        # Initialize the QTimer
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
-        self.timer.setInterval(1000)  # Update every 1000 ms (1 second)
+        self.timer.setInterval(1000)
 
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
@@ -90,7 +89,6 @@ class FastTapInGameScreen(QWidget):
             self.game_thread.start()
         self.game_over_label.setVisible(False)
 
-        # Start the countdown timer
         self.timer.start()
 
     def update_score(self, score):

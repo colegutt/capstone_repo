@@ -42,9 +42,7 @@ class MemoryGame:
                         GPIO.cleanup()
                         return
                     if GPIO.input(self.buttons[0]) == GPIO.LOW:
-                        print('light up led')
                         self.gen_funcs.light_up_led_as_long_as_pressed(self.leds[0], self.buttons[0])
-                        print('led off')
                         user_input = True
                         pressed_button = self.buttons[0]
                     elif GPIO.input(self.buttons[1]) == GPIO.LOW:
@@ -69,18 +67,15 @@ class MemoryGame:
                 self.gen_funcs.flash_all_leds()
                 update_score_callback(num_round)
             else:
-                print("INCORRECT SEQUENCE. GAME OVER!")
                 self.gen_funcs.game_over_flash()
                 on_game_over_callback()
         
         GPIO.cleanup()
     
     def wait_to_resume(self):
-        self.gen_funcs.turn_off_all_leds()
         while self.pause_event.is_set():
-            print('waiting...(2)')
+            self.gen_funcs.turn_off_all_leds()
             if self.end_game:
-                print('GAME IS ENDING')
                 return 1
             sleep(0.25)
         return 0

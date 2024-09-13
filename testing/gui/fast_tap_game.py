@@ -31,7 +31,6 @@ class FastTapGame:
                 self.update_time()
 
                 if self.time_remaining == 0 :
-                    print('flashing led')
                     self.gen_funcs.game_over_flash()
                     break
 
@@ -70,9 +69,7 @@ class FastTapGame:
     def wait_to_resume(self, current_led):
         while self.pause_event.is_set():
             self.gen_funcs.turn_off_all_leds()
-            print('Game paused...')
             if self.end_game:
-                print('GAME IS ENDING')
                 return 1
             sleep(0.25)
         self.light_up_led_if_needed(current_led)
