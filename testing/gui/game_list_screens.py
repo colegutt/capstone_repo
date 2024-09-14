@@ -12,8 +12,8 @@ class SPScreen(QWidget):
         }
         # Storing Qlabels for each high score
         self.hs_qlabels = {
-            'Tennis': 10,
-            'Memory': 10,
+            'Memory': None,
+            'Fast Tap': None,
         }
         title = 'Single Player Games'
         colors = ['blue', 'green']
@@ -34,11 +34,11 @@ class MPScreen(QWidget):
         self.app_init = app_init
         games_and_high_scores = {
             'Tennis': 10,
-            'Memory': 12,
+            'Memory 2 Player': self.app_init.memory_2p_hs
         }
         self.hs_qlabels = {
             'Tennis': None,
-            'Memory': None,
+            'Memory 2 Player': None
         }
         title = 'Multiplayer Games'
         colors = ['orange', 'purple']
@@ -46,6 +46,9 @@ class MPScreen(QWidget):
             stacked_widget, self.app_init, games_and_high_scores, title, True, self.hs_qlabels, colors
         )
         self.setLayout(self.gl_creator.create_screen())
+    
+    def update_displayed_values(self):
+        self.hs_qlabels['Memory 2 Player'].setText(f'{self.app_init.memory_2p_hs}')
 
 class GameListScreenCreator(QWidget):
     def __init__(self, stacked_widget, app_init, games_and_high_scores, title, multiplayer, hs_qlabels, colors):
@@ -115,7 +118,7 @@ class GameListScreenCreator(QWidget):
                 font-weight: bold;
                 height: 100px;
             ''')
-            game_button.clicked.connect(lambda checked, i=i: self.go_to_game(i))
+            game_button.clicked.connect(lambda checked, i=i: self.go_to_pregame_screen(i))
             temp_game_layout.addSpacing(200) 
             temp_game_layout.addWidget(game_button)
             temp_game_layout.addSpacing(125)  # Space between button and score
@@ -144,10 +147,12 @@ class GameListScreenCreator(QWidget):
         final_layout.addLayout(back_layout)
         return final_layout
     
-    def go_to_game(self, index):
+    def go_to_pregame_screen(self, index):
         if self.multiplayer:
             if index == 0:
-                self.stacked_widget.setCurrentIndex(5)
+                self.stacked_widget.setCurrentIndex(16)
+            elif index == 1:
+                self.stacked_widget.setCurrentIndex(12)
         else:
             if index == 0:
                 self.stacked_widget.setCurrentIndex(4)

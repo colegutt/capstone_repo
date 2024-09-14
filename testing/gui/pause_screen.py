@@ -49,6 +49,9 @@ class PauseScreen(QWidget):
             self.app_init.memory_ingame_screen.resume_game()
         elif self.previous_index == 9:
             self.app_init.fast_tap_ingame_screen.resume_game()
+        elif self.previous_index == 13:
+            self.app_init.memory_2p_ingame_screen.resume_game()
+
         self.stacked_widget.setCurrentIndex(self.previous_index)
 
     def set_title(self):
@@ -94,16 +97,20 @@ class PauseScreen(QWidget):
         self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
 
     def select_new_game(self):
-        # Change to save data
-        if self.previous_index == 5:
-            self.app_init.memory_ingame_screen.reset_game() 
-        elif self.previous_index == 9:
-            self.app_init.fast_tap_ingame_screen.reset_game() 
-        self.stacked_widget.setCurrentIndex(1) 
+        index = self.reset_specific_game()
+        self.stacked_widget.setCurrentIndex(index) 
 
     def go_to_main_menu(self):
+        self.reset_specific_game()
+        self.stacked_widget.setCurrentIndex(0)
+    
+    def reset_specific_game(self):
+        index = 1
         if self.previous_index == 5:
             self.app_init.memory_ingame_screen.reset_game() 
         elif self.previous_index == 9:
             self.app_init.fast_tap_ingame_screen.reset_game() 
-        self.stacked_widget.setCurrentIndex(0)
+        elif self.previous_index == 13:
+            self.app_init.memory_2p_ingame_screen.reset_game() 
+            index = 2
+        return index

@@ -4,13 +4,14 @@ import RPi.GPIO as GPIO
 from time import sleep
 
 class GeneralFunctions(QWidget):
-    def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None):
+    def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None, multiplayer=False):
         super().__init__()
         self.stacked_widget = stacked_widget
         self.game_score = game_score
         self.reset_game_func = reset_game_func
         self.start_game_func = start_game_func
         self.pause_game_func = pause_game_func
+        self.multiplayer = multiplayer
         self.pin_dict = None
         self.leds = None
         self.buttons = None
@@ -186,7 +187,10 @@ class GeneralFunctions(QWidget):
     
     def select_new_game(self):
         self.reset_game_func()
-        self.stacked_widget.setCurrentIndex(1)
+        if self.multiplayer:
+            self.stacked_widget.setCurrentIndex(2)
+        else:
+            self.stacked_widget.setCurrentIndex(1)
     
     def update_score(self, score):
         self.score = num_round

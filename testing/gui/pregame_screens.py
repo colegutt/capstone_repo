@@ -22,36 +22,33 @@ class FastTapPregameScreen(QWidget):
         description_str = (
             "Press every button that lights up. Try"
             " to get as many as you can before the "
-            "time runs out!"
+            "time runs out. Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Fast Tap', description_str, 'green', 1, 9))
 
-class MemoryMultiplayerPregameScreen(QWidget):
-    def __init__(self, stacked_widget):
+class Memory2PPregameScreen(QWidget):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.game_obj = None
-        self.ps_creator = PregameScreenCreator(stacked_widget, self.game_obj)
+        self.app_init = app_init
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "This is a new description for the multiplayer ping pong "
-            "game. I have no idea how this will be played."
-            "ROTATE SCREEN TO BEGIN!!!"
+            "Grab a friend and work together by matching the sequence by pressing the buttons that light up. "
+            "The sequence will get longer the better your team does. "
+            "How many can you get together? Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'purple', 2, 2))
+        self.setLayout(self.ps_creator.create_pregame_screen('Memory 2 Player', description_str, 'purple', 2, 13))
 
 class TennisPregameScreen(QWidget):
-    def __init__(self, stacked_widget):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.game_obj = None
-        self.ps_creator = PregameScreenCreator(stacked_widget, self.game_obj)
+        self.app_init = app_init
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "This is a new description for the multiplayer ping pong "
-            "game. I have no idea how this will be played."
-            "ROTATE SCREEN TO BEGIN!!!"
+            "Grab an opponent and take turns hitting a ball back and forth. "
+            "Player 1 uses the [green] button, and Player 2 uses the [yellow] button. "
+            "First player to 5 points wins the game. Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Ping Pong', description_str, 'blue', 2, 2))
-
-# Put classes for other pregame screens below!!!
-
+        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 2))
 
 class PregameScreenCreator(QWidget):
     def __init__(self, stacked_widget, app_init):
@@ -129,3 +126,5 @@ class PregameScreenCreator(QWidget):
             self.app_init.memory_ingame_screen.start_game()
         elif in_game_screen_index == 9:
             self.app_init.fast_tap_ingame_screen.start_game()
+        elif in_game_screen_index == 13:
+            self.app_init.memory_2p_ingame_screen.start_game()

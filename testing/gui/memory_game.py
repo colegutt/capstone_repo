@@ -12,10 +12,11 @@ class MemoryGame:
         self.pause_event = threading.Event()  # Event to handle pausing
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
+        self.player = 1
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.gen_funcs.turn_off_all_leds()
 
-    def run_game(self, update_score_callback, on_game_over_callback):
+    def run_game(self, update_score_callback, on_game_over_callback, update_player_callback=None):
         game_is_playing = True
         num_round = 0
         user_input = False
@@ -65,12 +66,20 @@ class MemoryGame:
             sleep(SPEED)
             if game_is_playing:
                 self.gen_funcs.flash_all_leds()
+                self.change_player()
                 update_score_callback(num_round)
+                update_player_callback(self.player)
             else:
                 self.gen_funcs.game_over_flash()
                 on_game_over_callback()
         
         GPIO.cleanup()
+    
+    def change_player(self):
+        if self.player == 1:
+            self.player = 2
+        else:
+            self.player = 1
     
     def wait_to_resume(self):
         while self.pause_event.is_set():
