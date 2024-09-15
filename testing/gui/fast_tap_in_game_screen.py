@@ -81,7 +81,7 @@ class FastTapInGameScreen(QWidget):
         main_layout.addStretch()
         self.setLayout(main_layout)
 
-    def start_game(self):
+    def start_game(self):        
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score)
@@ -114,6 +114,7 @@ class FastTapInGameScreen(QWidget):
         self.timer.start()  # Resume the timer
 
     def reset_game(self):
+        self.end_game()
         self.save_high_score()
         self.time_remaining = GAME_RUN_TIME
         self.score = 0
@@ -129,11 +130,11 @@ class FastTapInGameScreen(QWidget):
             self.app_init.save_fast_tap_high_score()
 
     def end_game(self):
-        if self.game_thread:
-            self.game_thread.stop()
+        if self.game_thread and self.game_thread.isRunning():
+            self.game_thread.fast_tap_game.stop() 
+            self.game_thread.quit()
+            self.game_thread.wait()
         self.timer.stop()  # Stop the timer
-        self.show_or_hide_timer_label(False)
-        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
         
     def show_or_hide_timer_label(self, show):
         self.timer_label.setVisible(show)

@@ -5,8 +5,8 @@ import threading
 from general_functions import GeneralFunctions
 
 # Game Parameters
-GAME_RUN_TIME = 5
-SPEED = 0.25
+GAME_RUN_TIME = 30
+SPEED = 0.17 # THIS IS THE NUMBER!!!
 
 class FastTapGame:
     def __init__(self):

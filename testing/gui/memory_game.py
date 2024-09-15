@@ -8,11 +8,12 @@ from general_functions import GeneralFunctions
 SPEED = 0.5
 
 class MemoryGame:
-    def __init__(self):
+    def __init__(self, multiplayer=False):
         self.pause_event = threading.Event()  # Event to handle pausing
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
         self.player = 1
+        self.multiplayer = multiplayer
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.gen_funcs.turn_off_all_leds()
 
@@ -66,9 +67,10 @@ class MemoryGame:
             sleep(SPEED)
             if game_is_playing:
                 self.gen_funcs.flash_all_leds()
-                self.change_player()
+                if self.multiplayer:
+                    self.change_player()
+                    update_player_callback(self.player)
                 update_score_callback(num_round)
-                update_player_callback(self.player)
             else:
                 self.gen_funcs.game_over_flash()
                 on_game_over_callback()

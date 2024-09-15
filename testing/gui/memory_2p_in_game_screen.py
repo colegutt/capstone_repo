@@ -10,7 +10,7 @@ class GameThread(QThread):
 
     def __init__(self):
         super().__init__()
-        self.memory_game = MemoryGame()
+        self.memory_game = MemoryGame(True)
 
     def run(self):
         def update_score(num_round):
