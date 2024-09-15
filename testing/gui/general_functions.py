@@ -120,7 +120,7 @@ class GeneralFunctions(QWidget):
         game_over_label = QLabel(f'GAME OVER!', self)
         game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
         game_over_label.setAlignment(Qt.AlignCenter)
-        game_over_label.setVisible(False)  # Initially hidden
+        game_over_label.setVisible(False)
         return game_over_label
     
     def create_pause_button(self):

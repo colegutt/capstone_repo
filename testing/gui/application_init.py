@@ -100,24 +100,20 @@ class ApplicationInit(QWidget):
         return self.narration_on
     
     def update_settings_screen(self):
-        # This method is used to ensure the settings screen reflects the current values
         self.settings_screen.update_displayed_values()
     
     def update_pause_settings_screen(self, index):
-        # This method is used to ensure the pause settings screen reflects the current values
         if index == 5:
             self.memory_pause_settings_screen.update_displayed_values()
         elif index == 9:
             self.fast_tap_pause_settings_screen.update_displayed_values()
     
     def save_settings(self):
-        # Save the current settings
         self.settings.setValue("brightness", self.brightness_level)
         self.settings.setValue("sound", self.sound_level)
         self.settings.setValue("narration", self.narration_on)
     
     def save_memory_high_score(self):
-        # Save the current settings
         self.settings.setValue("memory_hs", self.memory_hs)
     
     def save_fast_tap_high_score(self):

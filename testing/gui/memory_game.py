@@ -9,7 +9,7 @@ SPEED = 0.5
 
 class MemoryGame:
     def __init__(self, multiplayer=False):
-        self.pause_event = threading.Event()  # Event to handle pausing
+        self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
         self.player = 1
@@ -93,13 +93,13 @@ class MemoryGame:
     
     def stop(self):
         self.end_game = True
-        self.pause_event.set()  # Ensure the game is stopped
+        self.pause_event.set()
 
     def pause(self):
-        self.pause_event.set()  # Pause the game
+        self.pause_event.set()
 
     def resume(self):
-        self.pause_event.clear()  # Resume the game
+        self.pause_event.clear()
 
 if __name__ == '__main__':
     memory_game = MemoryGame()

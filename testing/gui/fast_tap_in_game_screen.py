@@ -105,13 +105,13 @@ class FastTapInGameScreen(QWidget):
     def pause_game(self):
         if self.game_thread and self.game_thread.fast_tap_game:
             self.game_thread.fast_tap_game.pause()
-        self.timer.stop()  # Pause the timer
+        self.timer.stop()
         self.stacked_widget.setCurrentIndex(10)
 
     def resume_game(self):
         if self.game_thread and self.game_thread.fast_tap_game:
             self.game_thread.fast_tap_game.resume()
-        self.timer.start()  # Resume the timer
+        self.timer.start()
 
     def reset_game(self):
         self.end_game()
@@ -134,7 +134,7 @@ class FastTapInGameScreen(QWidget):
             self.game_thread.fast_tap_game.stop() 
             self.game_thread.quit()
             self.game_thread.wait()
-        self.timer.stop()  # Stop the timer
+        self.timer.stop()
         
     def show_or_hide_timer_label(self, show):
         self.timer_label.setVisible(show)

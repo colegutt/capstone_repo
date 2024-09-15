@@ -5,7 +5,7 @@ from general_functions import GeneralFunctions
 
 class GameThread(QThread):
     score_updated = pyqtSignal(int)
-    game_over = pyqtSignal()  # Add a signal for game over
+    game_over = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -16,13 +16,13 @@ class GameThread(QThread):
             self.score_updated.emit(num_round)
         
         def on_game_over():
-            self.game_over.emit()  # Emit the game over signal
+            self.game_over.emit()
         
         self.memory_game.run_game(update_score, on_game_over)
     
     def stop(self):
         if self.memory_game:
-            self.memory_game.stop()  # Stop the game if running
+            self.memory_game.stop()
 
 
 class MemoryInGameScreen(QWidget):
@@ -69,9 +69,9 @@ class MemoryInGameScreen(QWidget):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
             self.game_thread.score_updated.connect(self.update_score_from_game)
-            self.game_thread.game_over.connect(self.end_game)  # Connect game over signal
+            self.game_thread.game_over.connect(self.end_game) 
             self.game_thread.start()
-        self.game_over_label.setVisible(False)  # Hide the label when the game starts
+        self.game_over_label.setVisible(False)
     
     def update_score_from_game(self, num_round):
         self.score = num_round
@@ -79,14 +79,14 @@ class MemoryInGameScreen(QWidget):
     
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
-            self.game_thread.memory_game.pause()  # Pause the game
-        self.stacked_widget.setCurrentIndex(6)  # Navigate to the pause screen
+            self.game_thread.memory_game.pause()
+        self.stacked_widget.setCurrentIndex(6)
 
     def resume_game(self):
         if self.game_thread:
-            self.game_thread.memory_game.resume()  # Resume the game
+            self.game_thread.memory_game.resume()
         else:
-            self.start_game()  # Start the game if it's not running
+            self.start_game()
     
     def end_game(self):
         if self.game_thread and self.game_thread.isRunning():

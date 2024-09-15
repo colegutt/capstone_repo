@@ -6,11 +6,11 @@ from general_functions import GeneralFunctions
 
 # Game Parameters
 GAME_RUN_TIME = 30
-SPEED = 0.17 # THIS IS THE NUMBER!!!
+SPEED = 0.17 # This is the lowest number we can do
 
 class FastTapGame:
     def __init__(self):
-        self.pause_event = threading.Event()  # Event to handle pausing
+        self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
         self.time_remaining = GAME_RUN_TIME
@@ -27,7 +27,6 @@ class FastTapGame:
             self.gen_funcs.light_up_led(current_led)
             user_input = False
             while not user_input:
-                # Update time
                 self.update_time()
 
                 if self.time_remaining == 0 :
@@ -48,7 +47,6 @@ class FastTapGame:
                     user_input = True
                     self.gen_funcs.flash_all_leds() 
 
-            # Update time
             self.update_time()
             update_timer_callback(self.time_remaining)
 
@@ -77,13 +75,13 @@ class FastTapGame:
 
     def stop(self):
         self.end_game = True
-        self.pause_event.set()  # Ensure the game is stopped
+        self.pause_event.set()
 
     def pause(self):
-        self.pause_event.set()  # Pause the game
+        self.pause_event.set()
 
     def resume(self):
-        self.pause_event.clear()  # Resume the game
+        self.pause_event.clear()
 
 if __name__ == '__main__':
     fast_tap_game = FastTapGame()

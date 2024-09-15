@@ -10,7 +10,6 @@ class SPScreen(QWidget):
             'Memory': self.app_init.memory_hs,
             'Fast Tap': self.app_init.fast_tap_hs,
         }
-        # Storing Qlabels for each high score
         self.hs_qlabels = {
             'Memory': None,
             'Fast Tap': None,
@@ -77,12 +76,10 @@ class GameListScreenCreator(QWidget):
         return title
 
     def create_header_layout(self):
-        # Game Header
         game_header_title = QLabel('Game', self)
         game_header_title.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
         game_header_title.setAlignment(Qt.AlignCenter)
 
-        # High Score Header
         high_score_header_title = QLabel('High Score', self)
         high_score_header_title.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
         high_score_header_title.setAlignment(Qt.AlignCenter)
@@ -99,14 +96,12 @@ class GameListScreenCreator(QWidget):
     def create_games_layout(self):
         header_layout = self.create_header_layout()
 
-        # Game layouts
         game_layouts = []
         i = 0
         for game, hs in self.games_and_high_scores.items():
             temp_game_layout = QHBoxLayout()
             self.hs_qlabels[game] = QLabel(f'{hs}', self)
             self.hs_qlabels[game].setStyleSheet("color: white; font-size: 40px; font-weight: bold;")
-            # Game button
             game_button = QPushButton(game, self)
             game_button.setStyleSheet(f'''
                 background-color: {self.colors[i % len(self.colors)]}; 
@@ -121,7 +116,7 @@ class GameListScreenCreator(QWidget):
             game_button.clicked.connect(lambda checked, i=i: self.go_to_pregame_screen(i))
             temp_game_layout.addSpacing(200) 
             temp_game_layout.addWidget(game_button)
-            temp_game_layout.addSpacing(125)  # Space between button and score
+            temp_game_layout.addSpacing(125)
             temp_game_layout.addWidget(self.hs_qlabels[game])
             temp_game_layout.addSpacing(300) 
 

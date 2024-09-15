@@ -111,11 +111,11 @@ class PregameScreenCreator(QWidget):
     def set_layout(self, title, description_layout, start_button, back_button):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
-        final_layout.addSpacing(50)  # Space between title and description
+        final_layout.addSpacing(50)
         final_layout.addLayout(description_layout)
-        final_layout.addSpacing(75)  # Space between description and start button
+        final_layout.addSpacing(75) 
         final_layout.addLayout(start_button)
-        final_layout.addStretch()  # Push back button to the bottom
+        final_layout.addStretch()
         final_layout.addLayout(back_button)
 
         return final_layout

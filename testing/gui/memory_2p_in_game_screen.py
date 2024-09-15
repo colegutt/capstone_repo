@@ -6,7 +6,7 @@ from general_functions import GeneralFunctions
 class GameThread(QThread):
     score_updated = pyqtSignal(int)
     game_over = pyqtSignal()
-    player_changed = pyqtSignal(int)  # Signal for changing player
+    player_changed = pyqtSignal(int)
 
     def __init__(self):
         super().__init__()
@@ -17,7 +17,7 @@ class GameThread(QThread):
             self.score_updated.emit(num_round)
         
         def update_player(player_num):
-            self.player_changed.emit(player_num)  # Emit player change signal
+            self.player_changed.emit(player_num)
         
         def on_game_over():
             self.game_over.emit()
