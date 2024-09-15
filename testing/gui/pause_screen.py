@@ -4,6 +4,7 @@ from general_functions import GeneralFunctions
 
 class PauseScreen(QWidget):
     def __init__(self, stacked_widget, pause_settings_screen_index, previous_index, app_init):
+        # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
         self.previous_index = previous_index
@@ -12,18 +13,19 @@ class PauseScreen(QWidget):
         self.app_init = app_init
         self.create_screen()
 
+    # Create pause screen
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
-
         layout = QVBoxLayout()
         layout.addWidget(self.set_title())
         layout.addStretch()
         layout.addLayout(self.create_buttons_layout())
         layout.addStretch()
-        layout.addLayout(self.create_back_layout())
+        layout.addLayout(self.create_resume_layout())
         self.setLayout(layout)
 
-    def create_back_layout(self):
+    # Return resume button layout
+    def create_resume_layout(self):
         resume_button = QPushButton('Resume', self)
         resume_button.setStyleSheet("""
             background-color: green; 
@@ -44,6 +46,7 @@ class PauseScreen(QWidget):
         resume_layout.setContentsMargins(20, 20, 20, 20)
         return resume_layout
 
+    # Resume game depending on the previous index
     def resume_game(self):
         if self.previous_index == 5:
             self.app_init.memory_ingame_screen.resume_game()
@@ -54,12 +57,14 @@ class PauseScreen(QWidget):
 
         self.stacked_widget.setCurrentIndex(self.previous_index)
 
+    # Return pause screen title label
     def set_title(self):
         title = QLabel('Pause', self)
         title.setStyleSheet("color: white; font-size: 40px; font-weight: bold;")
         title.setAlignment(Qt.AlignCenter)
         return title
 
+    # Create button layout
     def create_buttons_layout(self):
         settings_button = self.create_button('Settings')
         settings_button.clicked.connect(self.go_to_settings)
@@ -78,6 +83,7 @@ class PauseScreen(QWidget):
         button_layout.addWidget(main_menu_button)
         return button_layout
 
+    # General function for the buttons since they all have the same appearance
     def create_button(self, name):
         button = QPushButton(name, self)
         button.setStyleSheet(f'''
@@ -92,18 +98,22 @@ class PauseScreen(QWidget):
         ''')
         return button
 
+    # Navigate to pause settings screen
     def go_to_settings(self):
         self.app_init.update_pause_settings_screen(self.previous_index) 
         self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
 
+    # Navigate to corresponding game list screen and reset current game
     def select_new_game(self):
         index = self.reset_specific_game()
         self.stacked_widget.setCurrentIndex(index) 
 
+    # Navigate to main menu and reset current game
     def go_to_main_menu(self):
         self.reset_specific_game()
         self.stacked_widget.setCurrentIndex(0)
     
+    # Reset specific game
     def reset_specific_game(self):
         index = 1
         if self.previous_index == 5:

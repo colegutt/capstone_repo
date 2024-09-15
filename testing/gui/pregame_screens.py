@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 from general_functions import GeneralFunctions
 
+# Create Memory Pregame Screen
 class MemoryPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -14,6 +15,7 @@ class MemoryPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 5))
 
+# Create Fast Tap Pregame Screen
 class FastTapPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -26,6 +28,7 @@ class FastTapPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Fast Tap', description_str, 'green', 1, 9))
 
+# Create Memory 2P Pregame Screen
 class Memory2PPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -38,6 +41,7 @@ class Memory2PPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory 2 Player', description_str, 'purple', 2, 13))
 
+# Create Tennis Pregame Screen
 class TennisPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -50,13 +54,16 @@ class TennisPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 2))
 
+# General class that create pregame screens given certain parameters
 class PregameScreenCreator(QWidget):
     def __init__(self, stacked_widget, app_init):
+        # Intializations
+        super().__init__()
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
-        super().__init__()
-    
+
+    # Create pregame screen    
     def create_pregame_screen(self, game_title, game_desc, button_color, game_index, in_game_screen_index):
         self.setStyleSheet("background-color: black;")
         return self.set_layout(
@@ -66,12 +73,14 @@ class PregameScreenCreator(QWidget):
             self.gen_funcs.create_back_layout(game_index)
         )
     
+    # Return title label for the screen
     def set_title(self, game_title):
         title = QLabel(f'{game_title}', self)
         title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
         title.setAlignment(Qt.AlignCenter)
         return title
     
+    # Return description label for the screen
     def set_description_layout(self, game_desc):
         description_str = game_desc
 
@@ -86,6 +95,7 @@ class PregameScreenCreator(QWidget):
         description_layout.setContentsMargins(100, 0, 100, 0)
         return description_layout
 
+    # Create start button that starts the game when clicked
     def create_start_button(self, button_color, in_game_screen_index):
         start_button = QPushButton('Start', self)
         start_button.setStyleSheet(f"""
@@ -108,6 +118,7 @@ class PregameScreenCreator(QWidget):
 
         return start_layout
 
+    # Arrange created buttons and labels
     def set_layout(self, title, description_layout, start_button, back_button):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
@@ -120,6 +131,7 @@ class PregameScreenCreator(QWidget):
 
         return final_layout
 
+    # If start button is clicked, go to corresponding in-game screen
     def go_to_ingame_screen(self, in_game_screen_index):
         self.stacked_widget.setCurrentIndex(in_game_screen_index)
         if in_game_screen_index == 5:

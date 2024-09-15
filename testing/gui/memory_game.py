@@ -7,8 +7,10 @@ from general_functions import GeneralFunctions
 # Game Parameters
 SPEED = 0.5
 
+# This game is both Memory and Memory 2P
 class MemoryGame:
     def __init__(self, multiplayer=False):
+        # Intializations
         self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
@@ -17,6 +19,7 @@ class MemoryGame:
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.gen_funcs.turn_off_all_leds()
 
+    # Start memory game
     def run_game(self, update_score_callback, on_game_over_callback, update_player_callback=None):
         game_is_playing = True
         num_round = 0
@@ -67,6 +70,7 @@ class MemoryGame:
             sleep(SPEED)
             if game_is_playing:
                 self.gen_funcs.flash_all_leds()
+                # Change player if playing the multiplayer version
                 if self.multiplayer:
                     self.change_player()
                     update_player_callback(self.player)
@@ -77,12 +81,14 @@ class MemoryGame:
         
         GPIO.cleanup()
     
+    # Change player number
     def change_player(self):
         if self.player == 1:
             self.player = 2
         else:
             self.player = 1
     
+    # Wait to resume if game is paused
     def wait_to_resume(self):
         while self.pause_event.is_set():
             self.gen_funcs.turn_off_all_leds()
@@ -91,13 +97,16 @@ class MemoryGame:
             sleep(0.25)
         return 0
     
+    # End game if needed
     def stop(self):
         self.end_game = True
         self.pause_event.set()
 
+    # Pause game by setting pause_event
     def pause(self):
         self.pause_event.set()
 
+    # Resume game by resuming pause_event
     def resume(self):
         self.pause_event.clear()
 

@@ -13,6 +13,7 @@ class GameThread(QThread):
     def __init__(self):
         super().__init__()
         self.memory_game = MemoryGame(True)
+        
     # Function that runs when the thread starts
     def run(self):
 
@@ -80,7 +81,8 @@ class Memory2PInGameScreen(QWidget):
         main_layout.addWidget(self.go_back_button, alignment=Qt.AlignCenter)
         main_layout.addStretch()
         self.setLayout(main_layout)
-
+    
+    # Start Memory 2P game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread()
@@ -91,16 +93,19 @@ class Memory2PInGameScreen(QWidget):
         self.game_over_label.setVisible(False)
         self.turn_label.setVisible(True)
     
+    # Save Memory 2P high score if needed
     def save_high_score(self):
         if self.app_init.memory_2p_hs < self.score:
             self.app_init.memory_2p_hs = self.score
             self.app_init.mp_screen.update_displayed_values()
             self.app_init.save_memory_2p_high_score()
 
+    # Update score in screen
     def update_score_from_game(self, num_round):
         self.score = num_round
         self.score_label.setText(f'Score: {self.score}')
 
+    # Update "Player #'s Turn" label
     def update_player_label(self, player_num):
         if player_num == 1:
             self.turn_label.setText("Player 1's Turn")
@@ -108,18 +113,21 @@ class Memory2PInGameScreen(QWidget):
         else:
             self.turn_label.setText("Player 2's Turn")
             self.turn_label.setStyleSheet("color: red; font-size: 50px; font-weight: bold;")
-
+    
+    # Pause game and go to pause screen
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.memory_game.pause()
         self.stacked_widget.setCurrentIndex(14)
 
+    # Resume game if needed
     def resume_game(self):
         if self.game_thread:
             self.game_thread.memory_game.resume()
         else:
             self.start_game()
 
+    # End game by ending thread and hiding/showing needed labels and buttons
     def end_game(self):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.memory_game.stop()
@@ -127,7 +135,8 @@ class Memory2PInGameScreen(QWidget):
             self.game_thread.wait()
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
         self.turn_label.setVisible(False)
-
+    
+    # Reset game if needed
     def reset_game(self):
         self.end_game()
         self.save_high_score()
