@@ -124,7 +124,7 @@ class PregameScreenCreator(QWidget):
         final_layout.addWidget(title)
         final_layout.addSpacing(50)
         final_layout.addLayout(description_layout)
-        final_layout.addSpacing(75) 
+        final_layout.addSpacing(50) 
         final_layout.addLayout(start_button)
         final_layout.addStretch()
         final_layout.addLayout(back_button)
