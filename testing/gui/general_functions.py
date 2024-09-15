@@ -3,8 +3,11 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLa
 import RPi.GPIO as GPIO
 from time import sleep
 
+# These are general functions that are used in all scripts in this directory
+# to reduce code space and simplify functions
 class GeneralFunctions(QWidget):
     def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None, multiplayer=False):
+        # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
         self.game_score = game_score
@@ -16,6 +19,7 @@ class GeneralFunctions(QWidget):
         self.leds = None
         self.buttons = None
     
+    # Create common back button that is in bottom left of all screens
     def create_back_layout(self, index):
         back_button = QPushButton('Back', self)
         back_button.setStyleSheet("""
@@ -37,9 +41,17 @@ class GeneralFunctions(QWidget):
         back_layout.setContentsMargins(20, 20, 20, 20)
         return back_layout
     
+    # Function that goes back to the previous screen when button is clicked
     def go_back(self, index):
         self.stacked_widget.setCurrentIndex(index)
     
+    # Intialize GPIO pins:
+    # Yellow LED    (GPIO 17)
+    # Red LED       (GPIO 27)
+    # Green LED     (GPIO 22)
+    # Yellow Button (GPIO 18)
+    # Red Button    (GPIO 15)
+    # Green Button  (GPIO 14)
     def init_gpio(self):
         GPIO.setmode(GPIO.BCM)
         yellow_led = 17
@@ -67,15 +79,18 @@ class GeneralFunctions(QWidget):
 
         return self.pin_dict, self.buttons, self.leds
 
+    # Turn off all LEDs
     def turn_off_all_leds(self):
         for led in self.leds:
             GPIO.output(led, GPIO.LOW)
     
+    # Light up all LEDs
     def light_up_all_leds(self):
         GPIO.output(self.leds[0], GPIO.HIGH)
         GPIO.output(self.leds[1], GPIO.HIGH)
         GPIO.output(self.leds[2], GPIO.HIGH)
     
+    # Flash all LEDs 3 times
     def flash_all_leds(self):
         for _ in range(3):
             self.light_up_all_leds()
@@ -83,14 +98,17 @@ class GeneralFunctions(QWidget):
             self.turn_off_all_leds()
             sleep(0.1)
     
+    # Light up only one LED
     def light_up_led(self, led):
         GPIO.output(led, GPIO.HIGH)
     
+    # Light up LED and turn off within a set time
     def light_up_led_w_sleep(self, led, sleep_time):
         self.light_up_led(led)
         sleep(sleep_time)
         self.turn_off_led(led)
-    
+
+    # Light up LED as long as a button is pressed
     def light_up_led_as_long_as_pressed(self, led, button):
         self.light_up_led(led) 
         while GPIO.input(button) == GPIO.LOW:
@@ -98,10 +116,12 @@ class GeneralFunctions(QWidget):
 
         self.turn_off_led(led)
         sleep(0.1)
-        
+    
+    # Turn off a singular LED
     def turn_off_led(self, led):
         GPIO.output(led, GPIO.LOW)
     
+    # Blink red LED 5 times rapidly, signaling game over
     def game_over_flash(self):
         self.turn_off_all_leds()
         for _ in range(5):
@@ -110,12 +130,14 @@ class GeneralFunctions(QWidget):
             self.turn_off_led(self.leds[1])
             sleep(0.05)
     
+    # Returns title label for screen
     def set_title(self, label):
         title = QLabel(label, self)
         title.setStyleSheet("color: white; font-size: 72px; font-weight: bold;")
         title.setAlignment(Qt.AlignCenter)
         return title
     
+    # Returns game over label for in-game screens
     def create_game_over_label(self):
         game_over_label = QLabel(f'GAME OVER!', self)
         game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
@@ -123,6 +145,7 @@ class GeneralFunctions(QWidget):
         game_over_label.setVisible(False)
         return game_over_label
     
+    # Returns pause button for in-game screens
     def create_pause_button(self):
         pause_button = QPushButton('Pause', self)
         pause_button.setStyleSheet("""
@@ -140,12 +163,14 @@ class GeneralFunctions(QWidget):
         pause_button.clicked.connect(self.pause_game_func)
         return pause_button
     
+    # Returns score label for in-game screens
     def create_score_label(self):
         self.score_label = QLabel(f'Score: {self.game_score}', self)
         self.score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
         self.score_label.setAlignment(Qt.AlignCenter)
         return self.score_label
 
+    # Returns play again button that is shown when a game ends
     def create_play_again_button(self):
         play_again_button = QPushButton('Play Again', self)
         play_again_button.setStyleSheet("""
@@ -161,6 +186,7 @@ class GeneralFunctions(QWidget):
         play_again_button.setVisible(False)
         return play_again_button
     
+    # Returns go back button that is shown when a game ends
     def create_go_back_button(self):
         go_back_button = QPushButton('Go Back', self)
         go_back_button.setStyleSheet("""
@@ -176,22 +202,21 @@ class GeneralFunctions(QWidget):
         go_back_button.setVisible(False)
         return go_back_button
     
+    # Function that hides or shows the game over, play again, and go back buttons
     def hide_or_show_end_game_buttons(self, game_over_label, play_again_button, go_back_button, show):
         game_over_label.setVisible(show)
         play_again_button.setVisible(show)
         go_back_button.setVisible(show)
     
+    # General play again function
     def play_game_again(self):
         self.reset_game_func()
         self.start_game_func()
     
+    # Select new game by resetting current game and going to the correct index screen
     def select_new_game(self):
         self.reset_game_func()
         if self.multiplayer:
             self.stacked_widget.setCurrentIndex(2)
         else:
             self.stacked_widget.setCurrentIndex(1)
-    
-    def update_score(self, score):
-        self.score = num_round
-        self.score_label.setText(f'Score: {score}')

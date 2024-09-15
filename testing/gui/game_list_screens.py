@@ -2,6 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 from general_functions import GeneralFunctions
 
+# Single player screen creation
 class SPScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -22,11 +23,12 @@ class SPScreen(QWidget):
 
         self.setLayout(self.gl_creator.create_screen())
 
+    # Update high scores
     def update_displayed_values(self):
         self.hs_qlabels['Memory'].setText(f'{self.app_init.memory_hs}')
         self.hs_qlabels['Fast Tap'].setText(f'{self.app_init.fast_tap_hs}')
     
-
+# Multiplayer screen creation
 class MPScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
@@ -46,11 +48,14 @@ class MPScreen(QWidget):
         )
         self.setLayout(self.gl_creator.create_screen())
     
+    # Update high scores
     def update_displayed_values(self):
         self.hs_qlabels['Memory 2 Player'].setText(f'{self.app_init.memory_2p_hs}')
 
+# Common function for creating game list screens
 class GameListScreenCreator(QWidget):
     def __init__(self, stacked_widget, app_init, games_and_high_scores, title, multiplayer, hs_qlabels, colors):
+        # Initializations
         super().__init__()
         self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
@@ -61,6 +66,7 @@ class GameListScreenCreator(QWidget):
         self.title = title
         self.colors = colors
     
+    # Create screen
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         return self.set_layout(
@@ -69,12 +75,14 @@ class GameListScreenCreator(QWidget):
             self.gen_funcs.create_back_layout(0)
         )
     
+    # Return title label
     def set_title(self):
         title = QLabel(self.title, self)
         title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
         title.setAlignment(Qt.AlignCenter)
         return title
 
+    # Return layout of the "Game" and "High Score" headers
     def create_header_layout(self):
         game_header_title = QLabel('Game', self)
         game_header_title.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
@@ -93,6 +101,7 @@ class GameListScreenCreator(QWidget):
 
         return header_layout
 
+    # Return the layout for the list of the game buttons and the high scores to the right of them
     def create_games_layout(self):
         header_layout = self.create_header_layout()
 
@@ -135,6 +144,7 @@ class GameListScreenCreator(QWidget):
 
         return games_layout
 
+    # Take created layouts and arrange them
     def set_layout(self, title, games_layout, back_layout):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
@@ -142,6 +152,7 @@ class GameListScreenCreator(QWidget):
         final_layout.addLayout(back_layout)
         return final_layout
     
+    # If button is clicked, go to the corresponding screen
     def go_to_pregame_screen(self, index):
         if self.multiplayer:
             if index == 0:

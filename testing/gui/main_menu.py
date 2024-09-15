@@ -2,12 +2,15 @@ import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
 
+# Main menu screen creation
 class MainMenu(QWidget):
     def __init__(self, stacked_widget, app_init):
+        # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
         self.app_init = app_init
 
+        # Create labels and buttons that are used in create_screen
         self.title = self.set_title()
         self.single_player_button = self.create_single_player_button()
         self.multiplayer_button = self.create_multiplayer_button()
@@ -15,7 +18,8 @@ class MainMenu(QWidget):
         self.exit_button = self.create_exit_button()
 
         self.create_screen()
-        
+    
+    # Create screen using previously created labels and buttons
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         button_layout = QHBoxLayout()
@@ -49,6 +53,7 @@ class MainMenu(QWidget):
         final_layout.addStretch() 
         self.setLayout(final_layout) 
     
+    # Return title label for main menu
     def set_title(self):
         title = QLabel('BEEPY', self)
         title.setStyleSheet("color: white; font-size: 48px; font-weight: bold;")
@@ -56,6 +61,7 @@ class MainMenu(QWidget):
 
         return title
 
+    # Returns single player button
     def create_single_player_button(self):
         single_player_button = QPushButton('Single Player', self)
         single_player_button.setStyleSheet("""
@@ -73,6 +79,7 @@ class MainMenu(QWidget):
         single_player_button.clicked.connect(self.show_SP_screen)
         return single_player_button
 
+    # Returns multiplayer button
     def create_multiplayer_button(self):
         multiplayer_button = QPushButton('Multiplayer', self)
         multiplayer_button.setStyleSheet("""
@@ -90,6 +97,7 @@ class MainMenu(QWidget):
         multiplayer_button.clicked.connect(self.show_MP_screen)
         return multiplayer_button
     
+    # Returns settings button
     def create_settings_button(self):
         settings_button = QPushButton('Settings', self)
         settings_button.setStyleSheet("""
@@ -107,6 +115,7 @@ class MainMenu(QWidget):
         settings_button.clicked.connect(self.show_SETTINGS_screen)
         return settings_button
     
+    # Returns exit button
     def create_exit_button(self):
         exit_button = QPushButton('Exit', self)
         exit_button.setStyleSheet("""
@@ -125,16 +134,20 @@ class MainMenu(QWidget):
         exit_button.clicked.connect(self.exit_app)
         return exit_button
 
+    # Exit application if the exit button is clicked
     def exit_app(self):
         self.app_init.save_settings()
         sys.exit()
     
+    # Navigate to single player screen (game_list_screens.py)
     def show_SP_screen(self):
         self.stacked_widget.setCurrentIndex(1)
 
+    # Navigate to multiplayer screen (game_list_screens.py)
     def show_MP_screen(self):
         self.stacked_widget.setCurrentIndex(2)
 
+    # Navigate to settings screen and update parameters
     def show_SETTINGS_screen(self):
         self.app_init.update_settings_screen() 
         self.stacked_widget.setCurrentIndex(3)

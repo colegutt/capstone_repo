@@ -11,15 +11,14 @@ from PyQt5.QtCore import QSettings
 
 class ApplicationInit(QWidget):
     def __init__(self):
+        # Initialize the application
         super().__init__()
-
         self.setWindowTitle('GUI Test')
         self.setStyleSheet("background-color: black;")
-
         self.stacked_widget = QStackedWidget()
-
         self.settings = QSettings("BEEPY", "BEEPY_GUI")
 
+        # Set default settings if we cannot load the previous settings
         self.brightness_level = self.settings.value("brightness", 50, int)
         self.sound_level = self.settings.value("sound", 50, int)
         self.narration_on = self.settings.value("narration", False, bool)
@@ -29,7 +28,7 @@ class ApplicationInit(QWidget):
         self.fast_tap_hs = self.settings.value("fast_tap_hs", 0, int)
         self.memory_2p_hs = self.settings.value("memory_2p_hs", 0, int)
 
-        
+        # Intialize the screens
         self.main_menu = MainMenu(self.stacked_widget, self)
         self.sp_screen = SPScreen(self.stacked_widget, self)
         self.mp_screen = MPScreen(self.stacked_widget, self)
@@ -90,35 +89,44 @@ class ApplicationInit(QWidget):
 
         self.showFullScreen()
     
+    # Returns the sound level in the settings
     def get_sound_level(self):
         return self.sound_level
     
+    # Returns the brightness level in the settings
     def get_brightness_level(self):
         return self.brightness_level
     
+    # Returns the bool if narration is on or off in the settings
     def get_narration_bool(self):
         return self.narration_on
     
+    # Function to update the displayed settings when the screen is accessed
     def update_settings_screen(self):
         self.settings_screen.update_displayed_values()
     
+    # Function to update the displayed settings when the respective pause settings screens are accessed
     def update_pause_settings_screen(self, index):
         if index == 5:
             self.memory_pause_settings_screen.update_displayed_values()
         elif index == 9:
             self.fast_tap_pause_settings_screen.update_displayed_values()
     
+    # Save current settings
     def save_settings(self):
         self.settings.setValue("brightness", self.brightness_level)
         self.settings.setValue("sound", self.sound_level)
         self.settings.setValue("narration", self.narration_on)
     
+    # Save high score for memory
     def save_memory_high_score(self):
         self.settings.setValue("memory_hs", self.memory_hs)
     
+    # Save high score for fast tap
     def save_fast_tap_high_score(self):
         self.settings.setValue("fast_tap_hs", self.fast_tap_hs)
     
+    # Save high score for memory 2p
     def save_memory_2p_high_score(self):
         self.settings.setValue("memory_2p_hs", self.memory_2p_hs)
 
