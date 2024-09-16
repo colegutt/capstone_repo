@@ -8,21 +8,24 @@ def connect_bluetooth(mac_address):
         subprocess.run(['sudo', 'systemctl', 'start', 'bluetooth'], check=True)
         subprocess.run(['sudo', 'systemctl', 'enable', 'bluetooth'], check=True)
 
-        # Use bluetoothctl to connect and trust the device
-        commands = [
-            'connect {}'.format(mac_address),
-            'trust {}'.format(mac_address),
-            'exit'
-        ]
+        # Prepare the commands to be run in bluetoothctl
+        commands = f"""
+        connect {mac_address}
+        trust {mac_address}
+        exit
+        """
 
-        for cmd in commands:
-            subprocess.run(['bluetoothctl', cmd], check=True)
-
-        print("Bluetooth device connected successfully.")
+        # Use bluetoothctl with input commands
+        process = subprocess.Popen(['bluetoothctl'], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        stdout, stderr = process.communicate(commands)
+        
+        if process.returncode == 0:
+            print("Bluetooth device connected successfully.")
+        else:
+            print(f"Error connecting Bluetooth device: {stderr}")
 
     except subprocess.CalledProcessError as e:
         print(f"An error occurred: {e}")
-
 
 if __name__ == "__main__":
     main_pi_mac_address = 'D8:3A:DD:75:85:23'
