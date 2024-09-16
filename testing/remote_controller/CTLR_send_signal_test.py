@@ -1,4 +1,5 @@
 from bluetooth import *
+import time
 
 # Replace with your gaming console's MAC address
 MAC_ADDRESS = 'D8:3A:DD:75:85:23'
