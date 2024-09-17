@@ -1,5 +1,6 @@
 from bluetooth import *
 import RPi.GPIO as GPIO
+from time import sleep
 
 # Define the MAC address of the MAIN device
 main_mac_address = "D8:3A:DD:75:85:23"  # Replace with MAIN's MAC address
@@ -56,6 +57,8 @@ try:
             message = 'purple'
             sock.send(message)
             print("Message sent!")
+        
+        sleep(0.5)
 
 except Exception as e:
     print(f"An error occurred: {e}")
