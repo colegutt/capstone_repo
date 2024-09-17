@@ -1,5 +1,5 @@
 import smbus2 as smbus
-import time
+import time, math
 
 # MPU6050 Registers and their Address
 PWR_MGMT_1 = 0x6B
@@ -11,9 +11,9 @@ INT_ENABLE = 0x38
 ACCEL_XOUT_H = 0x3B
 ACCEL_YOUT_H = 0x3D
 ACCEL_ZOUT_H = 0x3F
-GYRO_XOUT_H = 0x43
-GYRO_YOUT_H = 0x45
-GYRO_ZOUT_H = 0x47
+GYRO_XOUT_H = 0x68
+GYRO_YOUT_H = 0x68
+GYRO_ZOUT_H = 0x68
 
 # Initialize the MPU6050
 def MPU_Init():
@@ -46,29 +46,34 @@ def read_raw_data(addr):
         value = value - 65536
     return value
 
-# Setup
-bus = smbus.SMBus(1)  # or 0 if you're using an older Raspberry Pi model
-Device_Address = 0x68  # MPU6050 device address
+def determine_orientation(accel_data):
+    x, y, z = accel_data
+   
+    magnitude = math.sqrt(x**2 + y**2 + z**2)
+   
+    x_norm = x / magnitude
+    y_norm = y / magnitude
+    z_norm = z / magnitude
+   
+    threshold_angle = math.pi / 4
+   
+    tilt_angle_z = math.acos(abs(z_norm))
+    tilt_angle_y = math.acos(abs(y_norm))
+
+    if tilt_angle_z < threshold_angle or tilt_angle_y > threshold_angle:
+        return "Horizontal"
+    else:
+        return "Vertical"
+
+bus = smbus.SMBus(1) 
+Device_Address = 0x68  
 
 MPU_Init()
 
-print("Reading Data from MPU6050...")
-
 while True:
-    # Read accelerometer data
-    acc_x = read_raw_data(ACCEL_XOUT_H)
-    acc_y = read_raw_data(ACCEL_YOUT_H)
-    acc_z = read_raw_data(ACCEL_ZOUT_H)
-
-    # Read gyroscope data
-    gyro_x = read_raw_data(GYRO_XOUT_H)
-    gyro_y = read_raw_data(GYRO_YOUT_H)
-    gyro_z = read_raw_data(GYRO_ZOUT_H)
-
-    # Print accelerometer data
-    print(f"Ax={acc_x}, Ay={acc_y}, Az={acc_z}")
-
-    # Print gyroscope data
-    print(f"Gx={gyro_x}, Gy={gyro_y}, Gz={gyro_z}")
-
+    print("Reading Data from MPU6050...")
+    accel_data = (read_raw_data(ACCEL_XOUT_H), read_raw_data(ACCEL_YOUT_H), read_raw_data(ACCEL_ZOUT_H))
+    print(accel_data)
+    orientation = determine_orientation_gpt(accel_data)
+    print(orientation)
     time.sleep(1)

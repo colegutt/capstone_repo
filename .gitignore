@@ -1,0 +1,6 @@
+__pycache__/*
+testing/gui/__pycache__/*
+testing/__pycache__/*
+*.pyc
+*.pyo
+*.pyd
