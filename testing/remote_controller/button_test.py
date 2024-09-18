@@ -11,12 +11,12 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # Defines the GPIO pins for each button (need to add gpio numbers on campus)
-RED_BUTTON = XX
-ORA_BUTTON = XX
-YEL_BUTTON = XX
-GRE_BUTTON = XX
-BLU_BUTTON = XX
-PUR_BUTTON = XX
+RED_BUTTON = 25
+ORA_BUTTON = 24
+YEL_BUTTON = 23
+GRE_BUTTON = 4
+BLU_BUTTON = 27
+PUR_BUTTON = 22
 
 # Set up the buttons as inputs with pull-up resistors
 GPIO.setup(RED_BUTTON, GPIO.IN, pull_up_down=GPIO.PUD_UP)
