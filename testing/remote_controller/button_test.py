@@ -48,7 +48,7 @@ try:
         if GPIO.input(PUR_BUTTON) == GPIO.LOW:
             print("Purple button pressed!")
         
-        time.sleep(0.25)  # Small delay to avoid CPU overload
+        time.sleep(0.1)  # Small delay to avoid CPU overload
     
 except KeyboardInterrupt:
     print("Program stopped by User.")
