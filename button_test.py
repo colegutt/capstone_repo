@@ -10,7 +10,7 @@ import time
 # Set up the GPIO mode
 GPIO.setmode(GPIO.BCM)
 
-# Defines the GPIO pins for each button
+# Defines the GPIO pins for each button (need to add gpio numbers on campus)
 RED_BUTTON = XX
 ORA_BUTTON = XX
 YEL_BUTTON = XX
