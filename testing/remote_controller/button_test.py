@@ -32,29 +32,24 @@ try:
         # Check each button
         if GPIO.input(RED_BUTTON) == GPIO.LOW:
             print("Red button pressed!")
-            time.sleep(0.5)
         
         if GPIO.input(ORA_BUTTON) == GPIO.LOW:
             print("Orange button pressed!")
-            time.sleep(0.5)
         
         if GPIO.input(YEL_BUTTON) == GPIO.LOW:
             print("Yellow button pressed!")
-            time.sleep(0.5)
         
         if GPIO.input(GRE_BUTTON) == GPIO.LOW:
             print("Green button pressed!")
-            time.sleep(0.5)
         
         if GPIO.input(BLU_BUTTON) == GPIO.LOW:
             print("Blue button pressed!")
-            time.sleep(0.5)
         
         if GPIO.input(PUR_BUTTON) == GPIO.LOW:
             print("Purple button pressed!")
-            time.sleep(0.5)
         
-        time.sleep(0.1)  # Small delay to avoid CPU overload
+        time.sleep(0.25)  # Small delay to avoid CPU overload
+    
 except KeyboardInterrupt:
     print("Program stopped by User.")
 finally:

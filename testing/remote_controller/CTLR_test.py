@@ -58,7 +58,7 @@ try:
             sock.send(message)
             print("Message sent!")
         
-        sleep(0.5)
+        sleep(0.25)
 
 except Exception as e:
     print(f"An error occurred: {e}")
