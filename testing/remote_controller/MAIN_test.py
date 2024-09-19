@@ -15,9 +15,16 @@ client_sock, client_info = server_sock.accept()
 print("Accepted connection from", client_info)
 
 try:
-    # Receive the message
-    data = client_sock.recv(1024)
-    print("Received message:", data.decode("utf-8"))
+    while True:
+        # Receive the message
+        data = client_sock.recv(1024)
+        if not data:
+            # Break the loop if no data is received (i.e., connection is closed)
+            print("Connection closed.")
+            break
+        
+        # Decode and print the message
+        print("Received message:", data.decode("utf-8"))
 
 except Exception as e:
     print(f"An error occurred: {e}")

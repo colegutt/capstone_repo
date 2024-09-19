@@ -1,13 +1,11 @@
 # YELLOW LED:    GPIO 17
-# YELLOW BUTTON: GPIO 18
 # RED LED:       GPIO 27
-# RED BUTTON:    GPIO 15
 # GREEN LED:     GPIO 22
-# GREEN BUTTON:  GPIO 14
 
 import RPi.GPIO as GPIO
 from time import sleep
 import random
+from bluetooth import *
 
 def stop():
     global THREAD_FLAG
@@ -28,23 +26,27 @@ def main():
         yellow_led = 17
         red_led = 27
         green_led = 22
-        yellow_button = 18
-        red_button = 15
-        green_button = 14
+
+        # Bluetooth setup
+        port = 1
+        server_sock = BluetoothSocket(RFCOMM)
+        server_sock.bind(("", port))
+        server_sock.listen(1)
+        print("Waiting for a connection from CTLR...")
+        
+        client_sock, client_info = server_sock.accept()
+        print("Accepted connection from", client_info)
 
         pin_dict = {
-            yellow_led: yellow_button,
-            red_led: red_button,
-            green_led: green_button
-        
+            yellow_led: 'yellow',
+            red_led: 'red',
+            green_led: 'green'
         }
+
         # Initialize pins
         GPIO.setup(yellow_led, GPIO.OUT)
         GPIO.setup(red_led, GPIO.OUT)
         GPIO.setup(green_led, GPIO.OUT)
-        GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         # Make sure all LEDs are off
         GPIO.output(yellow_led, GPIO.LOW)
@@ -54,7 +56,6 @@ def main():
         # Initialize game parameters
         game_is_playing = True
         num_round = 0
-        user_input = False
         led_sequence = []
 
         print("BEGIN GAME")
@@ -73,62 +74,67 @@ def main():
                     return
                 sleep(0.5)
                 light_up_led(led, 0.5)
-            # Get user input
-            print("Reapeat LED sequence")
-            i = 0
-            while True:
-                user_input = False
-                while not user_input:
-                    if THREAD_FLAG:
-                        GPIO.cleanup()
-                        return
-                    elif GPIO.input(yellow_button) == GPIO.LOW:
-                        light_up_led(yellow_led, 0.25)
-                        user_input = True
-                        pressed_button = yellow_button
-                    elif GPIO.input(green_button) == GPIO.LOW:
-                        light_up_led(green_led, 0.25)
-                        user_input = True
-                        pressed_button = green_button
-                    elif GPIO.input(red_button) == GPIO.LOW:
-                        light_up_led(red_led, 0.25)
-                        user_input = True
-                        pressed_button = red_button
             
-                if (pin_dict[led_sequence[i]] != pressed_button):
-                    game_is_playing = False
+            # Get user input from Bluetooth
+            print("Repeat LED sequence")
+            i = 0
+            while i < len(led_sequence):
+                try:
+                    data = client_sock.recv(1024)
+                    if not data:
+                        print("Connection closed.")
+                        game_is_playing = False
+                        break
+                    
+                    received_button = data.decode("utf-8")
+                    print(f"Received button press: {received_button}")
+                    
+                    # Check if the received button matches the expected LED in the sequence
+                    if pin_dict[led_sequence[i]] != received_button:
+                        game_is_playing = False
+                        break
 
-                i = i + 1
-                if i == len(led_sequence):
-                    break
-                else:
+                    # Light up the corresponding LED for feedback
+                    light_up_led(led_sequence[i], 0.25)
+                    
+                    i += 1
                     sleep(0.5)
-        
+
+                except Exception as e:
+                    print(f"An error occurred while receiving data: {e}")
+                    game_is_playing = False
+                    break
+
             sleep(0.5)
+
             if game_is_playing:
                 print("CORRECT")
-                for i in range(0,3):
+                for _ in range(3):
                     GPIO.output(yellow_led, GPIO.HIGH)
                     GPIO.output(red_led, GPIO.HIGH)
                     GPIO.output(green_led, GPIO.HIGH)
-                    sleep(0.1)     
+                    sleep(0.1)
                     GPIO.output(yellow_led, GPIO.LOW)
                     GPIO.output(red_led, GPIO.LOW)
                     GPIO.output(green_led, GPIO.LOW)
                     sleep(0.1)
             else:
                 print("INCORRECT SEQUENCE. GAME OVER!")
-                for i in range (0,5):
+                for _ in range(5):
                     light_up_led(red_led, 0.05)
                     sleep(0.05)
         
+        # Cleanup on game end
+        client_sock.close()
+        server_sock.close()
         GPIO.cleanup()
+
     except KeyboardInterrupt:
         THREAD_FLAG = True
-        return
+        GPIO.cleanup()
 
 if __name__ == "__main__":
-   try:
-       main()
-   except KeyboardInterrupt:
-       GPIO.cleanup()
+    try:
+        main()
+    except KeyboardInterrupt:
+        GPIO.cleanup()
