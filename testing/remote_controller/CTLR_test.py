@@ -13,6 +13,11 @@ message = "hello world"
 # Create a Bluetooth socket
 sock = BluetoothSocket(RFCOMM)
 
+def wait_for_button_release(button):
+    while GPIO.input(button) == GPIO.LOW:
+        sleep(0.1)
+    return
+
 try:
     # Connect to the MAIN device
     sock.connect((main_mac_address, port))
@@ -37,28 +42,34 @@ try:
             message = 'red'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(red_button)
         elif GPIO.input(orange_button) == GPIO.LOW:
             message = 'orange'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(orange_button)
         elif GPIO.input(yellow_button) == GPIO.LOW: 
             message = 'yellow'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(yellow_button)
         elif GPIO.input(green_button) == GPIO.LOW: 
             message = 'green'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(green_button)
         elif GPIO.input(blue_button) == GPIO.LOW: 
             message = 'blue'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(blue_button)
         elif GPIO.input(purple_button) == GPIO.LOW: 
             message = 'purple'
             sock.send(message)
             print("Message sent!")
+            wait_for_button_release(purple_button)
         
-        sleep(0.25)
+        sleep(0.1)
 
 except Exception as e:
     print(f"An error occurred: {e}")
