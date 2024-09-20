@@ -68,7 +68,11 @@ try:
             sock.send(message)
             print("Message sent!")
             wait_for_button_release(purple_button)
+        
         # add elif to check bluetooth and reconnect if disconnected
+
+
+        
         sleep(0.1)
 
 except Exception as e:
