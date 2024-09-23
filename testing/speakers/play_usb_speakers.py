@@ -13,7 +13,6 @@ def set_volume(volume_percentage, sink_name):
     except subprocess.CalledProcessError as e:
         print(f"Error setting volume: {e}", file=sys.stderr)
 
-
 def play_audio(file_path):
     if not os.path.isfile(file_path):
         print(f"Error: File {file_path} does not exist.", file=sys.stderr)
