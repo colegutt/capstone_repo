@@ -4,21 +4,17 @@ import subprocess
 import sys
 import os
 
-VOLUME_PERCENTAGE = 100
-HDMI_DEVICE = 'Built-in Audio Digital Stereo (HDMI)' 
+# Ranges from 0 to 153
+VOLUME_PERCENTAGE = 120
 
-def set_volume(volume_percentage, device):
-    """
-    Set the system volume using amixer.
-    volume_percentage should be between 0 and 100.
-    """
-    if not (0 <= volume_percentage <= 100):
-        raise ValueError("Volume percentage must be between 0 and 100.")
-    
+def set_volume(volume_percentage):
+    if not (0 <= volume_percentage <= 153):
+        raise ValueError("Volume percentage must be between 0 and 153.")
+
     try:
-        # Set the volume for the specified audio device
-        subprocess.run(['amixer', '-D', device, 'sset', 'Master', f'{volume_percentage}%'], check=True)
-        print(f"System volume set to {volume_percentage}% for device {device}")
+        # Set the volume for the default sink
+        subprocess.run(['pactl', 'set-sink-volume', '@DEFAULT_SINK@', f'{volume_percentage}%'], check=True)
+        print(f"System volume set to {volume_percentage}%")
     except subprocess.CalledProcessError as e:
         print(f"Error setting system volume: {e}", file=sys.stderr)
 
@@ -44,5 +40,5 @@ if __name__ == "__main__":
         print("Volume percentage must be an integer.", file=sys.stderr)
         sys.exit(1)
 
-    set_volume(volume_percentage, HDMI_DEVICE)
+    set_volume(volume_percentage)
     play_audio(audio_file)
