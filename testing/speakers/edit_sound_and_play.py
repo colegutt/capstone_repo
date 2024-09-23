@@ -5,7 +5,7 @@ import sys
 import os
 
 # Ranges from 0 to 153
-VOLUME_PERCENTAGE = 120
+VOLUME_PERCENTAGE = 100
 
 def set_volume(volume_percentage):
     if not (0 <= volume_percentage <= 153):
