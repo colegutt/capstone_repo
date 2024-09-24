@@ -75,7 +75,7 @@ def main():
             user_input = False
             while not user_input:
                 if GPIO.input(yellow_button) == GPIO.LOW:
-                    light_up_led_as_long_as_pressed(yellow_button, yellow_button)
+                    light_up_led_as_long_as_pressed(yellow_led, yellow_button)
                     user_input = True
                     pressed_button = yellow_button
                 elif GPIO.input(green_button) == GPIO.LOW:
