@@ -1,133 +1,140 @@
-import sys
+# YELLOW LED:    GPIO 17
+# RED LED:       GPIO 27
+# GREEN LED:     GPIO 22
+
 import RPi.GPIO as GPIO
-import threading
 from time import sleep
-from bluetooth import *
 import random
+from bluetooth import *
 
-# Global variables
-global THREAD_FLAG, expected_sequence, current_index, client_sock
-THREAD_FLAG = False
-expected_sequence = []
-current_index = 0
-
-# GPIO button (Board button) settings
-start_button = 10  # GPIO pin for the start button on the board
-
-# Bluetooth setup
-port = 1
-server_sock = BluetoothSocket(RFCOMM)
-server_sock.bind(("", port))
-server_sock.listen(1)
-client_sock = None  # Global variable to store client connection when Bluetooth is connected
-
-def init_gpio():
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(start_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-def stop_demo():
+def stop():
     global THREAD_FLAG
     THREAD_FLAG = True
 
-def listen_for_bluetooth_input():
-    global client_sock
-    while True:
-        if client_sock is None:
-            print("Waiting for a connection from CTLR...")
-            try:
-                client_sock, client_info = server_sock.accept()
-                print("Accepted connection from", client_info)
-            except Exception as e:
-                print(f"Error accepting Bluetooth connection: {e}")
-        else:
-            try:
-                data = client_sock.recv(1024)
-                if data:
-                    input_str = data.decode('utf-8')
-                    print(f"Received Bluetooth input: {input_str}")
-                    process_bluetooth_input(input_str)
-            except Exception as e:
-                print(f"Error receiving Bluetooth input: {e}")
-                client_sock = None  # Reset client socket on error
+def light_up_led(pin, sleep_time):
+   GPIO.output(pin, GPIO.HIGH) 
+   sleep(sleep_time)
+   GPIO.output(pin, GPIO.LOW)
+    
+def main():
+    try:
+        global THREAD_FLAG
+        THREAD_FLAG = False
 
-def generate_sequence():
-    return random.choices(['red', 'blue', 'green', 'yellow'], k=5)  # Example sequence length
+        GPIO.setmode(GPIO.BCM)
 
-def process_bluetooth_input(input_str):
-    global current_index
-    print(f"Processing input from controller: {input_str}")
-    if input_str == expected_sequence[current_index]:
-        print(f"Correct input: {input_str}")
-        current_index += 1
-        if current_index >= len(expected_sequence):
-            print("Round complete! Generating next sequence.")
-            expected_sequence = generate_sequence()
-            current_index = 0
-    else:
-        print(f"Incorrect input: {input_str}. Game over.")
-        # Reset game logic here if desired
+        yellow_led = 17
+        red_led = 27
+        green_led = 22
 
-def process_board_input():
-    global current_index
-    if GPIO.input(start_button) == GPIO.LOW:
-        print("Board button pressed.")
-        # Check if the current index is valid and process it
-        # This should be modified to check the specific input associated with the board button logic
-        # Assuming the board button is red for example
-        if expected_sequence[current_index] == 'red':  # Modify this logic based on your actual buttons
-            print("Correct input from board.")
-            current_index += 1
-            if current_index >= len(expected_sequence):
-                print("Round complete! Generating next sequence.")
-                expected_sequence = generate_sequence()
-                current_index = 0
-        else:
-            print("Incorrect input from board. Game over.")
-            # Reset game logic here if desired
+        # Bluetooth setup
+        port = 1
+        server_sock = BluetoothSocket(RFCOMM)
+        server_sock.bind(("", port))
+        server_sock.listen(1)
+        print("Waiting for a connection from CTLR...")
+        
+        client_sock, client_info = server_sock.accept()
+        print("Accepted connection from", client_info)
 
-def main_game_logic():
-    global THREAD_FLAG, expected_sequence, current_index
-    THREAD_FLAG = False
-    expected_sequence = generate_sequence()
-    current_index = 0
-    print(f"Starting game with sequence: {expected_sequence}")
+        pin_dict = {
+            yellow_led: 'yellow',
+            red_led: 'red',
+            green_led: 'green'
+        }
 
-    # Main game loop
-    while not THREAD_FLAG:
-        # Simulate showing the LED sequence here (not implemented in this example)
-        for color in expected_sequence:
-            print(f"Showing LED: {color}")  # Replace with actual LED control
-            sleep(1)  # Show each LED for 1 second
+        # Initialize pins
+        GPIO.setup(yellow_led, GPIO.OUT)
+        GPIO.setup(red_led, GPIO.OUT)
+        GPIO.setup(green_led, GPIO.OUT)
+        
+        # Make sure all LEDs are off
+        GPIO.output(yellow_led, GPIO.LOW)
+        GPIO.output(red_led, GPIO.LOW)
+        GPIO.output(green_led, GPIO.LOW)
 
-        sleep(1)  # Pause before next round
+        # Initialize game parameters
+        game_is_playing = True
+        num_round = 0
+        led_sequence = []
 
-def check_inputs():
-    if client_sock:  # If the controller is connected, process Bluetooth input
-        return
-    else:  # If not connected, process board input
-        process_board_input()
+        print("BEGIN GAME")
+
+        while game_is_playing:
+            num_round = num_round + 1
+            print("ROUND ", num_round)
+            random_led = random.choice(list(pin_dict.keys()))
+            led_sequence.append(random_led)
+
+            # Light up LED sequence
+            print("Showing LED sequence")
+            for led in led_sequence:
+                if THREAD_FLAG:
+                    GPIO.cleanup()
+                    return
+                sleep(0.5)
+                light_up_led(led, 0.5)
+            
+            # Get user input from Bluetooth
+            print("Repeat LED sequence")
+            i = 0
+            while i < len(led_sequence):
+                try:
+                    data = client_sock.recv(1024)
+                    if not data:
+                        print("Connection closed.")
+                        game_is_playing = False
+                        break
+                    
+                    received_button = data.decode("utf-8")
+                    print(f"Received button press: {received_button}")
+                    
+                    # Check if the received button matches the expected LED in the sequence
+                    if pin_dict[led_sequence[i]] != received_button:
+                        game_is_playing = False
+                        break
+
+                    # Light up the corresponding LED for feedback
+                    light_up_led(led_sequence[i], 0.25)
+                    
+                    i += 1
+                    sleep(0.5)
+
+                except Exception as e:
+                    print(f"An error occurred while receiving data: {e}")
+                    game_is_playing = False
+                    break
+
+            sleep(0.5)
+
+            if game_is_playing:
+                print("CORRECT")
+                for _ in range(3):
+                    GPIO.output(yellow_led, GPIO.HIGH)
+                    GPIO.output(red_led, GPIO.HIGH)
+                    GPIO.output(green_led, GPIO.HIGH)
+                    sleep(0.1)
+                    GPIO.output(yellow_led, GPIO.LOW)
+                    GPIO.output(red_led, GPIO.LOW)
+                    GPIO.output(green_led, GPIO.LOW)
+                    sleep(0.1)
+            else:
+                print("INCORRECT SEQUENCE. GAME OVER!")
+                for _ in range(5):
+                    light_up_led(red_led, 0.05)
+                    sleep(0.05)
+        
+        # Cleanup on game end
+        client_sock.close()
+        server_sock.close()
+        GPIO.cleanup()
+
+    except KeyboardInterrupt:
+        THREAD_FLAG = True
+        GPIO.cleanup()
 
 if __name__ == "__main__":
     try:
-        init_gpio()
-
-        # Start listening for Bluetooth connections in a separate thread
-        bt_thread = threading.Thread(target=listen_for_bluetooth_input)
-        bt_thread.daemon = True
-        bt_thread.start()
-
-        # Start the game immediately
-        print("Starting game. Use board buttons or Bluetooth controller.")
-        main_game_logic()
-
-        # Main loop to monitor inputs during the game
-        while True:
-            check_inputs()  # Check inputs based on connection status
-            sleep(0.15)
-
+        main()
     except KeyboardInterrupt:
-        stop_demo()
         GPIO.cleanup()
-        if client_sock:
-            client_sock.close()
-        server_sock.close()
