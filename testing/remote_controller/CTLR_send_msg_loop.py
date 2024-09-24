@@ -113,6 +113,10 @@ try:
                 sock.send('purple')
                 print("Message sent: purple")
                 # wait_for_button_release(button_and_led_dict['purple'])
+            else:
+                sock.send('none')
+                print("Message sent: none")
+
 
         except (BluetoothError, OSError) as e:
             print(f"Connection lost: {e}. Attempting to reconnect...")
