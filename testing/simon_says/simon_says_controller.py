@@ -12,9 +12,11 @@ def light_up_led(pin, sleep_time):
    sleep(sleep_time)
    GPIO.output(pin, GPIO.LOW)
 
-def light_up_led_as_long_as_pressed(led, button):
+def light_up_led_as_long_as_pressed(client_sock, led, button):
         GPIO.output(led, GPIO.HIGH) 
-        while GPIO.input(button) == GPIO.LOW:
+        while not ('none' in button):
+            data = client_sock.recv(1024)
+            button = data.decode("utf-8")
             sleep(0.01)
         GPIO.output(led, GPIO.LOW) 
     
@@ -83,9 +85,12 @@ def main():
                     break
                 
                 received_button = data.decode("utf-8")
+                if 'none' in received_button:
+                    continue
+
                 print(f"Received button press: {received_button}")
 
-                light_up_led_as_long_as_pressed(led_sequence[i], received_button)
+                light_up_led_as_long_as_pressed(client_sock, led_sequence[i], received_button)
                 
                 # Check if the received button matches the expected LED in the sequence
                 if pin_dict[led_sequence[i]] != received_button:
