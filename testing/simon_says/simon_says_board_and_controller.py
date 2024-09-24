@@ -16,26 +16,46 @@ def light_up_led_as_long_as_pressed(led, button):
 
 def light_up_led_as_long_as_pressed_controller(client_sock, led, button):
     GPIO.output(led, GPIO.HIGH)
-    while not ('none' in button):
-        data = client_sock.recv(1024)
-        button = data.decode("utf-8")
-        sleep(0.01)
+    while True:
+        try:
+            data = client_sock.recv(1024)
+            if data:
+                button = data.decode("utf-8")
+                if 'none' not in button:
+                    break
+        except BluetoothError as e:
+            if e.errno == 11:  # Resource temporarily unavailable
+                sleep(0.01)
+            else:
+                print(f'Bluetooth error: {e}')
+                break
     GPIO.output(led, GPIO.LOW)
 
 def connect_bluetooth():
-    try:
-        port = 1
+    print('Checking for Bluetooth controller...')
+    port = 1  # Default RFCOMM port
+    server_sock = BluetoothSocket(RFCOMM)
 
-        # Create a Bluetooth socket
-        server_sock = BluetoothSocket(RFCOMM)
+    try:
         server_sock.bind(("", port))
         server_sock.listen(1)
-        client_sock, client_info = server_sock.accept()
-        print("Accepted connection from", client_info)
-        return client_sock, server_sock
+        # server_sock.setblocking(False)  # Set non-blocking mode
+        print("Bluetooth socket created and listening.")
+
+        try:
+            client_sock, client_info = server_sock.accept()
+            print("Accepted connection from", client_info)
+            return client_sock, server_sock
+        except BluetoothError as e:
+            if e.errno == 11:  # Resource temporarily unavailable
+                print("No controller connected. Proceeding without Bluetooth controller.")
+            else:
+                print(f"Bluetooth connection error while accepting: {e}")
+
     except BluetoothError as e:
-        print(f"Bluetooth not connected: {e}")
-        return None, None
+        print(f"Bluetooth connection error: {e}")
+
+    return None, server_sock  # Return None for client_sock, keep the server_sock
 
 def main():
     GPIO.setmode(GPIO.BCM)
@@ -63,7 +83,7 @@ def main():
     led_sequence = []
     num_round = 0
 
-    # Bluetooth controller connection
+    # Bluetooth controller connection check
     client_sock, server_sock = connect_bluetooth()
 
     print("BEGIN GAME")
@@ -96,13 +116,23 @@ def main():
 
             # Check for Bluetooth input if connected
             if client_sock:
-                data = client_sock.recv(1024)
-                if data:
-                    received_button = data.decode("utf-8")
-                    if not ('none' in received_button):
-                        light_up_led_as_long_as_pressed_controller(client_sock, led_sequence[i], received_button)
-                        user_input = True
-                        pressed_button = button_dict[received_button]
+                # client_sock.setblocking(False)  # Set non-blocking mode
+                try:
+                    data = client_sock.recv(1024)
+                    if data:
+                        received_button = data.decode("utf-8")
+                        print(received_button)
+                        if 'none' not in received_button:
+                            light_up_led_as_long_as_pressed_controller(client_sock, led_sequence[i], received_button)
+                            user_input = True
+                            pressed_button = button_dict[received_button]
+                except BluetoothError as e:
+                    if e.errno == 11:  # Resource temporarily unavailable
+                        pass  # Continue checking for controller input
+                    else:
+                        print(f'Bluetooth disconnected: {e}')
+                        client_sock.close()
+                        client_sock = None  # Keep the server socket alive
 
             if user_input:
                 if (pressed_button is None) or (pin_dict[led_sequence[i]] != pressed_button):
@@ -123,11 +153,15 @@ def main():
             for _ in range(5):
                 light_up_led(red_led, 0.05)
                 sleep(0.05)
+            break
 
         # Attempt to reconnect Bluetooth if it was disconnected
         if not client_sock:
-            print('trying to connect to bluetooth')
+            print('Rechecking Bluetooth connection...')
             client_sock, server_sock = connect_bluetooth()
+            if client_sock is None:
+                print("No Bluetooth controller connected. You can continue playing without it.")
+                sleep(1)  # Wait before trying again to avoid spamming connections
 
     # Cleanup
     if client_sock:
