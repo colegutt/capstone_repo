@@ -92,27 +92,27 @@ try:
             if GPIO.input(button_and_led_dict['red']) == GPIO.LOW:
                 sock.send('red')
                 print("Message sent: red")
-                wait_for_button_release(button_and_led_dict['red'])
+                # wait_for_button_release(button_and_led_dict['red'])
             elif GPIO.input(button_and_led_dict['orange']) == GPIO.LOW:
                 sock.send('orange')
                 print("Message sent: orange")
-                wait_for_button_release(button_and_led_dict['orange'])
+                # wait_for_button_release(button_and_led_dict['orange'])
             elif GPIO.input(button_and_led_dict['yellow']) == GPIO.LOW: 
                 sock.send('yellow')
                 print("Message sent: yellow")
-                wait_for_button_release(button_and_led_dict['yellow'])
+                # wait_for_button_release(button_and_led_dict['yellow'])
             elif GPIO.input(button_and_led_dict['green']) == GPIO.LOW: 
                 sock.send('green')
                 print("Message sent: green")
-                wait_for_button_release(button_and_led_dict['green'])
+                # wait_for_button_release(button_and_led_dict['green'])
             elif GPIO.input(button_and_led_dict['blue']) == GPIO.LOW: 
                 sock.send('blue')
                 print("Message sent: blue")
-                wait_for_button_release(button_and_led_dict['blue'])
+                # wait_for_button_release(button_and_led_dict['blue'])
             elif GPIO.input(button_and_led_dict['purple']) == GPIO.LOW: 
                 sock.send('purple')
                 print("Message sent: purple")
-                wait_for_button_release(button_and_led_dict['purple'])
+                # wait_for_button_release(button_and_led_dict['purple'])
 
         except (BluetoothError, OSError) as e:
             print(f"Connection lost: {e}. Attempting to reconnect...")
