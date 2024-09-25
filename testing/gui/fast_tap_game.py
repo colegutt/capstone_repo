@@ -7,7 +7,7 @@ from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 
 # Game Parameters
 GAME_RUN_TIME = 30
-SPEED = 0.17  # This is the lowest number we can do
+SPEED = 0.20  # This is the lowest number we can do
 CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
@@ -94,7 +94,7 @@ class FastTapGame:
                 if self.wait_to_resume(current_led) == 1:
                     GPIO.cleanup()
                     return
-
+                
                 # Check for button input
                 if GPIO.input(self.pin_dict[current_led]) == GPIO.LOW:
                     user_input = True
@@ -108,7 +108,7 @@ class FastTapGame:
                 # Check for Bluetooth input if connected
                 if self.client_sock:
                     if user_input:
-                        continue
+                        break
                     try:
                         self.client_sock.setblocking(False)
                         data = self.client_sock.recv(1024)
