@@ -131,20 +131,6 @@ class GeneralFunctions(QWidget):
             sleep(0.05)
             self.turn_off_led(self.leds[1])
             sleep(0.05)
-
-    def connect_bluetooth_non_blocking(self):
-        print('Checking for Bluetooth controller...')
-        port = 1  # Default RFCOMM port
-        server_sock = BluetoothSocket(RFCOMM)
-
-        try:
-            server_sock.bind(("", port))
-            server_sock.listen(1)
-            server_sock.setblocking(False)  # Set to non-blocking mode
-            print("Bluetooth socket created and listening in non-blocking mode.")
-        except BluetoothError as e:
-            print(f"Bluetooth connection error: {e}")
-            return None, server_sock  # If binding fails, return server_sock only
     
     # Returns title label for screen
     def set_title(self, label):

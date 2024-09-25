@@ -31,11 +31,10 @@ class MemoryGame:
         self.gen_funcs.turn_off_all_leds()
 
         # Bluetooth initialization
-        self.client_sock, self.server_sock = self.connect_bluetooth_non_blocking()
+        self.client_sock, self.server_sock = self.connect_bluetooth()
 
-    # Connect Bluetooth in non-blocking mode
-    def connect_bluetooth_non_blocking(self):
-        print('Checking for Bluetooth controller...')
+    def connect_bluetooth(self):
+        # print('Checking for Bluetooth controller...')
         port = 1  # Default RFCOMM port
         server_sock = BluetoothSocket(RFCOMM)
 
@@ -43,9 +42,9 @@ class MemoryGame:
             server_sock.bind(("", port))
             server_sock.listen(1)
             server_sock.setblocking(False)  # Set non-blocking mode
-            print("Bluetooth socket created and listening.")
+            # print("Bluetooth socket created and listening.")
         except BluetoothError as e:
-            print(f"Bluetooth connection error: {e}")
+            # print(f"Bluetooth connection error: {e}")
             return None, server_sock
 
         # Function to periodically check for Bluetooth connection
@@ -54,14 +53,15 @@ class MemoryGame:
             while client_sock is None:
                 try:
                     client_sock, client_info = server_sock.accept()
-                    print(f"Accepted connection from {client_info}")
+                    # print(f"Accepted connection from {client_info}")
                     self.client_sock = client_sock
                     return client_sock, server_sock
                 except BluetoothError as e:
                     if e.errno == 11:  # No connection yet (non-blocking)
-                        print("No controller connected. Retrying...")
+                        sleep(0.01)
+                        # print("No controller connected. Retrying...")
                     else:
-                        print(f"Bluetooth connection error: {e}")
+                        # print(f"Bluetooth connection error: {e}")
                         break
                 sleep(1)  # Retry every 1 second
             return None, server_sock
@@ -120,7 +120,7 @@ class MemoryGame:
                             data = self.client_sock.recv(1024)
                             if data:
                                 received_button = data.decode("utf-8")
-                                print(f"Received button: {received_button}")
+                                # print(f"Received button: {received_button}")
                                 self.gen_funcs.light_up_led_w_sleep(self.led_dict[received_button], CTLR_LIGHT_UP_SLEEP_TIME)
                                 user_input = True
                                 pressed_button = self.button_dict[received_button]
@@ -128,7 +128,7 @@ class MemoryGame:
                             if e.errno == 11:
                                 pass
                             else:
-                                print(f'Bluetooth disconnected: {e}')
+                                # print(f'Bluetooth disconnected: {e}')
                                 self.client_sock.close()
                                 self.client_sock = None
 
@@ -154,10 +154,10 @@ class MemoryGame:
 
             # Attempt to reconnect Bluetooth if disconnected
             if not self.client_sock:
-                print('Rechecking Bluetooth connection...')
-                self.client_sock, self.server_sock = self.connect_bluetooth_non_blocking()
+                # print('Rechecking Bluetooth connection...')
+                self.client_sock, self.server_sock = self.connect_bluetooth()
             if self.client_sock is None:
-                print("No Bluetooth controller connected. You can continue playing without it.")
+                # print("No Bluetooth controller connected. You can continue playing without it.")
                 sleep(1)
 
         # Cleanup
@@ -194,5 +194,5 @@ class MemoryGame:
         self.pause_event.clear()
 
 if __name__ == '__main__':
-    memory_game = MemoryGameCtlrTest()
+    memory_game = MemoryGame()
     memory_game.run_game(None, None)
