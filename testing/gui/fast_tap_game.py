@@ -3,27 +3,76 @@ from time import sleep, time
 import random
 import threading
 from general_functions import GeneralFunctions
+from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 
 # Game Parameters
 GAME_RUN_TIME = 30
-SPEED = 0.17 # This is the lowest number we can do
+SPEED = 0.17  # This is the lowest number we can do
+CTLR_LIGHT_UP_SLEEP_TIME = 0.25
+CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class FastTapGame:
     def __init__(self):
-        # Create pause event 
+        # Create pause event
         self.pause_event = threading.Event()
-        
-        # Set parameters that control the game 
+
+        # Set parameters that control the game
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
         self.time_remaining = GAME_RUN_TIME
         self.start_time = None
-        
+
         # Intialize GPIO pins
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
+        self.button_dict = {
+            'green': self.buttons[2],
+            'red': self.buttons[1],
+            'yellow': self.buttons[0]
+        }
+        self.led_dict = {
+            'green': self.leds[2],
+            'red': self.leds[1],
+            'yellow': self.leds[0],
+        }
 
-        # All games turn off leds to start
+        # All games turn off LEDs to start
         self.gen_funcs.turn_off_all_leds()
+
+        # Bluetooth initialization
+        self.client_sock, self.server_sock = self.connect_bluetooth()
+
+    def connect_bluetooth(self):
+        port = 1
+        server_sock = BluetoothSocket(RFCOMM)
+
+        try:
+            server_sock.bind(("", port))
+            server_sock.listen(1)
+            server_sock.setblocking(False)  # Set non-blocking mode
+        except BluetoothError as e:
+            return None, server_sock
+
+        # Function to periodically check for Bluetooth connection
+        def attempt_accept():
+            client_sock = None
+            while client_sock is None:
+                try:
+                    client_sock, client_info = server_sock.accept()
+                    self.client_sock = client_sock
+                    return client_sock, server_sock
+                except BluetoothError as e:
+                    if e.errno == 11:  # No connection yet (non-blocking)
+                        sleep(0.01)
+                    else:
+                        break
+                sleep(CLIENT_SOCK_SLEEP_TIME)  # Retry every 1 second
+            return None, server_sock
+
+        # Start checking for connection in a separate thread
+        connection_thread = threading.Thread(target=attempt_accept, daemon=True)
+        connection_thread.start()
+
+        return None, server_sock  # Return None for client_sock until connection is made
 
     # Function that runs the fast tap game
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
@@ -37,7 +86,7 @@ class FastTapGame:
             while not user_input:
                 self.update_time()
 
-                if self.time_remaining == 0 :
+                if self.time_remaining == 0:
                     self.gen_funcs.game_over_flash()
                     break
 
@@ -46,14 +95,38 @@ class FastTapGame:
                     GPIO.cleanup()
                     return
 
+                # Check for button input
                 if GPIO.input(self.pin_dict[current_led]) == GPIO.LOW:
                     user_input = True
                     self.gen_funcs.turn_off_all_leds()
-                    score += 1  
+                    score += 1
                     update_score_callback(score)
                 elif any(GPIO.input(self.pin_dict[led]) == GPIO.LOW for led in self.pin_dict if led != current_led):
                     user_input = True
-                    self.gen_funcs.flash_all_leds() 
+                    self.gen_funcs.flash_all_leds()
+
+                # Check for Bluetooth input if connected
+                if self.client_sock:
+                    if user_input:
+                        continue
+                    try:
+                        self.client_sock.setblocking(False)
+                        data = self.client_sock.recv(1024)
+                        if data:
+                            received_button = data.decode("utf-8")
+                            if current_led == self.led_dict[received_button]:
+                                user_input = True
+                                self.gen_funcs.turn_off_all_leds()
+                                score += 1
+                                update_score_callback(score)
+                            else:
+                                self.gen_funcs.flash_all_leds()
+                    except BluetoothError as e:
+                        if e.errno == 11:
+                            pass
+                        else:
+                            self.client_sock.close()
+                            self.client_sock = None
 
             self.update_time()
             update_timer_callback(self.time_remaining)
@@ -68,7 +141,7 @@ class FastTapGame:
     def update_time(self):
         elapsed_time = time() - self.start_time
         self.time_remaining = GAME_RUN_TIME - int(elapsed_time)
-    
+
     # Function that lights up an LED if the game is paused then resumed
     def light_up_led_if_needed(self, current_led):
         if GPIO.input(current_led) == GPIO.LOW:
@@ -89,7 +162,7 @@ class FastTapGame:
         self.end_game = True
         self.pause_event.set()
 
-    # Pause the game by settings the pause event
+    # Pause the game by setting the pause event
     def pause(self):
         self.pause_event.set()
 

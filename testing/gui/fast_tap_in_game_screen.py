@@ -159,6 +159,8 @@ class FastTapInGameScreen(QWidget):
             self.game_thread.quit()
             self.game_thread.wait()
         self.timer.stop()
+        self.show_or_hide_timer_label(False)
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
     
     # Hide the timer label when the game ends
     def show_or_hide_timer_label(self, show):
