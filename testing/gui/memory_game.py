@@ -73,6 +73,23 @@ class MemoryGame:
 
         return None, server_sock  # Return None for client_sock until connection is made
 
+    # Function to disconnect the Bluetooth client
+    def disconnect_bluetooth(self):
+        if self.client_sock:
+            try:
+                self.client_sock.close()
+            except BluetoothError as e:
+                print(f"Error disconnecting Bluetooth: {e}")
+            finally:
+                self.client_sock = None
+        if self.server_sock:
+            try:
+                self.server_sock.close()
+            except BluetoothError as e:
+                print(f"Error closing Bluetooth server socket: {e}")
+            finally:
+                self.server_sock = None
+
     # Start memory game
     def run_game(self, update_score_callback, on_game_over_callback, update_player_callback=None):
         game_is_playing = True
@@ -184,6 +201,7 @@ class MemoryGame:
     # End game if needed
     def stop(self):
         self.end_game = True
+        self.disconnect_bluetooth()
         self.pause_event.set()
 
     # Pause game by setting pause_event
