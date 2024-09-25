@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
 from memory_game import MemoryGame
+from memory_game_ctlr_test import MemoryGameCtlrTest
 from general_functions import GeneralFunctions
 
 # Thread that runs the game simultaneously
@@ -11,7 +12,7 @@ class GameThread(QThread):
 
     def __init__(self):
         super().__init__()
-        self.memory_game = MemoryGame()
+        self.memory_game = MemoryGameCtlrTest()
 
     # Function that runs when the thread starts
     def run(self):
