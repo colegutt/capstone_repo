@@ -5,7 +5,7 @@ import select
 
 # This script is continuously ran on the remote game controller as long as the controller is on
 
-main_mac_address = "D8:3A:DD:75:85:23"  # Replace with MAIN's MAC address
+main_mac_address = "D8:3A:DD:75:85:23"
 port = 1
 
 def connect_to_main(button_and_led_dict):
