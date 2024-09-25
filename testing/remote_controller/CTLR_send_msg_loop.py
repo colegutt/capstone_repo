@@ -86,7 +86,6 @@ try:
             sock.close()
             sock = connect_to_main(button_and_led_dict)
 
-
         try:
             # Check for button presses and send the corresponding message
             if GPIO.input(button_and_led_dict['red']) == GPIO.LOW:
