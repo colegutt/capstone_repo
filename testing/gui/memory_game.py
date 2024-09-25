@@ -8,6 +8,7 @@ from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 # Game Parameters
 SPEED = 0.5
 CTLR_LIGHT_UP_SLEEP_TIME = 0.25
+CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class MemoryGame:
     def __init__(self, multiplayer=False):
@@ -63,7 +64,7 @@ class MemoryGame:
                     else:
                         # print(f"Bluetooth connection error: {e}")
                         break
-                sleep(1)  # Retry every 1 second
+                sleep(CLIENT_SOCK_SLEEP_TIME)  # Retry every 1 second
             return None, server_sock
 
         # Start checking for connection in a separate thread
@@ -158,7 +159,7 @@ class MemoryGame:
                 self.client_sock, self.server_sock = self.connect_bluetooth()
             if self.client_sock is None:
                 # print("No Bluetooth controller connected. You can continue playing without it.")
-                sleep(1)
+                sleep(CLIENT_SOCK_SLEEP_TIME)
 
         # Cleanup
         if self.client_sock:
