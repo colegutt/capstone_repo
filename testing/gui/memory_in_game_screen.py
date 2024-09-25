@@ -22,6 +22,7 @@ class GameThread(QThread):
         
         # Show game over layout when signaled
         def on_game_over():
+            self.memory_game.disconnect_bluetooth()
             self.game_over.emit()
         
         # Run Memory Game
