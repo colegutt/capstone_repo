@@ -35,7 +35,7 @@ class MemoryGame:
 
     def connect_bluetooth(self):
         # print('Checking for Bluetooth controller...')
-        port = 1  # Default RFCOMM port
+        port = 1
         server_sock = BluetoothSocket(RFCOMM)
 
         try:
