@@ -10,9 +10,9 @@ class GameThread(QThread):
     game_over = pyqtSignal()
     player_changed = pyqtSignal(int)
 
-    def __init__(self):
+    def __init__(self, player_count):
         super().__init__()
-        self.memory_game = MemoryGame(True)
+        self.memory_game = MemoryGame(True, player_count)
         
     # Function that runs when the thread starts
     def run(self):
@@ -47,6 +47,7 @@ class Memory2PInGameScreen(QWidget):
         self.gen_funcs = GeneralFunctions(
             self.stacked_widget, self.score, self.reset_game, self.start_game, self.pause_game, True
         )
+
         # Create labels and buttons that are used in set_layout
         self.title = self.gen_funcs.set_title('Memory 2 Player')
         self.turn_label = QLabel("Player 1's Turn", self)
@@ -85,7 +86,7 @@ class Memory2PInGameScreen(QWidget):
     # Start Memory 2P game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = GameThread()
+            self.game_thread = GameThread(self.app_init.memory_2p_pregame_screen.get_player_count())
             self.game_thread.score_updated.connect(self.update_score_from_game)
             self.game_thread.player_changed.connect(self.update_player_label)
             self.game_thread.game_over.connect(self.end_game)
@@ -110,9 +111,27 @@ class Memory2PInGameScreen(QWidget):
         if player_num == 1:
             self.turn_label.setText("Player 1's Turn")
             self.turn_label.setStyleSheet("color: blue; font-size: 50px; font-weight: bold;")
-        else:
+        elif player_num == 2:
             self.turn_label.setText("Player 2's Turn")
             self.turn_label.setStyleSheet("color: red; font-size: 50px; font-weight: bold;")
+        elif player_num == 3:
+            self.turn_label.setText("Player 3's Turn")
+            self.turn_label.setStyleSheet("color: #E6E6FA; font-size: 50px; font-weight: bold;")
+        elif player_num == 4:
+            self.turn_label.setText("Player 4's Turn")
+            self.turn_label.setStyleSheet("color: orange; font-size: 50px; font-weight: bold;")
+        elif player_num == 5:
+            self.turn_label.setText("Player 5's Turn")
+            self.turn_label.setStyleSheet("color: green; font-size: 50px; font-weight: bold;")
+        elif player_num == 6:
+            self.turn_label.setText("Player 6's Turn")
+            self.turn_label.setStyleSheet("color: cyan; font-size: 50px; font-weight: bold;")
+        elif player_num == 7:
+            self.turn_label.setText("Player 7's Turn")
+            self.turn_label.setStyleSheet("color: pink; font-size: 50px; font-weight: bold;")
+        elif player_num == 8:
+            self.turn_label.setText("Player 8's Turn")
+            self.turn_label.setStyleSheet("color: teal; font-size: 50px; font-weight: bold;")
     
     # Pause game and go to pause screen
     def pause_game(self):

@@ -33,13 +33,16 @@ class Memory2PPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
         self.app_init = app_init
-        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
+        self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init, True)
         description_str = (
             "Grab a friend and work together by matching the sequence by pressing the buttons that light up. "
             "The sequence will get longer the better your team does. "
             "How many can you get together? Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory 2 Player', description_str, 'purple', 2, 13))
+    
+    def get_player_count(self):
+        return self.ps_creator.get_player_count()
 
 # Create Tennis Pregame Screen
 class TennisPregameScreen(QWidget):
@@ -56,10 +59,18 @@ class TennisPregameScreen(QWidget):
 
 # General class that create pregame screens given certain parameters
 class PregameScreenCreator(QWidget):
-    def __init__(self, stacked_widget, app_init):
+    def __init__(self, stacked_widget, app_init, twoplayer_opt=False):
         # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
+
+        # For Memory 2P
+        self.player_count = 2
+        self.twoplayer_opt = twoplayer_opt
+        self.max_players = 8
+        self.min_players = 2
+        self.player_label = None
+
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
 
@@ -122,14 +133,58 @@ class PregameScreenCreator(QWidget):
     def set_layout(self, title, description_layout, start_button, back_button):
         final_layout = QVBoxLayout()
         final_layout.addWidget(title)
-        final_layout.addSpacing(50)
+        final_layout.addSpacing(30)
         final_layout.addLayout(description_layout)
-        final_layout.addSpacing(50) 
+        final_layout.addSpacing(30) 
+        # Add player count option if memory 2p
+        if self.twoplayer_opt:
+            final_layout.addLayout(self.create_player_count_layout())
+            final_layout.addSpacing(10) 
         final_layout.addLayout(start_button)
         final_layout.addStretch()
         final_layout.addLayout(back_button)
 
         return final_layout
+
+    def create_player_count_layout(self):
+        self.player_label = QLabel(f"{self.player_count} players")
+        self.player_label.setStyleSheet("color: white; font-size: 25px; font-weight: bold;")
+        self.player_label.setAlignment(Qt.AlignCenter)  # Center the text
+
+        minus_button = QPushButton('-', self)
+        minus_button.setStyleSheet(self.button_style())
+        minus_button.clicked.connect(self.decrease_player_count)
+
+        plus_button = QPushButton('+', self)
+        plus_button.setStyleSheet(self.button_style())
+        plus_button.clicked.connect(self.increase_player_count)
+
+        # Create a layout with spacers to center the label between the buttons
+        player_and_count_layout = QHBoxLayout()
+        
+        # Adding stretch for spacing to center the label between buttons
+        player_and_count_layout.addStretch(1)
+        player_and_count_layout.addWidget(minus_button)
+        player_and_count_layout.addSpacing(10)  # Small spacing between button and label
+        player_and_count_layout.addWidget(self.player_label)
+        player_and_count_layout.addSpacing(10)  # Small spacing between label and plus button
+        player_and_count_layout.addWidget(plus_button)
+        player_and_count_layout.addStretch(1)
+
+        return player_and_count_layout
+
+    def button_style(self):
+        return """
+            background-color: gray; 
+            color: white; 
+            border-radius: 10px;
+            font-size: 24px; 
+            font-weight: bold;
+            width: 50px; 
+            height: 50px;
+            padding: 0;
+            text-align: center;
+        """
 
     # If start button is clicked, go to corresponding in-game screen
     def go_to_ingame_screen(self, in_game_screen_index):
@@ -140,3 +195,16 @@ class PregameScreenCreator(QWidget):
             self.app_init.fast_tap_ingame_screen.start_game()
         elif in_game_screen_index == 13:
             self.app_init.memory_2p_ingame_screen.start_game()
+    
+    def decrease_player_count(self):
+        if self.player_count > self.min_players:
+            self.player_count -= 1
+            self.player_label.setText(f"{self.player_count} players")
+    
+    def increase_player_count(self):
+        if self.player_count < self.max_players:
+            self.player_count += 1
+            self.player_label.setText(f"{self.player_count} players")
+    
+    def get_player_count(self):
+        return self.player_count

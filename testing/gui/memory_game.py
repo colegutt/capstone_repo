@@ -11,13 +11,17 @@ CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class MemoryGame:
-    def __init__(self, multiplayer=False):
+    def __init__(self, multiplayer=False, player_count=1):
         # Initializations
         self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions()
         self.end_game = False
+
+        # Multiplayer parameters
         self.player = 1
         self.multiplayer = multiplayer
+        self.player_count = player_count
+
         self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.button_dict = {
             'green': self.buttons[2],
@@ -187,7 +191,12 @@ class MemoryGame:
 
     # Change player number
     def change_player(self):
-        self.player = 2 if self.player == 1 else 1
+        next_player = self.player + 1
+        
+        if next_player > self.player_count:
+            next_player = 1
+        
+        self.player = next_player
 
     # Wait to resume if the game is paused
     def wait_to_resume(self):
