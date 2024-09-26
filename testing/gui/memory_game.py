@@ -36,7 +36,6 @@ class MemoryGame:
         self.gen_funcs.turn_off_all_leds()
 
         # Bluetooth initialization
-        self.disconnect_bluetooth()
         self.client_sock, self.server_sock = self.connect_bluetooth()
 
     def connect_bluetooth(self):
