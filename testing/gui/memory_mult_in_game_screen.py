@@ -37,7 +37,7 @@ class GameThread(QThread):
         if self.memory_game:
             self.memory_game.stop()
 
-class Memory2PInGameScreen(QWidget):
+class MemoryMultInGameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         # Intializations
         super().__init__()
@@ -49,7 +49,7 @@ class Memory2PInGameScreen(QWidget):
         )
 
         # Create labels and buttons that are used in set_layout
-        self.title = self.gen_funcs.set_title('Memory 2 Player')
+        self.title = self.gen_funcs.set_title('Memory Multiplayer')
         self.turn_label = QLabel("Player 1's Turn", self)
         self.turn_label.setStyleSheet("color: blue; font-size: 50px; font-weight: bold;")
         self.score_label = self.gen_funcs.create_score_label()
@@ -86,7 +86,7 @@ class Memory2PInGameScreen(QWidget):
     # Start Memory 2P game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = GameThread(self.app_init.memory_2p_pregame_screen.get_player_count())
+            self.game_thread = GameThread(self.app_init.memory_mult_pregame_screen.get_player_count())
             self.game_thread.score_updated.connect(self.update_score_from_game)
             self.game_thread.player_changed.connect(self.update_player_label)
             self.game_thread.game_over.connect(self.end_game)
@@ -96,10 +96,10 @@ class Memory2PInGameScreen(QWidget):
     
     # Save Memory 2P high score if needed
     def save_high_score(self):
-        if self.app_init.memory_2p_hs < self.score:
-            self.app_init.memory_2p_hs = self.score
+        if self.app_init.memory_mult_hs < self.score:
+            self.app_init.memory_mult_hs = self.score
             self.app_init.mp_screen.update_displayed_values()
-            self.app_init.save_memory_2p_high_score()
+            self.app_init.save_memory_mult_high_score()
 
     # Update score in screen
     def update_score_from_game(self, num_round):

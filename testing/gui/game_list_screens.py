@@ -35,11 +35,11 @@ class MPScreen(QWidget):
         self.app_init = app_init
         games_and_high_scores = {
             'Tennis': 10,
-            'Memory 2 Player': self.app_init.memory_2p_hs
+            'Memory Multiplayer': self.app_init.memory_mult_hs
         }
         self.hs_qlabels = {
             'Tennis': None,
-            'Memory 2 Player': None
+            'Memory Mutliplayer': None
         }
         title = 'Multiplayer Games'
         colors = ['orange', 'purple']
@@ -50,7 +50,7 @@ class MPScreen(QWidget):
     
     # Update high scores
     def update_displayed_values(self):
-        self.hs_qlabels['Memory 2 Player'].setText(f'{self.app_init.memory_2p_hs}')
+        self.hs_qlabels['Memory Multiplayer'].setText(f'{self.app_init.memory_mult_hs}')
 
 # Common function for creating game list screens
 class GameListScreenCreator(QWidget):

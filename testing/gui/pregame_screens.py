@@ -28,18 +28,18 @@ class FastTapPregameScreen(QWidget):
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Fast Tap', description_str, 'green', 1, 9))
 
-# Create Memory 2P Pregame Screen
-class Memory2PPregameScreen(QWidget):
+# Create Memory Multiplayer Pregame Screen
+class MemoryMultPregameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
         super().__init__()
         self.app_init = app_init
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init, True)
         description_str = (
-            "Grab a friend and work together by matching the sequence by pressing the buttons that light up. "
+            "Grab some friends and work together by matching the sequence by pressing the buttons that light up. "
             "The sequence will get longer the better your team does. "
             "How many can you get together? Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Memory 2 Player', description_str, 'purple', 2, 13))
+        self.setLayout(self.ps_creator.create_pregame_screen('Memory Multiplayer', description_str, 'purple', 2, 13))
     
     def get_player_count(self):
         return self.ps_creator.get_player_count()
@@ -194,7 +194,7 @@ class PregameScreenCreator(QWidget):
         elif in_game_screen_index == 9:
             self.app_init.fast_tap_ingame_screen.start_game()
         elif in_game_screen_index == 13:
-            self.app_init.memory_2p_ingame_screen.start_game()
+            self.app_init.memory_mult_ingame_screen.start_game()
     
     def decrease_player_count(self):
         if self.player_count > self.min_players:

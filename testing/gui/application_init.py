@@ -2,10 +2,10 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QStackedWidget
 from main_menu import MainMenu
 from settings_screen import SettingsScreen
 from game_list_screens import SPScreen, MPScreen
-from pregame_screens import MemoryPregameScreen, FastTapPregameScreen, Memory2PPregameScreen, TennisPregameScreen
+from pregame_screens import MemoryPregameScreen, FastTapPregameScreen, MemoryMultPregameScreen, TennisPregameScreen
 from memory_in_game_screen import MemoryInGameScreen
 from fast_tap_in_game_screen import FastTapInGameScreen
-from memory_2p_in_game_screen import Memory2PInGameScreen
+from memory_mult_in_game_screen import MemoryMultInGameScreen
 from pause_screen import PauseScreen
 from PyQt5.QtCore import QSettings
 
@@ -26,7 +26,7 @@ class ApplicationInit(QWidget):
         # High scores for games
         self.memory_hs = self.settings.value("memory_hs", 0, int)
         self.fast_tap_hs = self.settings.value("fast_tap_hs", 0, int)
-        self.memory_2p_hs = self.settings.value("memory_2p_hs", 0, int)
+        self.memory_mult_hs = self.settings.value("memory_mult_hs", 0, int)
 
         # Intialize the screens
         self.main_menu = MainMenu(self.stacked_widget, self)
@@ -41,10 +41,10 @@ class ApplicationInit(QWidget):
         self.fast_tap_ingame_screen = FastTapInGameScreen(self.stacked_widget, self)
         self.fast_tap_pause_screen = PauseScreen(self.stacked_widget, 11, 9, self)
         self.fast_tap_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 10)
-        self.memory_2p_pregame_screen = Memory2PPregameScreen(self.stacked_widget, self)
-        self.memory_2p_ingame_screen = Memory2PInGameScreen(self.stacked_widget, self)
-        self.memory_2p_pause_screen = PauseScreen(self.stacked_widget, 15, 13, self)
-        self.memory_2p_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 14)
+        self.memory_mult_pregame_screen = MemoryMultPregameScreen(self.stacked_widget, self)
+        self.memory_mult_ingame_screen = MemoryMultInGameScreen(self.stacked_widget, self)
+        self.memory_mult_pause_screen = PauseScreen(self.stacked_widget, 15, 13, self)
+        self.memory_mult_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 14)
         self.tennis_pregame_screen = TennisPregameScreen(self.stacked_widget, self)
 
         # Index   Screen
@@ -77,10 +77,10 @@ class ApplicationInit(QWidget):
         self.stacked_widget.addWidget(self.fast_tap_ingame_screen)
         self.stacked_widget.addWidget(self.fast_tap_pause_screen)
         self.stacked_widget.addWidget(self.fast_tap_pause_settings_screen)
-        self.stacked_widget.addWidget(self.memory_2p_pregame_screen)
-        self.stacked_widget.addWidget(self.memory_2p_ingame_screen)
-        self.stacked_widget.addWidget(self.memory_2p_pause_screen)
-        self.stacked_widget.addWidget(self.memory_2p_pause_settings_screen)
+        self.stacked_widget.addWidget(self.memory_mult_pregame_screen)
+        self.stacked_widget.addWidget(self.memory_mult_ingame_screen)
+        self.stacked_widget.addWidget(self.memory_mult_pause_screen)
+        self.stacked_widget.addWidget(self.memory_mult_pause_settings_screen)
         self.stacked_widget.addWidget(self.tennis_pregame_screen)
 
         layout = QVBoxLayout()
@@ -127,6 +127,6 @@ class ApplicationInit(QWidget):
         self.settings.setValue("fast_tap_hs", self.fast_tap_hs)
     
     # Save high score for memory 2p
-    def save_memory_2p_high_score(self):
-        self.settings.setValue("memory_2p_hs", self.memory_2p_hs)
+    def save_memory_mult_high_score(self):
+        self.settings.setValue("memory_mult_hs", self.memory_mult_hs)
 
