@@ -1,9 +1,8 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QLabel, QHBoxLayout 
+from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QHBoxLayout 
 import RPi.GPIO as GPIO
 from time import sleep
 from bluetooth import *
-import threading
 
 # These are general functions that are used in all scripts in this directory
 # to reduce code space and simplify functions

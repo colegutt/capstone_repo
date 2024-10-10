@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
-from PyQt5.QtWidgets import QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
 from game_logic.fast_tap_game import FastTapGame, GAME_RUN_TIME
 from general_functions import GeneralFunctions
 

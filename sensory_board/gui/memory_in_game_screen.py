@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from game_logic.memory_game import MemoryGame
 from general_functions import GeneralFunctions
 
