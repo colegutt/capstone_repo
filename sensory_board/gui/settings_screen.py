@@ -7,11 +7,12 @@ class SettingsScreen(QWidget):
         # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
-        self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
+        self.gen_funcs = GeneralFunctions(app_init=self.app_init, stacked_widget=self.stacked_widget)
         self.previous_index = previous_index
         self.create_screen()
         self.update_displayed_values() 
+        self.gen_funcs.change_speaker_volume(self.app_init.sound_level)
 
     # Create screen
     def create_screen(self):
@@ -152,12 +153,14 @@ class SettingsScreen(QWidget):
         if self.app_init.sound_level < 100:
             self.app_init.sound_level += 10
             self.sound_percentage.setText(f'{self.app_init.get_sound_level()}%')
+            self.gen_funcs.change_speaker_volume(self.app_init.sound_level)
 
     # Function that handles decreasing the sound level and updating it in real-time
     def decrease_sound_level(self):
         if self.app_init.sound_level > 0:
             self.app_init.sound_level -= 10
             self.sound_percentage.setText(f'{self.app_init.get_sound_level()}%')
+            self.gen_funcs.change_speaker_volume(self.app_init.sound_level)
 
     # Function that handles increasing the brightness level and updating it in real-time
     def increase_brightness_level(self):

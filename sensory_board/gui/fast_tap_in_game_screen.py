@@ -10,9 +10,9 @@ class GameThread(QThread):
     time_updated = pyqtSignal(int)
     game_over = pyqtSignal()
 
-    def __init__(self):
+    def __init__(self, app_init):
         super().__init__()
-        self.fast_tap_game = FastTapGame()
+        self.fast_tap_game = FastTapGame(app_init)
 
     # Function that runs when the thread starts
     def run(self):
@@ -101,7 +101,7 @@ class FastTapInGameScreen(QWidget):
     # Start Fast Tap Game
     def start_game(self):        
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = GameThread()
+            self.game_thread = GameThread(self.app_init)
             self.game_thread.score_updated.connect(self.update_score)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()

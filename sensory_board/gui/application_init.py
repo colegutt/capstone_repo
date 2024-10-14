@@ -8,6 +8,7 @@ from gui.fast_tap_in_game_screen import FastTapInGameScreen
 from gui.memory_mult_in_game_screen import MemoryMultInGameScreen
 from gui.pause_screen import PauseScreen
 from PyQt5.QtCore import QSettings
+import pygame
 
 class ApplicationInit(QWidget):
     def __init__(self):
@@ -27,6 +28,14 @@ class ApplicationInit(QWidget):
         self.memory_hs = self.settings.value("memory_hs", 0, int)
         self.fast_tap_hs = self.settings.value("fast_tap_hs", 0, int)
         self.memory_mult_hs = self.settings.value("memory_mult_hs", 0, int)
+
+        # Sound initialization
+        pygame.mixer.init()
+        self.sounds = {
+            17: pygame.mixer.Sound("sounds/beep_1.wav"),
+            27: pygame.mixer.Sound("sounds/beep_3.wav"),
+            22: pygame.mixer.Sound("sounds/beep_5.wav"),
+        }
 
         # Intialize the screens
         self.main_menu = MainMenu(self.stacked_widget, self)

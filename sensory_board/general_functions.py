@@ -3,14 +3,20 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QHBoxLayout
 import RPi.GPIO as GPIO
 from time import sleep
 from bluetooth import *
+import subprocess
+import os
+import pygame
+
+USB_SPEAKER_SINK = 'alsa_output.usb-Solid_State_System_Co._Ltd._USB_PnP_Audio_Device_000000000000-00.analog-stereo'
 
 # These are general functions that are used in all scripts in this directory
 # to reduce code space and simplify functions
 class GeneralFunctions(QWidget):
-    def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None, multiplayer=False):
+    def __init__(self, stacked_widget=None, game_score=None, reset_game_func=None, start_game_func=None, pause_game_func=None, multiplayer=False, app_init=None):
         # Intializations
         super().__init__()
         self.stacked_widget = stacked_widget
+        self.app_init = app_init
         self.game_score = game_score
         self.reset_game_func = reset_game_func
         self.start_game_func = start_game_func
@@ -19,7 +25,7 @@ class GeneralFunctions(QWidget):
         self.pin_dict = None
         self.leds = None
         self.buttons = None
-    
+        
     # Create common back button that is in bottom left of all screens
     def create_back_layout(self, index):
         back_button = QPushButton('Back', self)
@@ -91,6 +97,14 @@ class GeneralFunctions(QWidget):
         GPIO.output(self.leds[1], GPIO.HIGH)
         GPIO.output(self.leds[2], GPIO.HIGH)
     
+    def change_speaker_volume(self, sound_level):
+        sound_level = sound_level / 100
+        for sound in self.app_init.sounds.values():
+            sound.set_volume(sound_level)
+
+    def play_beep_sound(self, led):
+        self.app_init.sounds[led].play()
+
     # Flash all LEDs 3 times
     def flash_all_leds(self):
         for _ in range(3):
@@ -102,6 +116,7 @@ class GeneralFunctions(QWidget):
     # Light up only one LED
     def light_up_led(self, led):
         GPIO.output(led, GPIO.HIGH)
+        self.play_beep_sound(led)
     
     # Light up LED and turn off within a set time
     def light_up_led_w_sleep(self, led, sleep_time):
