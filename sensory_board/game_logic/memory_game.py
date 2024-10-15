@@ -164,7 +164,7 @@ class MemoryGame:
 
             sleep(SPEED)
             if game_is_playing:
-                self.gen_funcs.flash_all_leds()
+                self.gen_funcs.memory_correct_sequence_flash()
                 # Change player if playing the multiplayer version
                 if self.multiplayer:
                     self.change_player()
@@ -187,6 +187,7 @@ class MemoryGame:
             self.client_sock.close()
         if self.server_sock:
             self.server_sock.close()
+        
         GPIO.cleanup()
 
     # Change player number

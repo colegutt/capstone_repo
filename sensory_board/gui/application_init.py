@@ -31,10 +31,20 @@ class ApplicationInit(QWidget):
 
         # Sound initialization
         pygame.mixer.init()
-        self.sounds = {
+        self.beep_sounds = {
             17: pygame.mixer.Sound("sounds/beep_1.wav"),
             27: pygame.mixer.Sound("sounds/beep_3.wav"),
             22: pygame.mixer.Sound("sounds/beep_5.wav"),
+        }
+        self.narration_sounds = {
+            17: pygame.mixer.Sound("sounds/yellow_star.wav"),
+            27: pygame.mixer.Sound("sounds/red_heart.wav"),
+            22: pygame.mixer.Sound("sounds/green_square.wav"),
+        }
+        self.other_sounds = {
+            'memory correct sequence': pygame.mixer.Sound("sounds/memory_correct_sequence.wav"),
+            'fast tap wrong led': pygame.mixer.Sound("sounds/fast_tap_wrong_led.wav"),
+            'game over': pygame.mixer.Sound("sounds/game_over.wav"),
         }
 
         # Intialize the screens

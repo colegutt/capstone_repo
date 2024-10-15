@@ -120,7 +120,7 @@ class FastTapGame:
                     update_score_callback(score)
                 elif any(GPIO.input(self.pin_dict[led]) == GPIO.LOW for led in self.pin_dict if led != current_led):
                     user_input = True
-                    self.gen_funcs.flash_all_leds()
+                    self.gen_funcs.fast_tap_wrong_led()
 
                 # Check for Bluetooth input if connected
                 if self.client_sock:
@@ -137,7 +137,7 @@ class FastTapGame:
                                 score += 1
                                 update_score_callback(score)
                             else:
-                                self.gen_funcs.flash_all_leds()
+                                self.gen_funcs.fast_tap_wrong_led()
                     except BluetoothError as e:
                         if e.errno == 11:
                             pass

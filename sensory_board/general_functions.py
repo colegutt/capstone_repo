@@ -99,20 +99,33 @@ class GeneralFunctions(QWidget):
     
     def change_speaker_volume(self, sound_level):
         sound_level = sound_level / 100
-        for sound in self.app_init.sounds.values():
+        for sound in self.app_init.beep_sounds.values():
+            sound.set_volume(sound_level)
+        for sound in self.app_init.narration_sounds.values():
+            sound.set_volume(sound_level)
+        for sound in self.app_init.other_sounds.values():
             sound.set_volume(sound_level)
 
     def play_beep_sound(self, led):
-        self.app_init.sounds[led].play()
+        if self.app_init.get_narration_bool():
+            self.app_init.narration_sounds[led].play()
+        else:
+            self.app_init.beep_sounds[led].play()
 
     # Flash all LEDs 3 times
-    def flash_all_leds(self):
-        for _ in range(3):
-            self.light_up_all_leds()
-            sleep(0.1)
-            self.turn_off_all_leds()
-            sleep(0.1)
+    def memory_correct_sequence_flash(self):
+        self.flash_all_leds_helper('memory correct sequence', 0.5)
     
+    def fast_tap_wrong_led(self):
+        self.flash_all_leds_helper('fast tap wrong led', 0.5)
+    
+    def flash_all_leds_helper(self, sound, sleep_time):
+        self.light_up_all_leds()
+        self.app_init.other_sounds[sound].play()
+        sleep(sleep_time)
+        self.turn_off_all_leds()
+        sleep(sleep_time)
+
     # Light up only one LED
     def light_up_led(self, led):
         GPIO.output(led, GPIO.HIGH)
@@ -139,12 +152,26 @@ class GeneralFunctions(QWidget):
     
     # Blink red LED 5 times rapidly, signaling game over
     def game_over_flash(self):
+        self.app_init.other_sounds['game over'].play()
         self.turn_off_all_leds()
-        for _ in range(5):
-            self.light_up_led(self.leds[1])
-            sleep(0.05)
-            self.turn_off_led(self.leds[1])
-            sleep(0.05)
+        GPIO.output(self.leds[0], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[0], GPIO.LOW)
+        GPIO.output(self.leds[1], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[1], GPIO.LOW)
+        GPIO.output(self.leds[2], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[2], GPIO.LOW)
+        GPIO.output(self.leds[1], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[1], GPIO.LOW)
+        GPIO.output(self.leds[0], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[0], GPIO.LOW)
+        GPIO.output(self.leds[1], GPIO.HIGH)
+        sleep(0.2)
+        GPIO.output(self.leds[1], GPIO.LOW)
     
     # Returns title label for screen
     def set_title(self, label):
