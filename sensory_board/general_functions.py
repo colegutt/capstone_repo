@@ -105,23 +105,23 @@ class GeneralFunctions(QWidget):
         }
 
         self.rgb_colors = {
-            'square': (255, 165, 0),
-            'cloud': (255, 100, 0),
-            'triangle': (255, 0, 0),
-            'heart': (128, 0, 128),
-            'circle': (0, 0, 255),
-            'star': (0, 255, 0),
+            'square': (0, 255, 0) ,
+            'cloud': (0, 0, 255),
+            'triangle': (128, 0, 128),
+            'heart': (255, 0, 0),
+            'circle': (255, 100, 0),
+            'star': (255, 165, 0),
             'off': (0, 0, 0)
         }
 
-        square_button = 23
-        cloud_button = 27
-        triangle_button = 22
-        heart_button = 14
-        circle_button = 15
+        square_button = 14
+        cloud_button = 22
+        triangle_button = 23
+        heart_button = 15
+        circle_button = 27
         star_button = 17
 
-        buttons = {
+        button_dict = {
             'square': square_button,
             'cloud': cloud_button,
             'triangle': triangle_button,
@@ -130,10 +130,10 @@ class GeneralFunctions(QWidget):
             'star': star_button,
         }
 
-        for button in buttons.values():
+        for button in button_dict.values():
             GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        return buttons, list(self.led_slices.keys())
+        return button_dict, list(self.led_slices.keys())
 
     # # Turn off all LEDs
     # def turn_off_all_leds(self):
@@ -155,12 +155,6 @@ class GeneralFunctions(QWidget):
             self.pixels[p] = (0, 0, 0)  
 
         self.pixels.show()
-    
-    # Light up all LEDs
-    # def light_up_all_leds(self)
-    #     GPIO.output(self.leds[0], GPIO.HIGH)
-    #     GPIO.output(self.leds[1], GPIO.HIGH)
-    #     GPIO.output(self.leds[2], GPIO.HIGH)
 
     def light_up_all_leds(self):
         for p in self.led_slices['star']:
@@ -207,35 +201,15 @@ class GeneralFunctions(QWidget):
         self.turn_off_all_leds()
         sleep(sleep_time)
 
-    # Light up only one LED
-    # def light_up_led(self, led):
-    #     GPIO.output(led, GPIO.HIGH)
-    #     self.play_beep_sound(led)
-
     def light_up_led(self, led_shape):
         for p in self.led_slices[led_shape]:
             self.pixels[p] = self.rgb_colors[led_shape]
         self.pixels.show()
 
-    # # Light up LED and turn off within a set time
-    # def light_up_led_w_sleep(self, led, sleep_time):
-    #     self.light_up_led(led)
-    #     sleep(sleep_time)
-    #     self.turn_off_led(led)
-
     def light_up_led_w_sleep(self, led_shape, sleep_time):
         self.light_up_led(led_shape)
         sleep(sleep_time)
         self.turn_off_led(led_shape)
-
-    # # Light up LED as long as a button is pressed
-    # def light_up_led_as_long_as_pressed(self, led, button):
-    #     self.light_up_led(led) 
-    #     while GPIO.input(button) == GPIO.LOW:
-    #         sleep(0.01)
-
-    #     self.turn_off_led(led)
-    #     sleep(0.1)
 
     def light_up_led_as_long_as_pressed(self, led_shape, button):
         self.light_up_led(led_shape) 
@@ -245,39 +219,10 @@ class GeneralFunctions(QWidget):
         self.turn_off_led(led_shape)
         sleep(0.1)
 
-    
-    # Turn off a singular LED
-    # def turn_off_led(self, led):
-    #     GPIO.output(led, GPIO.LOW)
-
     def turn_off_led(self, led_shape):
         for p in self.led_slices[led_shape]:
             self.pixels[p] = self.rgb_colors['off']
         self.pixels.show()
-
-    
-    # Blink red LED 5 times rapidly, signaling game over
-    # def game_over_flash(self):
-    #     self.app_init.other_sounds['game over'].play()
-    #     self.turn_off_all_leds()
-    #     GPIO.output(self.leds[0], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[0], GPIO.LOW)
-    #     GPIO.output(self.leds[1], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[1], GPIO.LOW)
-    #     GPIO.output(self.leds[2], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[2], GPIO.LOW)
-    #     GPIO.output(self.leds[1], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[1], GPIO.LOW)
-    #     GPIO.output(self.leds[0], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[0], GPIO.LOW)
-    #     GPIO.output(self.leds[1], GPIO.HIGH)
-    #     sleep(0.2)
-    #     GPIO.output(self.leds[1], GPIO.LOW)
 
     def game_over_flash(self):
         self.app_init.other_sounds['game over'].play()

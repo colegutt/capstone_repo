@@ -25,16 +25,6 @@ class MemoryGame:
         
         # self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
-        # self.button_dict = {
-        #     'square': self.buttons[2],
-        #     'red': self.buttons[1],
-        #     'yellow': self.buttons[0]
-        # }
-        # self.led_dict = {
-        #     'green': self.leds[2],
-        #     'red': self.leds[1],
-        #     'yellow': self.leds[0],
-        # }
         self.gen_funcs.turn_off_all_leds()
 
         # Bluetooth initialization

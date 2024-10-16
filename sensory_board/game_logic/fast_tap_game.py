@@ -23,17 +23,7 @@ class FastTapGame:
         self.start_time = None
 
         # Intialize GPIO pins
-        self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
-        self.button_dict = {
-            'green': self.buttons[2],
-            'red': self.buttons[1],
-            'yellow': self.buttons[0]
-        }
-        self.led_dict = {
-            'green': self.leds[2],
-            'red': self.leds[1],
-            'yellow': self.leds[0],
-        }
+        self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
 
         # All games turn off LEDs to start
         self.gen_funcs.turn_off_all_leds()
@@ -97,8 +87,8 @@ class FastTapGame:
         self.start_time = time()
         while not self.end_game and self.time_remaining > 0:
             # Light up a random LED
-            current_led = random.choice(self.leds)
-            self.gen_funcs.light_up_led(current_led)
+            current_led_shape = random.choice(self.led_shapes)
+            self.gen_funcs.light_up_led(current_led_shape)
             user_input = False
             while not user_input:
                 self.update_time()
@@ -108,17 +98,17 @@ class FastTapGame:
                     break
 
                 # Pause Condition
-                if self.wait_to_resume(current_led) == 1:
+                if self.wait_to_resume(current_led_shape) == 1:
                     GPIO.cleanup()
                     return
                 
                 # Check for button input
-                if GPIO.input(self.pin_dict[current_led]) == GPIO.LOW:
+                if GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW:
                     user_input = True
                     self.gen_funcs.turn_off_all_leds()
                     score += 1
                     update_score_callback(score)
-                elif any(GPIO.input(self.pin_dict[led]) == GPIO.LOW for led in self.pin_dict if led != current_led):
+                elif any(GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW for led_shape in self.led_shapes if led_shape != current_led_shape):
                     user_input = True
                     self.gen_funcs.fast_tap_wrong_led()
 
@@ -131,7 +121,7 @@ class FastTapGame:
                         data = self.client_sock.recv(1024)
                         if data:
                             received_button = data.decode("utf-8")
-                            if current_led == self.led_dict[received_button]:
+                            if current_led_shape == received_button:
                                 user_input = True
                                 self.gen_funcs.turn_off_all_leds()
                                 score += 1
@@ -160,18 +150,18 @@ class FastTapGame:
         self.time_remaining = GAME_RUN_TIME - int(elapsed_time)
 
     # Function that lights up an LED if the game is paused then resumed
-    def light_up_led_if_needed(self, current_led):
-        if GPIO.input(current_led) == GPIO.LOW:
-            self.gen_funcs.light_up_led(current_led)
+    def light_up_led_if_needed(self, current_led_shape):
+        if GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW:
+            self.gen_funcs.light_up_led(current_led_shape)
 
     # Function that pauses the game while in the pause screen
-    def wait_to_resume(self, current_led):
+    def wait_to_resume(self, current_led_shape):
         while self.pause_event.is_set():
             self.gen_funcs.turn_off_all_leds()
             if self.end_game:
                 return 1
             sleep(0.25)
-        self.light_up_led_if_needed(current_led)
+        self.light_up_led_if_needed(current_led_shape)
         return 0
 
     # End the game
