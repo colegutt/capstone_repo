@@ -10,7 +10,7 @@ SPEED = 0.5
 CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
-class MemoryGame:
+class MemoryGameOld:
     def __init__(self, app_init, multiplayer=False, player_count=1):
         # Initializations
         self.pause_event = threading.Event()
@@ -22,19 +22,17 @@ class MemoryGame:
         self.multiplayer = multiplayer
         self.player_count = player_count
 
-        
-        # self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
-        self.button_dict, self.led_shapes = self.init_leds_and_buttons()
-        # self.button_dict = {
-        #     'square': self.buttons[2],
-        #     'red': self.buttons[1],
-        #     'yellow': self.buttons[0]
-        # }
-        # self.led_dict = {
-        #     'green': self.leds[2],
-        #     'red': self.leds[1],
-        #     'yellow': self.leds[0],
-        # }
+        self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
+        self.button_dict = {
+            'green': self.buttons[2],
+            'red': self.buttons[1],
+            'yellow': self.buttons[0]
+        }
+        self.led_dict = {
+            'green': self.leds[2],
+            'red': self.leds[1],
+            'yellow': self.leds[0],
+        }
         self.gen_funcs.turn_off_all_leds()
 
         # Bluetooth initialization
@@ -104,14 +102,14 @@ class MemoryGame:
 
         while game_is_playing:
             num_round += 1
-            led_sequence.append(random.choice(self.led_shapes))
+            led_sequence.append(random.choice(self.leds))
 
             # Light up LED sequence
-            for led_shape in led_sequence:
+            for led in led_sequence:
                 if self.wait_to_resume() == 1:
                     GPIO.cleanup()
                     return
-                self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
+                self.gen_funcs.light_up_led_w_sleep(led, SPEED)
                 sleep(SPEED)
 
             # Get user input from buttons or Bluetooth controller
@@ -124,30 +122,18 @@ class MemoryGame:
                         return
 
                     # Check for button input
-                    if GPIO.input(self.button_dict['square']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('square', self.button_dict['square'])
+                    if GPIO.input(self.buttons[0]) == GPIO.LOW:
+                        self.gen_funcs.light_up_led_as_long_as_pressed(self.leds[0], self.buttons[0])
                         user_input = True
-                        pressed_button = self.button_dict['square']
-                    elif GPIO.input(self.button_dict['triangle']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('triangle', self.button_dict['triangle'])
+                        pressed_button = self.buttons[0]
+                    elif GPIO.input(self.buttons[1]) == GPIO.LOW:
+                        self.gen_funcs.light_up_led_as_long_as_pressed(self.leds[1], self.buttons[1])
                         user_input = True
-                        pressed_button = self.button_dict['triangle']
-                    elif GPIO.input(self.button_dict['circle']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('circle', self.button_dict['circle'])
+                        pressed_button = self.buttons[1]
+                    elif GPIO.input(self.buttons[2]) == GPIO.LOW:
+                        self.gen_funcs.light_up_led_as_long_as_pressed(self.leds[2], self.buttons[2])
                         user_input = True
-                        pressed_button = self.button_dict['circle']
-                    elif GPIO.input(self.button_dict['cloud']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('cloud', self.button_dict['cloud'])
-                        user_input = True
-                        pressed_button = self.button_dict['cloud']
-                    elif GPIO.input(self.button_dict['heart']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('heart', self.button_dict['heart'])
-                        user_input = True
-                        pressed_button = self.button_dict['heart']
-                    elif GPIO.input(self.button_dict['star']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('star', self.button_dict['star'])
-                        user_input = True
-                        pressed_button = self.button_dict['star']
+                        pressed_button = self.buttons[2]
 
                     # Check for Bluetooth input if connected
                     if self.client_sock:

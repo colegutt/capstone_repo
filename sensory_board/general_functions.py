@@ -3,9 +3,8 @@ from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QHBoxLayout
 import RPi.GPIO as GPIO
 from time import sleep
 from bluetooth import *
-import subprocess
-import os
-import pygame
+import board
+import neopixel
 
 USB_SPEAKER_SINK = 'alsa_output.usb-Solid_State_System_Co._Ltd._USB_PnP_Audio_Device_000000000000-00.analog-stereo'
 
@@ -22,9 +21,12 @@ class GeneralFunctions(QWidget):
         self.start_game_func = start_game_func
         self.pause_game_func = pause_game_func
         self.multiplayer = multiplayer
-        self.pin_dict = None
-        self.leds = None
-        self.buttons = None
+        # self.pin_dict = None
+        # self.leds = None
+        self.pixels = None
+        self.led_slices = None
+        self.rgb_colors = None
+        self.led_slice_array = None
         
     # Create common back button that is in bottom left of all screens
     def create_back_layout(self, index):
@@ -59,43 +61,117 @@ class GeneralFunctions(QWidget):
     # Yellow Button (GPIO 18)
     # Red Button    (GPIO 15)
     # Green Button  (GPIO 14)
-    def init_gpio(self):
-        GPIO.setmode(GPIO.BCM)
-        yellow_led = 17
-        red_led = 27
-        green_led = 22
-        yellow_button = 18
-        red_button = 15
-        green_button = 14
+    # def init_gpio(self):
+    #     GPIO.setmode(GPIO.BCM)
+    #     yellow_led = 17
+    #     red_led = 27
+    #     green_led = 22
+    #     yellow_button = 18
+    #     red_button = 15
+    #     green_button = 14
 
-        self.pin_dict = {
-            yellow_led: yellow_button,
-            red_led: red_button,
-            green_led: green_button
+    #     self.pin_dict = {
+    #         yellow_led: yellow_button,
+    #         red_led: red_button,
+    #         green_led: green_button
+    #     }
+
+    #     GPIO.setup(yellow_led, GPIO.OUT)
+    #     GPIO.setup(red_led, GPIO.OUT)
+    #     GPIO.setup(green_led, GPIO.OUT)
+    #     GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    #     GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    #     GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    #     self.buttons = list(self.pin_dict.values())
+    #     self.leds = list(self.pin_dict.keys())
+
+    #     return self.pin_dict, self.buttons, self.leds
+
+    def init_leds_and_buttons(self):
+        pixel_pin = board.D18
+        num_leds = 40
+        self.pixels = neopixel.NeoPixel(pixel_pin, num_leds)
+        self.led_slice_array = list(range(num_leds + 1))
+
+        self.led_slices = {
+            'square': self.led_slice_array[slice(25,30)],
+            'cloud': self.led_slice_array[slice(20, 25)],
+            'triangle': self.led_slice_array[slice(15,20)],
+            'heart': self.led_slice_array[slice(10, 15)],
+            'circle': self.led_slice_array[slice(5,10)],
+            'star': self.led_slice_array[slice(0, 5)]
         }
 
-        GPIO.setup(yellow_led, GPIO.OUT)
-        GPIO.setup(red_led, GPIO.OUT)
-        GPIO.setup(green_led, GPIO.OUT)
-        GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self.rgb_colors = {
+            'square': (255, 165, 0),
+            'cloud': (255, 100, 0),
+            'triangle': (255, 0, 0),
+            'heart': (128, 0, 128),
+            'circle': (0, 0, 255),
+            'star': (0, 255, 0),
+            'off': (0, 0, 0)
+        }
 
-        self.buttons = list(self.pin_dict.values())
-        self.leds = list(self.pin_dict.keys())
+        GPIO.setmode(GPIO.BCM)
+        square_button = 23
+        cloud_button = 27
+        triangle_button = 22
+        heart_button = 14
+        circle_button = 15
+        star_button = 17
 
-        return self.pin_dict, self.buttons, self.leds
+        GPIO.setup(square_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(cloud_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(triangle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(heart_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(circle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(star_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    # Turn off all LEDs
+        buttons = {
+            'square': square_button,
+            'cloud': cloud_button,
+            'triangle': triangle_button,
+            'heart': heart_button,
+            'circle': circle_button,
+            'star': star_button,
+        }
+
+        return buttons, self.led_slices.keys()
+
+
+    # # Turn off all LEDs
+    # def turn_off_all_leds(self):
+    #     for led in self.leds:
+    #         GPIO.output(led, GPIO.LOW)
+
     def turn_off_all_leds(self):
-        for led in self.leds:
-            GPIO.output(led, GPIO.LOW)
+        for p in self.led_slice_array:
+            self.pixels[p] = self.rgb_colors['off']
+
+        self.pixels.show()
     
     # Light up all LEDs
+    # def light_up_all_leds(self)
+    #     GPIO.output(self.leds[0], GPIO.HIGH)
+    #     GPIO.output(self.leds[1], GPIO.HIGH)
+    #     GPIO.output(self.leds[2], GPIO.HIGH)
+
     def light_up_all_leds(self):
-        GPIO.output(self.leds[0], GPIO.HIGH)
-        GPIO.output(self.leds[1], GPIO.HIGH)
-        GPIO.output(self.leds[2], GPIO.HIGH)
+        for p in self.led_slices['star']:
+            self.pixels[p] = self.rgb_colors['star']
+        for p in self.led_slices['circle']:
+            self.pixels[p] = self.rgb_colors['circle']
+        for p in self.led_slices['heart']:
+            self.pixels[p] = self.rgb_colors['heart']
+        for p in self.led_slices['triangle']:
+            self.pixels[p] = self.rgb_colors['triangle']
+        for p in self.led_slices['cloud']:
+            self.pixels[p] = self.rgb_colors['cloud']
+        for p in self.led_slices['square']:
+            self.pixels[p] = self.rgb_colors['square']
+
+        self.pixels.show()
     
     def change_speaker_volume(self, sound_level):
         sound_level = sound_level / 100
@@ -127,51 +203,86 @@ class GeneralFunctions(QWidget):
         sleep(sleep_time)
 
     # Light up only one LED
-    def light_up_led(self, led):
-        GPIO.output(led, GPIO.HIGH)
-        self.play_beep_sound(led)
-    
-    # Light up LED and turn off within a set time
-    def light_up_led_w_sleep(self, led, sleep_time):
-        self.light_up_led(led)
-        sleep(sleep_time)
-        self.turn_off_led(led)
+    # def light_up_led(self, led):
+    #     GPIO.output(led, GPIO.HIGH)
+    #     self.play_beep_sound(led)
 
-    # Light up LED as long as a button is pressed
-    def light_up_led_as_long_as_pressed(self, led, button):
-        self.light_up_led(led) 
+    def light_up_led(self, led_shape):
+        for p in self.led_slices[led_shape]:
+            self.pixels[p] = self.rgb_colors[led_shape]
+        self.pixels.show()
+
+    # # Light up LED and turn off within a set time
+    # def light_up_led_w_sleep(self, led, sleep_time):
+    #     self.light_up_led(led)
+    #     sleep(sleep_time)
+    #     self.turn_off_led(led)
+
+    def light_up_led_w_sleep(self, led_shape, sleep_time):
+        self.light_up_led(led_shape)
+        sleep(sleep_time)
+        self.turn_off_led(led_shape)
+
+    # # Light up LED as long as a button is pressed
+    # def light_up_led_as_long_as_pressed(self, led, button):
+    #     self.light_up_led(led) 
+    #     while GPIO.input(button) == GPIO.LOW:
+    #         sleep(0.01)
+
+    #     self.turn_off_led(led)
+    #     sleep(0.1)
+
+    def light_up_led_as_long_as_pressed(self, led_shape, button):
+        self.light_up_led(led_shape) 
         while GPIO.input(button) == GPIO.LOW:
             sleep(0.01)
 
-        self.turn_off_led(led)
+        self.turn_off_led(led_shape)
         sleep(0.1)
+
     
     # Turn off a singular LED
-    def turn_off_led(self, led):
-        GPIO.output(led, GPIO.LOW)
+    # def turn_off_led(self, led):
+    #     GPIO.output(led, GPIO.LOW)
+
+    def turn_off_led(self, led_shape):
+        for p in self.led_slices[led_shape]:
+            self.pixels[p] = self.rgb_colors['off']
+        self.pixels.show()
+
     
     # Blink red LED 5 times rapidly, signaling game over
+    # def game_over_flash(self):
+    #     self.app_init.other_sounds['game over'].play()
+    #     self.turn_off_all_leds()
+    #     GPIO.output(self.leds[0], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[0], GPIO.LOW)
+    #     GPIO.output(self.leds[1], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[1], GPIO.LOW)
+    #     GPIO.output(self.leds[2], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[2], GPIO.LOW)
+    #     GPIO.output(self.leds[1], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[1], GPIO.LOW)
+    #     GPIO.output(self.leds[0], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[0], GPIO.LOW)
+    #     GPIO.output(self.leds[1], GPIO.HIGH)
+    #     sleep(0.2)
+    #     GPIO.output(self.leds[1], GPIO.LOW)
+
     def game_over_flash(self):
         self.app_init.other_sounds['game over'].play()
         self.turn_off_all_leds()
-        GPIO.output(self.leds[0], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[0], GPIO.LOW)
-        GPIO.output(self.leds[1], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[1], GPIO.LOW)
-        GPIO.output(self.leds[2], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[2], GPIO.LOW)
-        GPIO.output(self.leds[1], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[1], GPIO.LOW)
-        GPIO.output(self.leds[0], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[0], GPIO.LOW)
-        GPIO.output(self.leds[1], GPIO.HIGH)
-        sleep(0.2)
-        GPIO.output(self.leds[1], GPIO.LOW)
+        self.light_up_led_w_sleep(self, 'square', 0.2)
+        self.light_up_led_w_sleep(self, 'cloud', 0.2)
+        self.light_up_led_w_sleep(self, 'triangle', 0.2)
+        self.light_up_led_w_sleep(self, 'heart', 0.2)
+        self.light_up_led_w_sleep(self, 'star', 0.2)
+        self.light_up_led_w_sleep(self, 'circle', 0.2)
     
     # Returns title label for screen
     def set_title(self, label):

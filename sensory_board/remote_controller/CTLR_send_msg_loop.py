@@ -35,29 +35,29 @@ def wait_for_button_release(button):
 def initialize_gpio():
     GPIO.setmode(GPIO.BCM)
 
-    red_button = 25
-    orange_button = 24
-    yellow_button = 23
-    green_button = 4
-    blue_button = 27
-    purple_button = 22
+    heart_button = 25
+    circle_button = 24
+    star_button = 23
+    square_button = 4
+    cloud_button = 27
+    triangle_button = 22
     connection_led = 13
 
-    GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(orange_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(blue_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(purple_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(heart_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(circle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(star_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(square_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(cloud_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(triangle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(connection_led, GPIO.OUT)
 
     return {
-        'red': red_button,
-        'orange': orange_button,
-        'yellow': yellow_button,
-        'green': green_button,
-        'blue': blue_button,
-        'purple': purple_button,
+        'heart': heart_button,
+        'circle': circle_button,
+        'star': star_button,
+        'square': square_button,
+        'cloud': cloud_button,
+        'triangle': triangle_button,
         'connection_led': connection_led
     }
 
@@ -88,30 +88,30 @@ try:
 
         try:
             # Check for button presses and send the corresponding message
-            if GPIO.input(button_and_led_dict['red']) == GPIO.LOW:
-                sock.send('red')
-                print("Message sent: red")
-                wait_for_button_release(button_and_led_dict['red'])
-            elif GPIO.input(button_and_led_dict['orange']) == GPIO.LOW:
-                sock.send('orange')
-                print("Message sent: orange")
-                wait_for_button_release(button_and_led_dict['orange'])
-            elif GPIO.input(button_and_led_dict['yellow']) == GPIO.LOW: 
-                sock.send('yellow')
-                print("Message sent: yellow")
-                wait_for_button_release(button_and_led_dict['yellow'])
-            elif GPIO.input(button_and_led_dict['green']) == GPIO.LOW: 
-                sock.send('green')
-                print("Message sent: green")
-                wait_for_button_release(button_and_led_dict['green'])
-            elif GPIO.input(button_and_led_dict['blue']) == GPIO.LOW: 
-                sock.send('blue')
-                print("Message sent: blue")
-                wait_for_button_release(button_and_led_dict['blue'])
-            elif GPIO.input(button_and_led_dict['purple']) == GPIO.LOW: 
-                sock.send('purple')
-                print("Message sent: purple")
-                wait_for_button_release(button_and_led_dict['purple'])
+            if GPIO.input(button_and_led_dict['heart']) == GPIO.LOW:
+                sock.send('heart')
+                print("Message sent: heart")
+                wait_for_button_release(button_and_led_dict['heart'])
+            elif GPIO.input(button_and_led_dict['circle']) == GPIO.LOW:
+                sock.send('circle')
+                print("Message sent: circle")
+                wait_for_button_release(button_and_led_dict['circle'])
+            elif GPIO.input(button_and_led_dict['star']) == GPIO.LOW: 
+                sock.send('star')
+                print("Message sent: star")
+                wait_for_button_release(button_and_led_dict['star'])
+            elif GPIO.input(button_and_led_dict['square']) == GPIO.LOW: 
+                sock.send('square')
+                print("Message sent: square")
+                wait_for_button_release(button_and_led_dict['square'])
+            elif GPIO.input(button_and_led_dict['cloud']) == GPIO.LOW: 
+                sock.send('cloud')
+                print("Message sent: cloud")
+                wait_for_button_release(button_and_led_dict['cloud'])
+            elif GPIO.input(button_and_led_dict['triangle']) == GPIO.LOW: 
+                sock.send('triangle')
+                print("Message sent: triangle")
+                wait_for_button_release(button_and_led_dict['triangle'])
 
         except (BluetoothError, OSError) as e:
             print(f"Connection lost: {e}. Attempting to reconnect...")
