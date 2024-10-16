@@ -89,6 +89,7 @@ class GeneralFunctions(QWidget):
     #     return self.pin_dict, self.buttons, self.leds
 
     def init_leds_and_buttons(self):
+        GPIO.setmode(GPIO.BCM)
         pixel_pin = board.D18
         num_leds = 40
         self.pixels = neopixel.NeoPixel(pixel_pin, num_leds)
@@ -113,20 +114,12 @@ class GeneralFunctions(QWidget):
             'off': (0, 0, 0)
         }
 
-        GPIO.setmode(GPIO.BCM)
         square_button = 23
         cloud_button = 27
         triangle_button = 22
         heart_button = 14
         circle_button = 15
         star_button = 17
-
-        GPIO.setup(square_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(cloud_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(triangle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(heart_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(circle_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(star_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         buttons = {
             'square': square_button,
@@ -137,8 +130,10 @@ class GeneralFunctions(QWidget):
             'star': star_button,
         }
 
-        return buttons, self.led_slices.keys()
+        for button in buttons.values():
+            GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+        return buttons, list(self.led_slices.keys())
 
     # # Turn off all LEDs
     # def turn_off_all_leds(self):
@@ -146,8 +141,18 @@ class GeneralFunctions(QWidget):
     #         GPIO.output(led, GPIO.LOW)
 
     def turn_off_all_leds(self):
-        for p in self.led_slice_array:
-            self.pixels[p] = self.rgb_colors['off']
+        for p in self.led_slices['star']:
+            self.pixels[p] = (0, 0, 0) 
+        for p in self.led_slices['triangle']:
+            self.pixels[p] = (0, 0, 0)  
+        for p in self.led_slices['circle']:
+            self.pixels[p] = (0, 0, 0)  
+        for p in self.led_slices['heart']:
+            self.pixels[p] = (0, 0, 0) 
+        for p in self.led_slices['cloud']:
+            self.pixels[p] = (0, 0, 0)  
+        for p in self.led_slices['square']:
+            self.pixels[p] = (0, 0, 0)  
 
         self.pixels.show()
     
@@ -277,12 +282,12 @@ class GeneralFunctions(QWidget):
     def game_over_flash(self):
         self.app_init.other_sounds['game over'].play()
         self.turn_off_all_leds()
-        self.light_up_led_w_sleep(self, 'square', 0.2)
-        self.light_up_led_w_sleep(self, 'cloud', 0.2)
-        self.light_up_led_w_sleep(self, 'triangle', 0.2)
-        self.light_up_led_w_sleep(self, 'heart', 0.2)
-        self.light_up_led_w_sleep(self, 'star', 0.2)
-        self.light_up_led_w_sleep(self, 'circle', 0.2)
+        self.light_up_led_w_sleep('square', 0.2)
+        self.light_up_led_w_sleep('cloud', 0.2)
+        self.light_up_led_w_sleep('triangle', 0.2)
+        self.light_up_led_w_sleep('heart', 0.2)
+        self.light_up_led_w_sleep('star', 0.2)
+        self.light_up_led_w_sleep('circle', 0.2)
     
     # Returns title label for screen
     def set_title(self, label):

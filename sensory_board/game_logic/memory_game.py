@@ -24,7 +24,7 @@ class MemoryGame:
 
         
         # self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
-        self.button_dict, self.led_shapes = self.init_leds_and_buttons()
+        self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
         # self.button_dict = {
         #     'square': self.buttons[2],
         #     'red': self.buttons[1],
@@ -155,11 +155,11 @@ class MemoryGame:
                             self.client_sock.setblocking(False)
                             data = self.client_sock.recv(1024)
                             if data:
-                                received_button = data.decode("utf-8")
+                                received_button_shape = data.decode("utf-8")
                                 # print(f"Received button: {received_button}")
-                                self.gen_funcs.light_up_led_w_sleep(self.led_dict[received_button], CTLR_LIGHT_UP_SLEEP_TIME)
+                                self.gen_funcs.light_up_led_w_sleep(received_button_shape, CTLR_LIGHT_UP_SLEEP_TIME)
                                 user_input = True
-                                pressed_button = self.button_dict[received_button]
+                                pressed_button = self.button_dict[received_button_shape]
                         except BluetoothError as e:
                             if e.errno == 11:
                                 pass
@@ -168,7 +168,7 @@ class MemoryGame:
                                 self.client_sock.close()
                                 self.client_sock = None
 
-                if self.pin_dict[led_sequence[i]] != pressed_button:
+                if self.button_dict[led_sequence[i]] != pressed_button:
                     game_is_playing = False
                     break
 
