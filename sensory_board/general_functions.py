@@ -201,14 +201,15 @@ class GeneralFunctions(QWidget):
         self.turn_off_all_leds()
         sleep(sleep_time)
 
-    def light_up_led(self, led_shape):
+    def light_up_led(self, led_shape, sound=True):
         for p in self.led_slices[led_shape]:
             self.pixels[p] = self.rgb_colors[led_shape]
-        self.play_beep_sound(led_shape)
+        if sound:
+            self.play_beep_sound(led_shape)
         self.pixels.show()
 
-    def light_up_led_w_sleep(self, led_shape, sleep_time):
-        self.light_up_led(led_shape)
+    def light_up_led_w_sleep(self, led_shape, sleep_time, sound=True):
+        self.light_up_led(led_shape, sound)
         sleep(sleep_time)
         self.turn_off_led(led_shape)
 
@@ -228,12 +229,12 @@ class GeneralFunctions(QWidget):
     def game_over_flash(self):
         self.app_init.other_sounds['game over'].play()
         self.turn_off_all_leds()
-        self.light_up_led_w_sleep('square', 0.2)
-        self.light_up_led_w_sleep('cloud', 0.2)
-        self.light_up_led_w_sleep('triangle', 0.2)
-        self.light_up_led_w_sleep('heart', 0.2)
-        self.light_up_led_w_sleep('star', 0.2)
-        self.light_up_led_w_sleep('circle', 0.2)
+        self.light_up_led_w_sleep('square', 0.2, False)
+        self.light_up_led_w_sleep('cloud', 0.2, False)
+        self.light_up_led_w_sleep('triangle', 0.2, False)
+        self.light_up_led_w_sleep('heart', 0.2, False)
+        self.light_up_led_w_sleep('star', 0.2, False)
+        self.light_up_led_w_sleep('circle', 0.2, False)
     
     # Returns title label for screen
     def set_title(self, label):
