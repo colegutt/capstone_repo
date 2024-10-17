@@ -32,14 +32,20 @@ class ApplicationInit(QWidget):
         # Sound initialization
         pygame.mixer.init()
         self.beep_sounds = {
-            17: pygame.mixer.Sound("sounds/beep_1.wav"),
-            27: pygame.mixer.Sound("sounds/beep_3.wav"),
-            22: pygame.mixer.Sound("sounds/beep_5.wav"),
+            'star': pygame.mixer.Sound("sounds/beep_1.wav"),
+            'square': pygame.mixer.Sound("sounds/beep_2.wav"),
+            'circle': pygame.mixer.Sound("sounds/beep_3.wav"),
+            'heart': pygame.mixer.Sound("sounds/beep_4.wav"),
+            'triangle': pygame.mixer.Sound("sounds/beep_5.wav"),
+            'cloud': pygame.mixer.Sound("sounds/beep_6.wav"),
         }
         self.narration_sounds = {
-            17: pygame.mixer.Sound("sounds/yellow_star.wav"),
-            27: pygame.mixer.Sound("sounds/red_heart.wav"),
-            22: pygame.mixer.Sound("sounds/green_square.wav"),
+            'star': pygame.mixer.Sound("sounds/yellow_star.wav"),
+            'square': pygame.mixer.Sound("sounds/green_square.wav"),
+            'circle': pygame.mixer.Sound("sounds/orange_circle.wav"),
+            'heart': pygame.mixer.Sound("sounds/red_heart.wav"),
+            'triangle': pygame.mixer.Sound("sounds/purple_triangle.wav"),
+            'cloud': pygame.mixer.Sound("sounds/blue_cloud.wav"),
         }
         self.other_sounds = {
             'memory correct sequence': pygame.mixer.Sound("sounds/memory_correct_sequence.wav"),

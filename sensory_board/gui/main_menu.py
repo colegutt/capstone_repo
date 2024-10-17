@@ -68,7 +68,7 @@ class MainMenu(QWidget):
             background-color: green; 
             color: white; 
             border-radius: 100px; 
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: bold;
             width: 200px;
             height: 200px;
@@ -86,7 +86,7 @@ class MainMenu(QWidget):
             background-color: blue; 
             color: white; 
             border-radius: 100px; 
-            font-size: 26px; 
+            font-size: 24px; 
             font-weight: bold;
             width: 200px; 
             height: 200px; 

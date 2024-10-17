@@ -181,11 +181,11 @@ class GeneralFunctions(QWidget):
         for sound in self.app_init.other_sounds.values():
             sound.set_volume(sound_level)
 
-    def play_beep_sound(self, led):
+    def play_beep_sound(self, led_shape):
         if self.app_init.get_narration_bool():
-            self.app_init.narration_sounds[led].play()
+            self.app_init.narration_sounds[led_shape].play()
         else:
-            self.app_init.beep_sounds[led].play()
+            self.app_init.beep_sounds[led_shape].play()
 
     # Flash all LEDs 3 times
     def memory_correct_sequence_flash(self):
@@ -204,6 +204,7 @@ class GeneralFunctions(QWidget):
     def light_up_led(self, led_shape):
         for p in self.led_slices[led_shape]:
             self.pixels[p] = self.rgb_colors[led_shape]
+        self.play_beep_sound(led_shape)
         self.pixels.show()
 
     def light_up_led_w_sleep(self, led_shape, sleep_time):
