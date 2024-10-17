@@ -89,7 +89,6 @@ class FastTapGame:
             # Light up a random LED
             current_led_shape = random.choice(self.led_shapes)
             self.gen_funcs.light_up_led(current_led_shape)
-            print("LIGHTING UP NEW LED")
             user_input = False
             while not user_input:
                 self.update_time()
@@ -149,7 +148,6 @@ class FastTapGame:
             # Pause for next LED to light up
             sleep(SPEED)
 
-        print("HELLO")
         self.gen_funcs.game_over_flash()
         on_game_over_callback()
         GPIO.cleanup()
@@ -162,14 +160,16 @@ class FastTapGame:
     # Function that pauses the game while in the pause screen
     def wait_to_resume(self, current_led_shape):
         resume_opt = None
+        if self.pause_event.is_set():
+            self.gen_funcs.turn_off_all_leds()
+            
         while self.pause_event.is_set():
             resume_opt = 'resume'
-            self.gen_funcs.turn_off_all_leds()
             if self.end_game:
                 return 'end'
             sleep(0.25)
-        if resume_opt == 'resume':
-            self.start_time = time()
+        # if resume_opt == 'resume':
+        #     self.start_time = time()
         return resume_opt
 
     # End the game
