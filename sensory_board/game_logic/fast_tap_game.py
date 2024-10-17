@@ -94,12 +94,12 @@ class FastTapGame:
                 self.update_time()
 
                 if self.time_remaining  == 0:
-                    # self.gen_funcs.game_over_flash()
                     break
 
                 # Pause Condition
-                resume_opt = self.wait_to_resume(current_led_shape)
+                resume_opt = self.wait_to_resume()
                 if resume_opt == 'end':
+                    print('game ended')
                     GPIO.cleanup()
                     return
                 elif resume_opt == 'resume':
@@ -158,18 +158,18 @@ class FastTapGame:
         self.time_remaining = GAME_RUN_TIME - int(elapsed_time)
 
     # Function that pauses the game while in the pause screen
-    def wait_to_resume(self, current_led_shape):
+    def wait_to_resume(self):
         resume_opt = None
         if self.pause_event.is_set():
             self.gen_funcs.turn_off_all_leds()
-            
+
         while self.pause_event.is_set():
             resume_opt = 'resume'
             if self.end_game:
                 return 'end'
             sleep(0.25)
-        # if resume_opt == 'resume':
-        #     self.start_time = time()
+        if resume_opt == 'resume':
+            self.start_time = time()
         return resume_opt
 
     # End the game

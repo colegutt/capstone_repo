@@ -119,8 +119,6 @@ class FastTapInGameScreen(QWidget):
         if self.time_remaining > 0:
             self.time_remaining -= 1
             self.timer_label.setText(f'{self.time_remaining}')
-        else:
-            self.end_game()
 
     # Pause game by calling the pause function within the thread
     def pause_game(self):
