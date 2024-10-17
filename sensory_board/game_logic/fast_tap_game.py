@@ -6,7 +6,7 @@ from general_functions import GeneralFunctions
 from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 
 # Game Parameters
-GAME_RUN_TIME = 30
+GAME_RUN_TIME = 10
 SPEED = 0.20  # This is the lowest number we can do
 CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
@@ -89,12 +89,13 @@ class FastTapGame:
             # Light up a random LED
             current_led_shape = random.choice(self.led_shapes)
             self.gen_funcs.light_up_led(current_led_shape)
+            print("LIGHTING UP NEW LED")
             user_input = False
             while not user_input:
                 self.update_time()
 
-                if self.time_remaining == 0:
-                    self.gen_funcs.game_over_flash()
+                if self.time_remaining  == 0:
+                    # self.gen_funcs.game_over_flash()
                     break
 
                 # Pause Condition
@@ -148,6 +149,8 @@ class FastTapGame:
             # Pause for next LED to light up
             sleep(SPEED)
 
+        print("HELLO")
+        self.gen_funcs.game_over_flash()
         on_game_over_callback()
         GPIO.cleanup()
 
@@ -165,6 +168,8 @@ class FastTapGame:
             if self.end_game:
                 return 'end'
             sleep(0.25)
+        if resume_opt == 'resume':
+            self.start_time = time()
         return resume_opt
 
     # End the game
