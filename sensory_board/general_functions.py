@@ -52,40 +52,6 @@ class GeneralFunctions(QWidget):
     # Function that goes back to the previous screen when button is clicked
     def go_back(self, index):
         self.stacked_widget.setCurrentIndex(index)
-    
-    # Intialize GPIO pins:
-    # Yellow LED    (GPIO 17)
-    # Red LED       (GPIO 27)
-    # Green LED     (GPIO 22)
-    # Yellow Button (GPIO 18)
-    # Red Button    (GPIO 15)
-    # Green Button  (GPIO 14)
-    # def init_gpio(self):
-    #     GPIO.setmode(GPIO.BCM)
-    #     yellow_led = 17
-    #     red_led = 27
-    #     green_led = 22
-    #     yellow_button = 18
-    #     red_button = 15
-    #     green_button = 14
-
-    #     self.pin_dict = {
-    #         yellow_led: yellow_button,
-    #         red_led: red_button,
-    #         green_led: green_button
-    #     }
-
-    #     GPIO.setup(yellow_led, GPIO.OUT)
-    #     GPIO.setup(red_led, GPIO.OUT)
-    #     GPIO.setup(green_led, GPIO.OUT)
-    #     GPIO.setup(yellow_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    #     GPIO.setup(red_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    #     GPIO.setup(green_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-    #     self.buttons = list(self.pin_dict.values())
-    #     self.leds = list(self.pin_dict.keys())
-
-    #     return self.pin_dict, self.buttons, self.leds
 
     def init_leds_and_buttons(self):
         GPIO.setmode(GPIO.BCM)

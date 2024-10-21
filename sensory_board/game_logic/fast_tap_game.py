@@ -6,7 +6,7 @@ from general_functions import GeneralFunctions
 from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 
 # Game Parameters
-GAME_RUN_TIME = 10
+GAME_RUN_TIME = 30
 SPEED = 0.20  # This is the lowest number we can do
 CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25

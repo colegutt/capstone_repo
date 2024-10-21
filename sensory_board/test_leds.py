@@ -21,6 +21,7 @@ np_array = list(range(num_leds+1))
 
 # Create slice objects corresponding to the LED indices for each area
 #   and give those ranges of your LED strand meaningful names
+
 star_slice = slice(0, 5)
 star = np_array[star_slice]
 
@@ -51,7 +52,7 @@ def turn_on_all_leds(dimming_factor):
     for p in triangle:
         pixels[p] = dim_color((128, 0, 128), dimming_factor)  # Dimmable Purple
     for p in cloud:
-        pixels[p] = dim_color((0, 0, 255), dimming_factor)    # Dimmable Blue
+        pixels[p] = dim_color((0, 255, 0), dimming_factor)    # Dimmable Blue
     for p in square:
         pixels[p] = dim_color((0, 255, 0), dimming_factor)    # Dimmable Green
 
@@ -81,20 +82,21 @@ def turn_off_leds():
 
     pixels.show()
 
-
-turn_off_leds()
-turn_on_all_leds(0.1)
-time.sleep(1)
-turn_off_leds()
-turn_on_all_leds(0.25)
-time.sleep(1)
-turn_off_leds()
-turn_on_all_leds(0.5)
-time.sleep(1)
-turn_off_leds()
-turn_on_all_leds(0.75)
-time.sleep(1)
-turn_off_leds()
-turn_on_all_leds(1)
-time.sleep(1)
+# while True:
+#     turn_off_leds()
+#     turn_on_all_leds(0.1)
+#     time.sleep(1)
+#     turn_off_leds()
+#     turn_on_all_leds(0.25)
+#     time.sleep(1)
+#     turn_off_leds()
+#     turn_on_all_leds(0.5)
+#     time.sleep(1)
+#     turn_off_leds()
+#     turn_on_all_leds(0.75)
+#     time.sleep(1)
+#     turn_off_leds()
+#     turn_on_all_leds(1)
+#     time.sleep(1)
+#     turn_off_leds()
 turn_off_leds()
