@@ -21,8 +21,7 @@ class GeneralFunctions(QWidget):
         self.start_game_func = start_game_func
         self.pause_game_func = pause_game_func
         self.multiplayer = multiplayer
-        # self.pin_dict = None
-        # self.leds = None
+
         self.pixels = None
         self.led_slices = None
         self.rgb_colors = None
@@ -158,17 +157,17 @@ class GeneralFunctions(QWidget):
 
     def light_up_all_leds(self):
         for p in self.led_slices['star']:
-            self.pixels[p] = self.rgb_colors['star']
+            self.pixels[p] = self.dim_color(self.rgb_colors['star'], self.app_init.brightness_level / 100) 
         for p in self.led_slices['circle']:
-            self.pixels[p] = self.rgb_colors['circle']
+            self.pixels[p] = self.dim_color(self.rgb_colors['circle'], self.app_init.brightness_level / 100) 
         for p in self.led_slices['heart']:
-            self.pixels[p] = self.rgb_colors['heart']
+            self.pixels[p] = self.dim_color(self.rgb_colors['heart'], self.app_init.brightness_level / 100) 
         for p in self.led_slices['triangle']:
-            self.pixels[p] = self.rgb_colors['triangle']
+            self.pixels[p] = self.dim_color(self.rgb_colors['triangle'], self.app_init.brightness_level / 100) 
         for p in self.led_slices['cloud']:
-            self.pixels[p] = self.rgb_colors['cloud']
+            self.pixels[p] = self.dim_color(self.rgb_colors['cloud'], self.app_init.brightness_level / 100) 
         for p in self.led_slices['square']:
-            self.pixels[p] = self.rgb_colors['square']
+            self.pixels[p] = self.dim_color(self.rgb_colors['square'], self.app_init.brightness_level / 100) 
 
         self.pixels.show()
     
@@ -180,12 +179,15 @@ class GeneralFunctions(QWidget):
             sound.set_volume(sound_level)
         for sound in self.app_init.other_sounds.values():
             sound.set_volume(sound_level)
-
+    
     def play_beep_sound(self, led_shape):
         if self.app_init.get_narration_bool():
             self.app_init.narration_sounds[led_shape].play()
         else:
             self.app_init.beep_sounds[led_shape].play()
+    
+    def dim_color(self, color, factor):
+        return tuple(int(c*factor)for c in color)
 
     # Flash all LEDs 3 times
     def memory_correct_sequence_flash(self):
@@ -203,7 +205,7 @@ class GeneralFunctions(QWidget):
 
     def light_up_led(self, led_shape, sound=True):
         for p in self.led_slices[led_shape]:
-            self.pixels[p] = self.rgb_colors[led_shape]
+            self.pixels[p] = self.dim_color(self.rgb_colors[led_shape], self.app_init.brightness_level / 100) 
         if sound:
             self.play_beep_sound(led_shape)
         self.pixels.show()

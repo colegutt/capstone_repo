@@ -67,11 +67,11 @@ class MainMenu(QWidget):
         single_player_button.setStyleSheet("""
             background-color: green; 
             color: white; 
-            border-radius: 100px; 
+            border-radius: 105px; 
             font-size: 24px; 
             font-weight: bold;
-            width: 200px;
-            height: 200px;
+            width: 210px;
+            height: 210px;
             padding: 0;
             text-align: center;
             line-height: 200px;
@@ -85,11 +85,11 @@ class MainMenu(QWidget):
         multiplayer_button.setStyleSheet("""
             background-color: blue; 
             color: white; 
-            border-radius: 100px; 
+            border-radius: 105px; 
             font-size: 24px; 
             font-weight: bold;
-            width: 200px; 
-            height: 200px; 
+            width: 210px; 
+            height: 210px; 
             padding: 0;
             text-align: center;
             line-height: 200px;
