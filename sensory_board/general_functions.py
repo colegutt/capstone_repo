@@ -80,10 +80,10 @@ class GeneralFunctions(QWidget):
         }
 
         square_button = 14
-        cloud_button = 22
-        triangle_button = 23
+        cloud_button = 21
+        triangle_button = 24
         heart_button = 15
-        circle_button = 27
+        circle_button = 27  
         star_button = 17
 
         button_dict = {

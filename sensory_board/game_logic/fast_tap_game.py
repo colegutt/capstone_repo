@@ -99,12 +99,10 @@ class FastTapGame:
                 # Pause Condition
                 resume_opt = self.wait_to_resume()
                 if resume_opt == 'end':
-                    print('game ended')
                     GPIO.cleanup()
                     return
                 elif resume_opt == 'resume':
                     break
-                
 
                 # Check for button input
                 if GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW and all(GPIO.input(self.button_dict[led_shape]) == GPIO.HIGH for led_shape in self.led_shapes if led_shape != current_led_shape):
@@ -134,6 +132,7 @@ class FastTapGame:
                                 score += 1
                                 update_score_callback(score)
                             else:
+                                user_input = True
                                 self.gen_funcs.fast_tap_wrong_led()
                     except BluetoothError as e:
                         if e.errno == 11:
