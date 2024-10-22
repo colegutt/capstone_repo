@@ -116,14 +116,14 @@ class GameListScreenCreator(QWidget):
                 background-color: {self.colors[i % len(self.colors)]}; 
                 color: white; 
                 border-radius: 10px; 
-                width: 275px; 
+                width: 300px; 
                 height: 100px; 
                 font-size: 24px; 
                 font-weight: bold;
                 height: 100px;
             ''')
             game_button.clicked.connect(lambda checked, i=i: self.go_to_pregame_screen(i))
-            temp_game_layout.addSpacing(200) 
+            temp_game_layout.addSpacing(165) 
             temp_game_layout.addWidget(game_button)
             temp_game_layout.addSpacing(125)
             temp_game_layout.addWidget(self.hs_qlabels[game])
