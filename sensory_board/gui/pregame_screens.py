@@ -195,6 +195,8 @@ class PregameScreenCreator(QWidget):
             self.app_init.fast_tap_ingame_screen.start_game()
         elif in_game_screen_index == 13:
             self.app_init.memory_mult_ingame_screen.start_game()
+        elif in_game_screen_index == 17:
+            self.app_init.tennis_ingame_screen.start_game()
     
     def decrease_player_count(self):
         if self.player_count > self.min_players:

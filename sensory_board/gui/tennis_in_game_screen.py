@@ -1,11 +1,11 @@
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, QTimer
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from game_logic.tennis_game import TennisGame
 from general_functions import GeneralFunctions
 
-# Thread that runs the Tennis game simultaneously
+# Thread that runs the Tennis Game simultaneously
 class TennisGameThread(QThread):
-    # Signals to update the player scores in real time
+    # Signals that allow screen parameters to change in real time
     player1_score_updated = pyqtSignal(int)
     player2_score_updated = pyqtSignal(int)
     game_over = pyqtSignal()
@@ -16,23 +16,23 @@ class TennisGameThread(QThread):
 
     # Function that runs when the thread starts
     def run(self):
-        # Update Player 1 score on screen
+        # Update Player 1's score on screen when signaled
         def update_player1_score(score):
             self.player1_score_updated.emit(score)
 
-        # Update Player 2 score on screen
+        # Update Player 2's score on screen when signaled
         def update_player2_score(score):
             self.player2_score_updated.emit(score)
 
-        # Signal when the game is over
+        # Show game over layout when signaled
         def on_game_over():
-            self.tennis_game.disconnect()
+            self.tennis_game.disconnect_bluetooth()
             self.game_over.emit()
 
         # Run Tennis Game
-        self.tennis_game.run_game(update_player1_score, update_player2_score, on_game_over)
+        self.tennis_game.run_game()
 
-    # Stops the tennis game
+    # Stops the Tennis Game
     def stop(self):
         if self.tennis_game:
             self.tennis_game.stop()
@@ -43,66 +43,66 @@ class TennisInGameScreen(QWidget):
         # Initializations
         super().__init__()
         self.stacked_widget = stacked_widget
-        self.app_init = app_init
-        self.gen_funcs = GeneralFunctions(self.stacked_widget, None, self.reset_game, self.start_game, self.pause_game)
-
-        # Initial scores
         self.player1_score = 0
         self.player2_score = 0
+        self.app_init = app_init
+        self.gen_funcs = GeneralFunctions(
+            self.stacked_widget, self.player1_score, self.reset_game, self.start_game, self.pause_game
+        )
 
-        # Create title and labels for player scores
+        # Create labels and buttons that are used in set_layout
         self.title = self.gen_funcs.set_title('Tennis')
-        self.player1_label = self.create_player_label('Player 1', self.player1_score)
-        self.player2_label = self.create_player_label('Player 2', self.player2_score)
-
-        # Create the pause button
+        self.game_over_label = self.gen_funcs.create_game_over_label()
+        self.player1_score_label = self.gen_funcs.create_score_label()
+        self.player2_score_label = self.gen_funcs.create_score_label()
         self.pause_button = self.gen_funcs.create_pause_button()
-
+        self.play_again_button = self.gen_funcs.create_play_again_button()
+        self.go_back_button = self.gen_funcs.create_go_back_button()
         self.create_screen()
         self.game_thread = None
 
-    # Create labels for players
-    def create_player_label(self, player_name, score):
-        layout = QVBoxLayout()
-        player_label = QLabel(player_name, self)
-        player_label.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
-        player_label.setAlignment(Qt.AlignCenter)
-
-        score_label = QLabel(f'Score: {score}', self)
-        score_label.setStyleSheet("color: white; font-size: 28px;")
-        score_label.setAlignment(Qt.AlignCenter)
-
-        layout.addWidget(player_label)
-        layout.addWidget(score_label)
-        return layout
-
-    # Create screen layout
+    # Create in-game screen
     def create_screen(self):
         self.setStyleSheet("background-color: black;")
         self.set_layout()
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
 
-    # Set up the main layout
+    # Use previously created buttons and labels and arrange them in the screen
     def set_layout(self):
         main_layout = QVBoxLayout()
-
-        # Create a top layout for the pause button
         top_layout = QHBoxLayout()
-        top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)  # Align the pause button to the left
+        top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)
         top_layout.addStretch()
 
-        players_layout = QHBoxLayout()
+        score_layout = QHBoxLayout()
 
-        # Add Player 1 and Player 2 sides
-        players_layout.addLayout(self.player1_label)
-        players_layout.addStretch()
-        players_layout.addLayout(self.player2_label)
+        # Left side: Player 1 score and label
+        player1_layout = QVBoxLayout()
+        player1_layout.addWidget(self.gen_funcs.create_score_label(), alignment=Qt.AlignCenter)
+        player1_layout.addWidget(self.player1_score_label, alignment=Qt.AlignCenter)
 
-        main_layout.addLayout(top_layout)  # Add the top layout with the pause button
-        main_layout.addWidget(self.title, alignment=Qt.AlignCenter)
-        main_layout.addLayout(players_layout)
+        # Right side: Player 2 score and label
+        player2_layout = QVBoxLayout()
+        player2_layout.addWidget(self.gen_funcs.create_score_label(), alignment=Qt.AlignCenter)
+        player2_layout.addWidget(self.player2_score_label, alignment=Qt.AlignCenter)
+
+        # Add player layouts to score layout
+        score_layout.addLayout(player1_layout)
+        score_layout.addStretch()
+        score_layout.addLayout(player2_layout)
+
+        main_layout.addLayout(top_layout)
+        main_layout.addWidget(self.title)
+        main_layout.addLayout(score_layout)
+        main_layout.addStretch()
+        main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
+        main_layout.addSpacing(10)
+        main_layout.addWidget(self.play_again_button, alignment=Qt.AlignCenter)
+        main_layout.addWidget(self.go_back_button, alignment=Qt.AlignCenter)
+        main_layout.addStretch()
         self.setLayout(main_layout)
 
-    # Start Tennis Game
+    # Start Tennis game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = TennisGameThread(self.app_init)
@@ -110,34 +110,52 @@ class TennisInGameScreen(QWidget):
             self.game_thread.player2_score_updated.connect(self.update_player2_score)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
+        self.game_over_label.setVisible(False)
 
-    # Update Player 1 score on screen
+    # Update Player 1's score on screen
     def update_player1_score(self, score):
         self.player1_score = score
-        self.player1_label.itemAt(1).widget().setText(f'Score: {self.player1_score}')
+        self.player1_score_label.setText(f'Score: {self.player1_score}')
 
-    # Update Player 2 score on screen
+    # Update Player 2's score on screen
     def update_player2_score(self, score):
         self.player2_score = score
-        self.player2_label.itemAt(1).widget().setText(f'Score: {self.player2_score}')
+        self.player2_score_label.setText(f'Score: {self.player2_score}')
 
-    # Reset game
-    def reset_game(self):
-        self.end_game()
-        self.player1_score = 0
-        self.player2_score = 0
-        self.update_player1_score(self.player1_score)
-        self.update_player2_score(self.player2_score)
+    # Pause game and go to pause screen
+    def pause_game(self):
+        if self.game_thread and self.game_thread.isRunning():
+            self.game_thread.tennis_game.pause()
+        self.stacked_widget.setCurrentIndex(6)
 
-    # End game
+    # Resume game if needed
+    def resume_game(self):
+        if self.game_thread:
+            self.game_thread.tennis_game.resume()
+        else:
+            self.start_game()
+
+    # End Tennis game and hide corresponding buttons/labels
     def end_game(self):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.tennis_game.stop()
             self.game_thread.quit()
             self.game_thread.wait()
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
 
-    # Pause game
-    def pause_game(self):
-        if self.game_thread and self.game_thread.tennis_game:
-            self.game_thread.tennis_game.pause()
-        self.stacked_widget.setCurrentIndex(18)  # Navigate to index 18
+    # Save high score if needed
+    def save_high_score(self):
+        if self.app_init.tennis_hs < max(self.player1_score, self.player2_score):
+            self.app_init.tennis_hs = max(self.player1_score, self.player2_score)
+            self.app_init.sp_screen.update_displayed_values()
+            self.app_init.save_tennis_high_score()
+
+    # Reset game, save high score, and hide/show buttons/labels as needed
+    def reset_game(self):
+        self.end_game()
+        self.save_high_score()
+        self.player1_score = 0
+        self.player2_score = 0
+        self.player1_score_label.setText(f'Score: {self.player1_score}')
+        self.player2_score_label.setText(f'Score: {self.player2_score}')
+        self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
