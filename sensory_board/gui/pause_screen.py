@@ -123,4 +123,8 @@ class PauseScreen(QWidget):
         elif self.previous_index == 13:
             self.app_init.memory_mult_ingame_screen.reset_game() 
             index = 2
+        elif self.previous_index == 17:
+            self.app_init.memory_mult_ingame_screen.reset_game() 
+            index = 2
+            
         return index
