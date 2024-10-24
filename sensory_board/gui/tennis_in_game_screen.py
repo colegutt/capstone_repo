@@ -55,6 +55,9 @@ class TennisInGameScreen(QWidget):
         self.player1_label = self.create_player_label('Player 1', self.player1_score)
         self.player2_label = self.create_player_label('Player 2', self.player2_score)
 
+        # Create the pause button
+        self.pause_button = self.gen_funcs.create_pause_button()
+
         self.create_screen()
         self.game_thread = None
 
@@ -81,6 +84,12 @@ class TennisInGameScreen(QWidget):
     # Set up the main layout
     def set_layout(self):
         main_layout = QVBoxLayout()
+
+        # Create a top layout for the pause button
+        top_layout = QHBoxLayout()
+        top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)  # Align the pause button to the left
+        top_layout.addStretch()
+
         players_layout = QHBoxLayout()
 
         # Add Player 1 and Player 2 sides
@@ -88,7 +97,8 @@ class TennisInGameScreen(QWidget):
         players_layout.addStretch()
         players_layout.addLayout(self.player2_label)
 
-        main_layout.addWidget(self.title)
+        main_layout.addLayout(top_layout)  # Add the top layout with the pause button
+        main_layout.addWidget(self.title, alignment=Qt.AlignCenter)
         main_layout.addLayout(players_layout)
         self.setLayout(main_layout)
 
@@ -130,4 +140,4 @@ class TennisInGameScreen(QWidget):
     def pause_game(self):
         if self.game_thread and self.game_thread.tennis_game:
             self.game_thread.tennis_game.pause()
-        self.stacked_widget.setCurrentIndex(10)
+        self.stacked_widget.setCurrentIndex(18)  # Navigate to index 18
