@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel
 from game_logic.tennis_game import TennisGame
 from general_functions import GeneralFunctions
 
@@ -53,8 +53,8 @@ class TennisInGameScreen(QWidget):
         # Create labels and buttons that are used in set_layout
         self.title = self.gen_funcs.set_title('Tennis')
         self.game_over_label = self.gen_funcs.create_game_over_label()
-        self.player1_score_label = self.gen_funcs.create_score_label()
-        self.player2_score_label = self.gen_funcs.create_score_label()
+        self.player1_score_label = self.gen_funcs.create_score_label(52)
+        self.player2_score_label = self.gen_funcs.create_score_label(52)
         self.pause_button = self.gen_funcs.create_pause_button()
         self.play_again_button = self.gen_funcs.create_play_again_button()
         self.go_back_button = self.gen_funcs.create_go_back_button()
@@ -76,23 +76,44 @@ class TennisInGameScreen(QWidget):
 
         score_layout = QHBoxLayout()
 
-        # Left side: Player 1 score and label
+        self.player_1_serving_label = QLabel('Now serving:', self)
+        self.player_1_serving_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
+        self.player_1_serving_label.setAlignment(Qt.AlignCenter)
+        self.player_1_serving_label.setVisible(True)
+
         player1_layout = QVBoxLayout()
-        player1_layout.addWidget(self.gen_funcs.create_score_label(), alignment=Qt.AlignCenter)
+        player1_layout.addWidget(self.player_1_serving_label)
+        label = QLabel('Player 1', self)
+        label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        label.setAlignment(Qt.AlignCenter)
+        player1_layout.addWidget(label)
+        player1_layout.addSpacing(20)
         player1_layout.addWidget(self.player1_score_label, alignment=Qt.AlignCenter)
 
-        # Right side: Player 2 score and label
+        self.player_2_serving_label = QLabel('Now serving:', self)
+        self.player_2_serving_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
+        self.player_2_serving_label.setAlignment(Qt.AlignCenter)
+        self.player_2_serving_label.setVisible(True)
+
         player2_layout = QVBoxLayout()
-        player2_layout.addWidget(self.gen_funcs.create_score_label(), alignment=Qt.AlignCenter)
+        player2_layout.addWidget(self.player_2_serving_label)
+        label = QLabel('Player 2', self)
+        label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        label.setAlignment(Qt.AlignCenter)
+        player2_layout.addWidget(label)
+        player2_layout.addSpacing(20)
         player2_layout.addWidget(self.player2_score_label, alignment=Qt.AlignCenter)
 
         # Add player layouts to score layout
+        score_layout.addStretch()
         score_layout.addLayout(player1_layout)
         score_layout.addStretch()
         score_layout.addLayout(player2_layout)
+        score_layout.addStretch()
 
         main_layout.addLayout(top_layout)
         main_layout.addWidget(self.title)
+        main_layout.addStretch()
         main_layout.addLayout(score_layout)
         main_layout.addStretch()
         main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
@@ -126,7 +147,7 @@ class TennisInGameScreen(QWidget):
     def pause_game(self):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.tennis_game.pause()
-        self.stacked_widget.setCurrentIndex(6)
+        self.stacked_widget.setCurrentIndex(18)
 
     # Resume game if needed
     def resume_game(self):

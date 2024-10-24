@@ -238,9 +238,9 @@ class GeneralFunctions(QWidget):
         return pause_button
     
     # Returns score label for in-game screens
-    def create_score_label(self):
+    def create_score_label(self, font_size=68):
         self.score_label = QLabel(f'Score: {self.game_score}', self)
-        self.score_label.setStyleSheet("color: white; font-size: 68px; font-weight: bold;")
+        self.score_label.setStyleSheet(f'color: white; font-size: {font_size}px; font-weight: bold;')
         self.score_label.setAlignment(Qt.AlignCenter)
         return self.score_label
 

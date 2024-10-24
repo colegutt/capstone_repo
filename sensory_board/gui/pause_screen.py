@@ -54,6 +54,8 @@ class PauseScreen(QWidget):
             self.app_init.fast_tap_ingame_screen.resume_game()
         elif self.previous_index == 13:
             self.app_init.memory_mult_ingame_screen.resume_game()
+        elif self.previous_index == 17:
+            self.app_init.tennis_ingame_screen.resume_game()
 
         self.stacked_widget.setCurrentIndex(self.previous_index)
 

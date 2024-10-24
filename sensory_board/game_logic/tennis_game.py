@@ -85,7 +85,7 @@ class TennisGame:
 
             print(f'PLAYER 1 SCORE: {self.player_1_score}')
             print(f'PLAYER 2 SCORE: {self.player_2_score}')
-            if self.player_1_score == 3:
+            if self.player_1_score == 5:
                 print('PLAYER 1 WINS! GAME OVER!')
                 break
             elif self.player_2_score == 3:
@@ -206,3 +206,6 @@ class TennisGame:
 
     def pause(self):
         self.pause_event.set
+    
+    def resume(self):
+        self.pause_event.clear()
