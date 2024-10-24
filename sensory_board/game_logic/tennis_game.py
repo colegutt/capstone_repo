@@ -6,6 +6,7 @@ from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
 
 CLIENT_SOCK_SLEEP_TIME = 0.25
 STARTING_SPEED = 1
+SPEED_ACCELERATION = 0.75
 
 class TennisGame:
     def __init__(self, app_init):
@@ -17,8 +18,11 @@ class TennisGame:
         self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
         self.gen_funcs.turn_off_all_leds()
         self.client_sock, self.server_sock = self.connect_bluetooth()
-        self.thread_flag_1 = False
+        self.thread_flag_1 = None
         self.thread_flag_2 = False
+        self.player_1_score = 0
+        self.player_2_score = 0
+        self.serving_player = 1
 
         self.sleep_time = STARTING_SPEED
 
@@ -69,36 +73,73 @@ class TennisGame:
                 self.server_sock = None
 
     def run_game(self):
-        triangle_flashing = threading.Thread(target=self.flash_led)
-        triangle_flashing.start()
+        while True:
+            print('starting round')
+            if self.serving_player == 1:
+                self.play_round('triangle', 'cw', 'ccw', 'square')
+            elif self.serving_player == 2:
+                self.play_round('square', 'ccw', 'cw', 'triangle')
 
-        while GPIO.input(self.button_dict['triangle']) == GPIO.HIGH:
+            self.sleep_time = STARTING_SPEED
+            self.serving_player = 1 if self.serving_player == 2 else 2
+
+            print(f'PLAYER 1 SCORE: {self.player_1_score}')
+            print(f'PLAYER 2 SCORE: {self.player_2_score}')
+            if self.player_1_score == 3:
+                print('PLAYER 1 WINS! GAME OVER!')
+                break
+            elif self.player_2_score == 3:
+                print('PLAYER 2 WINS! GAME OVER!')
+                break
+            
+            sleep(1)
+            
+        GPIO.cleanup()
+    
+    def play_round(self, shape_1, dir_1, dir_2, shape_2):
+        self.thread_flag_1 = False
+        server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
+        server_button_flashing.start()
+
+        while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
             sleep(0.1)
 
-        self.gen_funcs.turn_off_led('triangle')
+        self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag_1 = True
 
         while True:
-            if not self.light_up_over_net('cw'):
+            if not self.light_up_over_net(dir_1):
+                self.determine_who_scores(dir=dir_1)
                 break
         
-            if not self.wait_for_return('square'):
+            if not self.wait_for_return(shape_2):
+                self.determine_who_scores(shape=shape_2)
                 break
         
-            if not self.light_up_over_net('ccw'):
+            if not self.light_up_over_net(dir_2):
+                self.determine_who_scores(dir=dir_2)
                 break
 
-            if not self.wait_for_return('triangle'):
+            if not self.wait_for_return(shape_1):
+                self.determine_who_scores(shape=shape_1)
                 break
 
+            self.sleep_time = self.sleep_time * SPEED_ACCELERATION
+        
         self.gen_funcs.fast_tap_wrong_led()
-        
-        sleep(self.sleep_time)
-        
-        GPIO.cleanup()
+
+    def determine_who_scores(self, dir=None, shape=None):
+        print('determining who scored')
+        if dir == 'cw':
+            self.player_1_score += 1
+        elif dir == 'ccw':
+            self.player_2_score += 1
+        elif shape == 'triangle':
+            self.player_2_score += 1
+        elif shape == 'square':
+            self.player_1_score += 1
 
     def wait_for_return(self, led_shape):
-        print('lighting up led')
         self.gen_funcs.light_up_led(led_shape)
         start_time = time()
         success = False
@@ -106,16 +147,17 @@ class TennisGame:
             if GPIO.input(self.button_dict[led_shape]) == GPIO.LOW:
                 success = True
                 break
+            sleep(0.1)
         self.gen_funcs.turn_off_led(led_shape)
         return success
 
     def monitor_button_press(self, button_pressed_event, shape_traveling_to):
         while not button_pressed_event.is_set():
             if GPIO.input(self.button_dict[shape_traveling_to]) == GPIO.LOW:
-                button_pressed_event.set()  # Signal that the button has been pressed
+                button_pressed_event.set()
                 break
             elif self.thread_flag_2:
-                break
+                return
 
     def light_up_over_net(self, cw_or_ccw):
         success = True
@@ -143,18 +185,18 @@ class TennisGame:
                     monitoring_thread.join()
                     self.thread_flag_2 = True
                     return success
+                sleep(0.1)
             
             self.gen_funcs.turn_off_led(led_shape) 
 
         self.thread_flag_2 = True
         return success
 
-
-    def flash_led(self):
+    def flash_led(self, led_shape):
         while not self.thread_flag_1 == True:
-            self.gen_funcs.light_up_led('triangle', False)
+            self.gen_funcs.light_up_led(led_shape, False)
             sleep(0.5)
-            self.gen_funcs.turn_off_led('triangle')
+            self.gen_funcs.turn_off_led(led_shape)
             sleep(0.5)
 
     def stop(self):
