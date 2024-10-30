@@ -105,12 +105,12 @@ class TennisGame:
         self.on_wait_for_serve = True
         self.app_init.tennis_ingame_screen.toggle_pause_button(True)
 
-        self.thread_flag_1 = False
+        self.thread_flag_1 = 'off'
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
         server_button_flashing.start()
 
         while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
-            if self.wait_to_resume() == 1:
+            if self.wait_to_resume(shape_1) == 1:
                 GPIO.cleanup()
                 return 1
             if self.check_for_controller_input(shape_1):
@@ -118,7 +118,7 @@ class TennisGame:
             sleep(0.1)
 
         self.gen_funcs.turn_off_led(shape_1)
-        self.thread_flag_1 = True
+        self.thread_flag_1 = 'on'
 
         self.on_wait_for_serve = False
         self.app_init.tennis_ingame_screen.toggle_pause_button(False)
@@ -235,7 +235,10 @@ class TennisGame:
         return success
 
     def flash_led(self, led_shape):
-        while self.thread_flag_1 == False:
+
+        while self.thread_flag_1 == 'off' or self.thread_flag_1 == 'pause':
+            while self.thread_flag_1 == 'pause':
+                sleep(0.1)
             self.gen_funcs.light_up_led(led_shape, False)
             sleep(0.5)
             self.gen_funcs.turn_off_led(led_shape)
@@ -247,16 +250,17 @@ class TennisGame:
         self.pause_event.set()
 
     def pause(self):
-        self.pause_event.set
+        self.pause_event.set()
 
-    def wait_to_resume(self):
+    def wait_to_resume(self, shape_1):
+        if self.pause_event.is_set():
+            self.gen_funcs.turn_off_all_leds()
+            self.thread_flag_1 = 'pause'
         while self.pause_event.is_set():
-            print('pause is set')
-            self.thread_flag_1 = True
             if self.end_game:
                 return 1
             sleep(0.25)
-        # self.thread_flag_1 = True
+        self.thread_flag_1 = 'off'
         return 0
         
     def resume(self):
