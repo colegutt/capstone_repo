@@ -118,28 +118,8 @@ class FastTapGame:
                     self.gen_funcs.fast_tap_wrong_led()
 
                 # Check for Bluetooth input if connected
-                if self.client_sock:
-                    if user_input:
-                        break
-                    try:
-                        self.client_sock.setblocking(False)
-                        data = self.client_sock.recv(1024)
-                        if data:
-                            received_button = data.decode("utf-8")
-                            if current_led_shape == received_button:
-                                user_input = True
-                                self.gen_funcs.turn_off_all_leds()
-                                score += 1
-                                update_score_callback(score)
-                            else:
-                                user_input = True
-                                self.gen_funcs.fast_tap_wrong_led()
-                    except BluetoothError as e:
-                        if e.errno == 11:
-                            pass
-                        else:
-                            self.client_sock.close()
-                            self.client_sock = None
+                if not user_input:
+                    user_input, score = self.check_for_controller_input(user_input, current_led_shape, update_score_callback, score)
 
             self.update_time()
             update_timer_callback(self.time_remaining)
@@ -155,6 +135,31 @@ class FastTapGame:
     def update_time(self):
         elapsed_time = time() - self.start_time
         self.time_remaining = GAME_RUN_TIME - int(elapsed_time)
+    
+    def check_for_controller_input(self, user_input, current_led_shape, update_score_callback, score):
+        if self.client_sock:
+            if user_input:
+                return user_input
+            try:
+                self.client_sock.setblocking(False)
+                data = self.client_sock.recv(1024)
+                if data:
+                    received_button = data.decode("utf-8")
+                    if current_led_shape == received_button:
+                        user_input = True
+                        self.gen_funcs.turn_off_all_leds()
+                        score += 1
+                        update_score_callback(score)
+                    else:
+                        user_input = True
+                        self.gen_funcs.fast_tap_wrong_led()
+            except BluetoothError as e:
+                if e.errno == 11:
+                    pass
+                else:
+                    self.client_sock.close()
+                    self.client_sock = None
+        return user_input, score
 
     # Function that pauses the game while in the pause screen
     def wait_to_resume(self):
