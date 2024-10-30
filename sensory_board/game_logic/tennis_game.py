@@ -102,6 +102,8 @@ class TennisGame:
         server_button_flashing.start()
 
         while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
+            if self.check_for_controller_input(shape_1):
+                break
             sleep(0.1)
 
         self.gen_funcs.turn_off_led(shape_1)
@@ -147,13 +149,37 @@ class TennisGame:
             if GPIO.input(self.button_dict[led_shape]) == GPIO.LOW:
                 success = True
                 break
-            sleep(0.1)
+            if self.check_for_controller_input(led_shape):
+                success = True
+                break
         self.gen_funcs.turn_off_led(led_shape)
         return success
+    
+    def check_for_controller_input(self, led_shape):
+        button_pressed = False
+        if self.client_sock:
+            try:
+                self.client_sock.setblocking(False)
+                data = self.client_sock.recv(1024)
+                if data:
+                    received_button_shape = data.decode("utf-8")
+                    print(received_button_shape)
+                    if received_button_shape == led_shape:
+                        button_pressed = True
+            except BluetoothError as e:
+                if e.errno == 11:
+                    pass
+                else:
+                    self.client_sock.close()
+                    self.client_sock = None
+        return button_pressed
 
     def monitor_button_press(self, button_pressed_event, shape_traveling_to):
         while not button_pressed_event.is_set():
             if GPIO.input(self.button_dict[shape_traveling_to]) == GPIO.LOW:
+                button_pressed_event.set()
+                break
+            elif self.check_for_controller_input(shape_traveling_to):
                 button_pressed_event.set()
                 break
             elif self.thread_flag_2:
