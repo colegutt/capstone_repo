@@ -8,6 +8,7 @@ from PyQt5.QtCore import pyqtSignal
 CLIENT_SOCK_SLEEP_TIME = 0.25
 STARTING_SPEED = 1
 SPEED_ACCELERATION = 0.75
+POINTS_PLAYED_TO = 5
 
 class TennisGame:
     def __init__(self, app_init):
@@ -87,11 +88,11 @@ class TennisGame:
             self.sleep_time = STARTING_SPEED
             self.serving_player = 1 if self.serving_player == 2 else 2
 
-            if self.player_1_score == 1:
+            if self.player_1_score == POINTS_PLAYED_TO:
                 self.gen_funcs.game_over_flash()
                 on_game_over_callback(1)
                 break
-            elif self.player_2_score == 1:
+            elif self.player_2_score == POINTS_PLAYED_TO:
                 self.gen_funcs.game_over_flash()
                 on_game_over_callback(2)
                 break
