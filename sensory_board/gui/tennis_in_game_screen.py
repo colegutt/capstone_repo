@@ -16,13 +16,12 @@ class TennisGameThread(QThread):
 
     # Function that runs when the thread starts
     def run(self):
-        # Update Player 1's score on screen when signaled
-        def update_player1_score(score):
-            self.player1_score_updated.emit(score)
-
         # Update Player 2's score on screen when signaled
-        def update_player2_score(score):
-            self.player2_score_updated.emit(score)
+        def update_score(player, score):
+            if player == 1:
+                self.player1_score_updated.emit(score)
+            elif player == 2:
+                self.player2_score_updated.emit(score)
 
         # Show game over layout when signaled
         def on_game_over():
@@ -30,7 +29,7 @@ class TennisGameThread(QThread):
             self.game_over.emit()
 
         # Run Tennis Game
-        self.tennis_game.run_game()
+        self.tennis_game.run_game(update_score, on_game_over)
 
     # Stops the Tennis Game
     def stop(self):
@@ -93,7 +92,7 @@ class TennisInGameScreen(QWidget):
         self.player_2_serving_label = QLabel('Now serving:', self)
         self.player_2_serving_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
         self.player_2_serving_label.setAlignment(Qt.AlignCenter)
-        self.player_2_serving_label.setVisible(True)
+        self.player_2_serving_label.setVisible(False)
 
         player2_layout = QVBoxLayout()
         player2_layout.addWidget(self.player_2_serving_label)
@@ -133,12 +132,18 @@ class TennisInGameScreen(QWidget):
             self.game_thread.start()
         self.game_over_label.setVisible(False)
 
-    # Update Player 1's score on screen
+    def update_serving_label(self, player, visible):
+        if player == 1:
+            self.player_1_serving_label.setVisible(visible)
+            self.player_2_serving_label.setVisible(False)
+        elif player == 2:
+            self.player_2_serving_label.setVisible(visible)
+            self.player_1_serving_label.setVisible(False)
+
     def update_player1_score(self, score):
         self.player1_score = score
         self.player1_score_label.setText(f'Score: {self.player1_score}')
 
-    # Update Player 2's score on screen
     def update_player2_score(self, score):
         self.player2_score = score
         self.player2_score_label.setText(f'Score: {self.player2_score}')

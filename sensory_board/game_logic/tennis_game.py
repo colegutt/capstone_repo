@@ -3,6 +3,7 @@ from time import sleep, time
 import threading
 from general_functions import GeneralFunctions
 from bluetooth import BluetoothSocket, BluetoothError, RFCOMM
+from PyQt5.QtCore import pyqtSignal
 
 CLIENT_SOCK_SLEEP_TIME = 0.25
 STARTING_SPEED = 1
@@ -22,10 +23,11 @@ class TennisGame:
         self.thread_flag_2 = False
         self.player_1_score = 0
         self.player_2_score = 0
+        self.player1_score_updated = pyqtSignal(int)
+        self.player2_score_updated = pyqtSignal(int)
         self.serving_player = 1
 
         self.sleep_time = STARTING_SPEED
-        # Initialize variables to control the pause button visibility
         self.on_wait_for_serve = True
 
     def connect_bluetooth(self):
@@ -74,36 +76,35 @@ class TennisGame:
             finally:
                 self.server_sock = None
 
-    def run_game(self):
+    def run_game(self, update_score_callback, on_game_over_callback):
         while True:
             print('starting round')
             if self.serving_player == 1:
-                if self.play_round('triangle', 'cw', 'ccw', 'square') == 1:
+                if self.play_round('triangle', 'cw', 'ccw', 'square', update_score_callback) == 1:
                     return
             elif self.serving_player == 2:
-                if self.play_round('square', 'ccw', 'cw', 'triangle') == 1:
+                if self.play_round('square', 'ccw', 'cw', 'triangle', update_score_callback) == 1:
                     return
 
             self.sleep_time = STARTING_SPEED
             self.serving_player = 1 if self.serving_player == 2 else 2
 
-            print(f'PLAYER 1 SCORE: {self.player_1_score}')
-            print(f'PLAYER 2 SCORE: {self.player_2_score}')
             if self.player_1_score == 5:
-                print('PLAYER 1 WINS! GAME OVER!')
                 break
-            elif self.player_2_score == 3:
-                print('PLAYER 2 WINS! GAME OVER!')
+            elif self.player_2_score == 5:
                 break
             
             sleep(1)
             
         GPIO.cleanup()
     
-    def play_round(self, shape_1, dir_1, dir_2, shape_2):
-        # Signal that we are waiting for a serve (pause button visible)
+    def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback):
+        # Signal the active serving player at the start of each serve
         self.on_wait_for_serve = True
-        self.app_init.tennis_ingame_screen.toggle_pause_button(True)
+        if self.serving_player == 1:
+            self.app_init.tennis_ingame_screen.update_serving_label(1, True)
+        else:
+            self.app_init.tennis_ingame_screen.update_serving_label(2, True)
 
         self.thread_flag_1 = 'off'
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
@@ -120,43 +121,45 @@ class TennisGame:
         self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag_1 = 'on'
 
+        self.app_init.tennis_ingame_screen.update_serving_label(self.serving_player, False)
         self.on_wait_for_serve = False
-        self.app_init.tennis_ingame_screen.toggle_pause_button(False)
 
         while True:
             if not self.light_up_over_net(dir_1):
-                self.determine_who_scores(dir=dir_1)
+                self.determine_who_scores(dir=dir_1, update_score_callback=update_score_callback)
                 break
-        
+            
             if not self.wait_for_return(shape_2):
-                self.determine_who_scores(shape=shape_2)
+                self.determine_who_scores(shape=shape_2, update_score_callback=update_score_callback)
                 break
-        
+
             if not self.light_up_over_net(dir_2):
-                self.determine_who_scores(dir=dir_2)
+                self.determine_who_scores(dir=dir_2, update_score_callback=update_score_callback)
                 break
 
             if not self.wait_for_return(shape_1):
-                self.determine_who_scores(shape=shape_1)
+                self.determine_who_scores(shape=shape_1, update_score_callback=update_score_callback)
                 break
 
             self.sleep_time = self.sleep_time * SPEED_ACCELERATION
-        
-        self.gen_funcs.fast_tap_wrong_led()
 
-        # Signal end of round (waiting for next serve)
+        self.gen_funcs.fast_tap_wrong_led()
         self.on_wait_for_serve = True
 
-    def determine_who_scores(self, dir=None, shape=None):
+    def determine_who_scores(self, dir=None, shape=None, update_score_callback=None):
         print('determining who scored')
         if dir == 'cw':
             self.player_1_score += 1
+            update_score_callback(1, self.player_1_score)
         elif dir == 'ccw':
             self.player_2_score += 1
+            update_score_callback(2, self.player_2_score)
         elif shape == 'triangle':
             self.player_2_score += 1
+            update_score_callback(2, self.player_2_score)
         elif shape == 'square':
             self.player_1_score += 1
+            update_score_callback(1, self.player_1_score)
 
     def wait_for_return(self, led_shape):
         self.gen_funcs.light_up_led(led_shape)
