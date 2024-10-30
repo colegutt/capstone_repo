@@ -28,7 +28,6 @@ class TennisGame:
         self.serving_player = 1
 
         self.sleep_time = STARTING_SPEED
-        self.on_wait_for_serve = True
 
     def connect_bluetooth(self):
         port = 1
@@ -78,7 +77,6 @@ class TennisGame:
 
     def run_game(self, update_score_callback, on_game_over_callback):
         while True:
-            print('starting round')
             if self.serving_player == 1:
                 if self.play_round('triangle', 'cw', 'ccw', 'square', update_score_callback) == 1:
                     return
@@ -89,23 +87,26 @@ class TennisGame:
             self.sleep_time = STARTING_SPEED
             self.serving_player = 1 if self.serving_player == 2 else 2
 
-            if self.player_1_score == 5:
+            if self.player_1_score == 1:
+                self.gen_funcs.game_over_flash()
+                on_game_over_callback(1)
                 break
-            elif self.player_2_score == 5:
+            elif self.player_2_score == 1:
+                self.gen_funcs.game_over_flash()
+                on_game_over_callback(2)
                 break
             
-            sleep(1)
+            sleep(0.5)
             
         GPIO.cleanup()
     
     def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback):
-        # Signal the active serving player at the start of each serve
-        self.on_wait_for_serve = True
         if self.serving_player == 1:
-            self.app_init.tennis_ingame_screen.update_serving_label(1, True)
+            self.app_init.tennis_ingame_screen.update_serving_label(1)
         else:
-            self.app_init.tennis_ingame_screen.update_serving_label(2, True)
+            self.app_init.tennis_ingame_screen.update_serving_label(2)
 
+        self.app_init.tennis_ingame_screen.toggle_pause_button(True)
         self.thread_flag_1 = 'off'
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
         server_button_flashing.start()
@@ -121,8 +122,8 @@ class TennisGame:
         self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag_1 = 'on'
 
-        self.app_init.tennis_ingame_screen.update_serving_label(self.serving_player, False)
-        self.on_wait_for_serve = False
+        self.app_init.tennis_ingame_screen.update_serving_label()
+        self.app_init.tennis_ingame_screen.toggle_pause_button(False)
 
         while True:
             if not self.light_up_over_net(dir_1):
@@ -144,10 +145,8 @@ class TennisGame:
             self.sleep_time = self.sleep_time * SPEED_ACCELERATION
 
         self.gen_funcs.fast_tap_wrong_led()
-        self.on_wait_for_serve = True
 
     def determine_who_scores(self, dir=None, shape=None, update_score_callback=None):
-        print('determining who scored')
         if dir == 'cw':
             self.player_1_score += 1
             update_score_callback(1, self.player_1_score)

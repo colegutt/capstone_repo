@@ -8,7 +8,7 @@ class TennisGameThread(QThread):
     # Signals that allow screen parameters to change in real time
     player1_score_updated = pyqtSignal(int)
     player2_score_updated = pyqtSignal(int)
-    game_over = pyqtSignal()
+    game_over = pyqtSignal(int)
 
     def __init__(self, app_init):
         super().__init__()
@@ -24,18 +24,16 @@ class TennisGameThread(QThread):
                 self.player2_score_updated.emit(score)
 
         # Show game over layout when signaled
-        def on_game_over():
+        def on_game_over(player):
             self.tennis_game.disconnect_bluetooth()
-            self.game_over.emit()
+            self.game_over.emit(player)  # Emit the winning player number
 
-        # Run Tennis Game
         self.tennis_game.run_game(update_score, on_game_over)
 
     # Stops the Tennis Game
     def stop(self):
         if self.tennis_game:
             self.tennis_game.stop()
-
 
 class TennisInGameScreen(QWidget):
     def __init__(self, stacked_widget, app_init):
@@ -46,7 +44,7 @@ class TennisInGameScreen(QWidget):
         self.player2_score = 0
         self.app_init = app_init
         self.gen_funcs = GeneralFunctions(
-            self.stacked_widget, self.player1_score, self.reset_game, self.start_game, self.pause_game
+            self.stacked_widget, self.player1_score, self.reset_game, self.start_game, self.pause_game, True
         )
 
         # Create labels and buttons that are used in set_layout
@@ -71,35 +69,28 @@ class TennisInGameScreen(QWidget):
         main_layout = QVBoxLayout()
         top_layout = QHBoxLayout()
         top_layout.addWidget(self.pause_button, alignment=Qt.AlignLeft)
-        top_layout.addStretch()
 
         score_layout = QHBoxLayout()
 
-        self.player_1_serving_label = QLabel('Now serving:', self)
-        self.player_1_serving_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
-        self.player_1_serving_label.setAlignment(Qt.AlignCenter)
-        self.player_1_serving_label.setVisible(True)
+        # Player 1 Label
+        self.player1_label = QLabel('Player 1', self)
+        self.player1_label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        self.player1_label.setAlignment(Qt.AlignCenter)
+
+        # Player 2 Label
+        self.player2_label = QLabel('Player 2', self)
+        self.player2_label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        self.player2_label.setAlignment(Qt.AlignCenter)
 
         player1_layout = QVBoxLayout()
-        player1_layout.addWidget(self.player_1_serving_label)
-        label = QLabel('Player 1', self)
-        label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
-        label.setAlignment(Qt.AlignCenter)
-        player1_layout.addWidget(label)
+        player1_layout.addStretch()
+        player1_layout.addWidget(self.player1_label)
         player1_layout.addSpacing(20)
         player1_layout.addWidget(self.player1_score_label, alignment=Qt.AlignCenter)
 
-        self.player_2_serving_label = QLabel('Now serving:', self)
-        self.player_2_serving_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
-        self.player_2_serving_label.setAlignment(Qt.AlignCenter)
-        self.player_2_serving_label.setVisible(False)
-
         player2_layout = QVBoxLayout()
-        player2_layout.addWidget(self.player_2_serving_label)
-        label = QLabel('Player 2', self)
-        label.setStyleSheet("color: green; font-size: 56px; font-weight: bold;")
-        label.setAlignment(Qt.AlignCenter)
-        player2_layout.addWidget(label)
+        player2_layout.addStretch()
+        player2_layout.addWidget(self.player2_label)
         player2_layout.addSpacing(20)
         player2_layout.addWidget(self.player2_score_label, alignment=Qt.AlignCenter)
 
@@ -111,6 +102,7 @@ class TennisInGameScreen(QWidget):
         score_layout.addStretch()
 
         main_layout.addLayout(top_layout)
+        main_layout.addStretch()
         main_layout.addWidget(self.title)
         main_layout.addStretch()
         main_layout.addLayout(score_layout)
@@ -128,17 +120,21 @@ class TennisInGameScreen(QWidget):
             self.game_thread = TennisGameThread(self.app_init)
             self.game_thread.player1_score_updated.connect(self.update_player1_score)
             self.game_thread.player2_score_updated.connect(self.update_player2_score)
-            self.game_thread.game_over.connect(self.end_game)
+            self.game_thread.game_over.connect(self.end_game)  # Ensure this is connected properly
             self.game_thread.start()
-        self.game_over_label.setVisible(False)
+        self.game_over_label.setVisible(False)  # This should be done only when starting a new game
 
-    def update_serving_label(self, player, visible):
+
+    def update_serving_label(self, player=None):
+        self.player1_label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
+        self.player2_label.setStyleSheet("color: green; font-size: 56px; font-weight: bold;")
+        self.player1_label.setText("Player 1")
+        self.player2_label.setText("Player 2")
+        
         if player == 1:
-            self.player_1_serving_label.setVisible(visible)
-            self.player_2_serving_label.setVisible(False)
+            self.player1_label.setText("SERVING: Player 1")
         elif player == 2:
-            self.player_2_serving_label.setVisible(visible)
-            self.player_1_serving_label.setVisible(False)
+            self.player2_label.setText("SERVING: Player 2")
 
     def update_player1_score(self, score):
         self.player1_score = score
@@ -162,23 +158,32 @@ class TennisInGameScreen(QWidget):
             self.start_game()
 
     # End Tennis game and hide corresponding buttons/labels
-    def end_game(self):
+    def end_game(self, winning_player=None):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.tennis_game.stop()
             self.game_thread.quit()
             self.game_thread.wait()
+
+        self.show_game_over(winning_player)
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
+
+
+    def show_game_over(self, winning_player):
+        if winning_player == 1:
+            self.game_over_label.setText('PLAYER 1 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: purple; font-size: 40px; font-weight: bold;")
+        elif winning_player == 2:
+            self.game_over_label.setText('PLAYER 2 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
 
     # Reset game, save high score, and hide/show buttons/labels as needed
     def reset_game(self):
         self.end_game()
-        self.save_high_score()
         self.player1_score = 0
         self.player2_score = 0
         self.player1_score_label.setText(f'Score: {self.player1_score}')
         self.player2_score_label.setText(f'Score: {self.player2_score}')
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
 
-    # Toggle pause button visibility based on game state
     def toggle_pause_button(self, visible):
         self.pause_button.setVisible(visible)
