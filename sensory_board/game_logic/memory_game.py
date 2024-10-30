@@ -108,6 +108,7 @@ class MemoryGame:
             i = 0
             while True:
                 user_input = False
+                pressed_button = None
                 while not user_input:
                     if self.wait_to_resume() == 1:
                         GPIO.cleanup()
@@ -140,23 +141,10 @@ class MemoryGame:
                         pressed_button = self.button_dict['star']
 
                     # Check for Bluetooth input if connected
-                    if self.client_sock:
-                        try:
-                            self.client_sock.setblocking(False)
-                            data = self.client_sock.recv(1024)
-                            if data:
-                                received_button_shape = data.decode("utf-8")
-                                # print(f"Received button: {received_button}")
-                                self.gen_funcs.light_up_led_w_sleep(received_button_shape, CTLR_LIGHT_UP_SLEEP_TIME)
-                                user_input = True
-                                pressed_button = self.button_dict[received_button_shape]
-                        except BluetoothError as e:
-                            if e.errno == 11:
-                                pass
-                            else:
-                                # print(f'Bluetooth disconnected: {e}')
-                                self.client_sock.close()
-                                self.client_sock = None
+                    if pressed_button == None:
+                        user_input, pressed_button = self.check_for_controller_input(user_input)
+                    
+                    sleep(0.1)
 
                 if self.button_dict[led_sequence[i]] != pressed_button:
                     game_is_playing = False
@@ -202,6 +190,28 @@ class MemoryGame:
             next_player = 1
         
         self.player = next_player
+    
+    def check_for_controller_input(self, user_input):
+        pressed_button = None
+        if self.client_sock:
+            try:
+                self.client_sock.setblocking(False)
+                data = self.client_sock.recv(1024)
+                if data:
+                    received_button_shape = data.decode("utf-8")
+                    # print(f"Received button: {received_button}")
+                    self.gen_funcs.light_up_led_w_sleep(received_button_shape, CTLR_LIGHT_UP_SLEEP_TIME)
+                    user_input = True
+                    pressed_button = self.button_dict[received_button_shape]
+            except BluetoothError as e:
+                if e.errno == 11:
+                    pass
+                else:
+                    # print(f'Bluetooth disconnected: {e}')
+                    self.client_sock.close()
+                    self.client_sock = None
+        return user_input, pressed_button
+        
 
     # Wait to resume if the game is paused
     def wait_to_resume(self):
