@@ -112,6 +112,7 @@ class TennisGame:
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
         server_button_flashing.start()
 
+        # Wait to serve
         while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
             if self.wait_to_resume(shape_1) == 1:
                 GPIO.cleanup()
@@ -242,7 +243,7 @@ class TennisGame:
         while self.thread_flag_1 == 'off' or self.thread_flag_1 == 'pause':
             while self.thread_flag_1 == 'pause':
                 sleep(0.1)
-            self.gen_funcs.light_up_led(led_shape, False)
+            self.gen_funcs.light_up_led(led_shape)
             sleep(0.5)
             self.gen_funcs.turn_off_led(led_shape)
             sleep(0.5)
