@@ -77,28 +77,28 @@ class TennisInGameScreen(QWidget):
         score_layout = QHBoxLayout()
 
         self.player_1_serving_label = QLabel('Now serving:', self)
-        self.player_1_serving_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
+        self.player_1_serving_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
         self.player_1_serving_label.setAlignment(Qt.AlignCenter)
         self.player_1_serving_label.setVisible(True)
 
         player1_layout = QVBoxLayout()
         player1_layout.addWidget(self.player_1_serving_label)
         label = QLabel('Player 1', self)
-        label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
         label.setAlignment(Qt.AlignCenter)
         player1_layout.addWidget(label)
         player1_layout.addSpacing(20)
         player1_layout.addWidget(self.player1_score_label, alignment=Qt.AlignCenter)
 
         self.player_2_serving_label = QLabel('Now serving:', self)
-        self.player_2_serving_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
+        self.player_2_serving_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
         self.player_2_serving_label.setAlignment(Qt.AlignCenter)
         self.player_2_serving_label.setVisible(True)
 
         player2_layout = QVBoxLayout()
         player2_layout.addWidget(self.player_2_serving_label)
         label = QLabel('Player 2', self)
-        label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        label.setStyleSheet("color: green; font-size: 56px; font-weight: bold;")
         label.setAlignment(Qt.AlignCenter)
         player2_layout.addWidget(label)
         player2_layout.addSpacing(20)
@@ -164,13 +164,6 @@ class TennisInGameScreen(QWidget):
             self.game_thread.wait()
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
 
-    # Save high score if needed
-    def save_high_score(self):
-        if self.app_init.tennis_hs < max(self.player1_score, self.player2_score):
-            self.app_init.tennis_hs = max(self.player1_score, self.player2_score)
-            self.app_init.sp_screen.update_displayed_values()
-            self.app_init.save_tennis_high_score()
-
     # Reset game, save high score, and hide/show buttons/labels as needed
     def reset_game(self):
         self.end_game()
@@ -180,3 +173,7 @@ class TennisInGameScreen(QWidget):
         self.player1_score_label.setText(f'Score: {self.player1_score}')
         self.player2_score_label.setText(f'Score: {self.player2_score}')
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
+
+    # Toggle pause button visibility based on game state
+    def toggle_pause_button(self, visible):
+        self.pause_button.setVisible(visible)

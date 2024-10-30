@@ -25,6 +25,8 @@ class TennisGame:
         self.serving_player = 1
 
         self.sleep_time = STARTING_SPEED
+        # Initialize variables to control the pause button visibility
+        self.on_wait_for_serve = True
 
     def connect_bluetooth(self):
         port = 1
@@ -76,9 +78,11 @@ class TennisGame:
         while True:
             print('starting round')
             if self.serving_player == 1:
-                self.play_round('triangle', 'cw', 'ccw', 'square')
+                if self.play_round('triangle', 'cw', 'ccw', 'square') == 1:
+                    return
             elif self.serving_player == 2:
-                self.play_round('square', 'ccw', 'cw', 'triangle')
+                if self.play_round('square', 'ccw', 'cw', 'triangle') == 1:
+                    return
 
             self.sleep_time = STARTING_SPEED
             self.serving_player = 1 if self.serving_player == 2 else 2
@@ -97,17 +101,27 @@ class TennisGame:
         GPIO.cleanup()
     
     def play_round(self, shape_1, dir_1, dir_2, shape_2):
+        # Signal that we are waiting for a serve (pause button visible)
+        self.on_wait_for_serve = True
+        self.app_init.tennis_ingame_screen.toggle_pause_button(True)
+
         self.thread_flag_1 = False
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
         server_button_flashing.start()
 
         while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
+            if self.wait_to_resume() == 1:
+                GPIO.cleanup()
+                return 1
             if self.check_for_controller_input(shape_1):
                 break
             sleep(0.1)
 
         self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag_1 = True
+
+        self.on_wait_for_serve = False
+        self.app_init.tennis_ingame_screen.toggle_pause_button(False)
 
         while True:
             if not self.light_up_over_net(dir_1):
@@ -129,6 +143,9 @@ class TennisGame:
             self.sleep_time = self.sleep_time * SPEED_ACCELERATION
         
         self.gen_funcs.fast_tap_wrong_led()
+
+        # Signal end of round (waiting for next serve)
+        self.on_wait_for_serve = True
 
     def determine_who_scores(self, dir=None, shape=None):
         print('determining who scored')
@@ -163,7 +180,6 @@ class TennisGame:
                 data = self.client_sock.recv(1024)
                 if data:
                     received_button_shape = data.decode("utf-8")
-                    print(received_button_shape)
                     if received_button_shape == led_shape:
                         button_pressed = True
             except BluetoothError as e:
@@ -219,7 +235,7 @@ class TennisGame:
         return success
 
     def flash_led(self, led_shape):
-        while not self.thread_flag_1 == True:
+        while self.thread_flag_1 == False:
             self.gen_funcs.light_up_led(led_shape, False)
             sleep(0.5)
             self.gen_funcs.turn_off_led(led_shape)
@@ -232,6 +248,16 @@ class TennisGame:
 
     def pause(self):
         self.pause_event.set
-    
+
+    def wait_to_resume(self):
+        while self.pause_event.is_set():
+            print('pause is set')
+            self.thread_flag_1 = True
+            if self.end_game:
+                return 1
+            sleep(0.25)
+        # self.thread_flag_1 = True
+        return 0
+        
     def resume(self):
         self.pause_event.clear()
