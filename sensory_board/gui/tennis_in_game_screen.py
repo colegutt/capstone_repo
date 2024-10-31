@@ -5,9 +5,9 @@ from general_functions import GeneralFunctions
 
 # Thread that runs the Tennis Game simultaneously
 class TennisGameThread(QThread):
-    # Signals that allow screen parameters to change in real time
     player1_score_updated = pyqtSignal(int)
     player2_score_updated = pyqtSignal(int)
+    rally_updated = pyqtSignal(int)
     game_over = pyqtSignal(int)
 
     def __init__(self, app_init):
@@ -27,8 +27,11 @@ class TennisGameThread(QThread):
         def on_game_over(player):
             # self.tennis_game.disconnect_bluetooth()
             self.game_over.emit(player)  # Emit the winning player number
+        
+        def update_rally(rally):
+            self.rally_updated.emit(rally)  # Emit rally count to the screen
 
-        self.tennis_game.run_game(update_score, on_game_over)
+        self.tennis_game.run_game(update_score, update_rally, on_game_over)
 
     # Stops the Tennis Game
     def stop(self):
@@ -52,6 +55,10 @@ class TennisInGameScreen(QWidget):
         self.game_over_label = self.gen_funcs.create_game_over_label()
         self.player1_score_label = self.gen_funcs.create_score_label(52)
         self.player2_score_label = self.gen_funcs.create_score_label(52)
+        self.rally_label = QLabel('Rally: 0', self)  # New rally label
+        self.rally_label.setStyleSheet("color: white; font-size: 32px; font-weight: bold;")
+        self.rally_label.setAlignment(Qt.AlignCenter)
+        self.rally_label.setVisible(True)
         self.pause_button = self.gen_funcs.create_pause_button()
         self.play_again_button = self.gen_funcs.create_play_again_button()
         self.go_back_button = self.gen_funcs.create_go_back_button()
@@ -94,6 +101,9 @@ class TennisInGameScreen(QWidget):
         player2_layout.addSpacing(20)
         player2_layout.addWidget(self.player2_score_label, alignment=Qt.AlignCenter)
 
+        rally_layout = QVBoxLayout()
+        rally_layout.addWidget(self.rally_label, alignment=Qt.AlignCenter)
+
         # Add player layouts to score layout
         score_layout.addStretch()
         score_layout.addLayout(player1_layout)
@@ -106,6 +116,8 @@ class TennisInGameScreen(QWidget):
         main_layout.addWidget(self.title)
         main_layout.addStretch()
         main_layout.addLayout(score_layout)
+        main_layout.addStretch()
+        main_layout.addLayout(rally_layout) 
         main_layout.addStretch()
         main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
         main_layout.addSpacing(10)
@@ -120,10 +132,10 @@ class TennisInGameScreen(QWidget):
             self.game_thread = TennisGameThread(self.app_init)
             self.game_thread.player1_score_updated.connect(self.update_player1_score)
             self.game_thread.player2_score_updated.connect(self.update_player2_score)
-            self.game_thread.game_over.connect(self.end_game)  # Ensure this is connected properly
+            self.game_thread.rally_updated.connect(self.update_rally)
+            self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
         self.game_over_label.setVisible(False)  # This should be done only when starting a new game
-
 
     def update_serving_label(self, player=None):
         self.player1_label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
@@ -143,6 +155,9 @@ class TennisInGameScreen(QWidget):
     def update_player2_score(self, score):
         self.player2_score = score
         self.player2_score_label.setText(f'Score: {self.player2_score}')
+    
+    def update_rally(self, rally):
+        self.rally_label.setText(f"Rally: {rally}")
 
     # Pause game and go to pause screen
     def pause_game(self):
@@ -164,6 +179,7 @@ class TennisInGameScreen(QWidget):
             self.game_thread.quit()
             self.game_thread.wait()
 
+        self.rally_label.setVisible(False)
         self.show_game_over(winning_player)
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
 
@@ -183,6 +199,7 @@ class TennisInGameScreen(QWidget):
         self.player2_score = 0
         self.player1_score_label.setText(f'Score: {self.player1_score}')
         self.player2_score_label.setText(f'Score: {self.player2_score}')
+        self.rally_label.setText("Rally: 0")
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
 
     def toggle_pause_button(self, visible):

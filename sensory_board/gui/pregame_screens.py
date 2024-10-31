@@ -52,9 +52,10 @@ class TennisPregameScreen(QWidget):
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
             "Grab an opponent and take turns hitting a ball back and forth. "
-            "Player 1 uses the [green] button, and Player 2 uses the [yellow] button. "
+            "Player 1 uses the purple triangle button, and Player 2 uses the green square button. "
             "First player to 5 points wins the game. Good luck!"
         )
+        description_str = description_str + '\nNOTE: This game is not compatible with the controller'
         self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17))
 
 # General class that create pregame screens given certain parameters
@@ -96,7 +97,7 @@ class PregameScreenCreator(QWidget):
         description_str = game_desc
 
         description = QLabel(description_str, self)
-        description.setStyleSheet("color: white; font-size: 26px;")
+        description.setStyleSheet("color: white; font-size: 24px;")
         description.setAlignment(Qt.AlignCenter)
         description.setWordWrap(True)
         description_layout = QVBoxLayout()
