@@ -55,7 +55,7 @@ class TennisPregameScreen(QWidget):
             "Player 1 uses the purple triangle button, and Player 2 uses the green square button. "
             "First player to 5 points wins the game. Good luck!"
         )
-        description_str = description_str + '\nNOTE: This game is not compatible with the controller'
+        description_str = description_str + '\n\nNOTE: This game is not compatible with the controller'
         self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17))
 
 # General class that create pregame screens given certain parameters
@@ -104,7 +104,7 @@ class PregameScreenCreator(QWidget):
         description_layout.addStretch()
         description_layout.addWidget(description)
         description_layout.addStretch()
-        description_layout.setContentsMargins(100, 0, 100, 0)
+        description_layout.setContentsMargins(25, 0, 25, 0)
         return description_layout
 
     # Create start button that starts the game when clicked
@@ -149,7 +149,7 @@ class PregameScreenCreator(QWidget):
 
     def create_player_count_layout(self):
         self.player_label = QLabel(f"{self.player_count} players")
-        self.player_label.setStyleSheet("color: white; font-size: 25px; font-weight: bold;")
+        self.player_label.setStyleSheet("color: white; font-size: 22px; font-weight: bold;")
         self.player_label.setAlignment(Qt.AlignCenter)  # Center the text
 
         minus_button = QPushButton('-', self)
@@ -179,10 +179,10 @@ class PregameScreenCreator(QWidget):
             background-color: gray; 
             color: white; 
             border-radius: 10px;
-            font-size: 24px; 
+            font-size: 22px; 
             font-weight: bold;
-            width: 50px; 
-            height: 50px;
+            width: 40px; 
+            height: 40px;
             padding: 0;
             text-align: center;
         """
