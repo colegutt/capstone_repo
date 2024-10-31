@@ -16,15 +16,15 @@ def connect_to_main(button_and_led_dict):
         try:
             i += 1
             sock = BluetoothSocket(RFCOMM)
-            print(f'[Try {i}]: Trying to connect to MAIN')
+            # print(f'[Try {i}]: Trying to connect to MAIN')
             sock.connect((main_mac_address, port))
-            print("Successfully connected to MAIN")
+            # print("Successfully connected to MAIN")
             connected = True
         except BluetoothError as e:
-            print(f"Connection failed: {e}. Retrying in 1 second...")
-            sleep(0.5)
+            # print(f"Connection failed: {e}. Retrying in 1 second...")
+            sleep(1)
             GPIO.output(button_and_led_dict['connection_led'], GPIO.LOW)
-            sleep(0.5)
+            sleep(1)
     return sock
 
 def wait_for_button_release(button):
@@ -68,10 +68,10 @@ def is_socket_connected(sock, button_and_led_dict):
             # Attempt to read data
             data = sock.recv(1024)
             if len(data) == 0:
-                print("Socket disconnected")
+                # print("Socket disconnected")
                 return False
     except BluetoothError as e:
-        print(f"Socket error: {e}")
+        # print(f"Socket error: {e}")
         return False
     return True
 
@@ -82,7 +82,7 @@ try:
     while True:
         # Check if the socket is still conn
         if not is_socket_connected(sock, button_and_led_dict):
-            print("Detected disconnection. Attempting to reconnect...")
+            # print("Detected disconnection. Attempting to reconnect...")
             sock.close()
             sock = connect_to_main(button_and_led_dict)
 
@@ -90,31 +90,31 @@ try:
             # Check for button presses and send the corresponding message
             if GPIO.input(button_and_led_dict['heart']) == GPIO.LOW:
                 sock.send('heart')
-                print("Message sent: heart")
+                # print("Message sent: heart")
                 wait_for_button_release(button_and_led_dict['heart'])
             elif GPIO.input(button_and_led_dict['circle']) == GPIO.LOW:
                 sock.send('circle')
-                print("Message sent: circle")
+                # print("Message sent: circle")
                 wait_for_button_release(button_and_led_dict['circle'])
             elif GPIO.input(button_and_led_dict['star']) == GPIO.LOW: 
                 sock.send('star')
-                print("Message sent: star")
+                # print("Message sent: star")
                 wait_for_button_release(button_and_led_dict['star'])
             elif GPIO.input(button_and_led_dict['square']) == GPIO.LOW: 
                 sock.send('square')
-                print("Message sent: square")
+                # print("Message sent: square")
                 wait_for_button_release(button_and_led_dict['square'])
             elif GPIO.input(button_and_led_dict['cloud']) == GPIO.LOW: 
                 sock.send('cloud')
-                print("Message sent: cloud")
+                # print("Message sent: cloud")
                 wait_for_button_release(button_and_led_dict['cloud'])
             elif GPIO.input(button_and_led_dict['triangle']) == GPIO.LOW: 
                 sock.send('triangle')
-                print("Message sent: triangle")
+                # print("Message sent: triangle")
                 wait_for_button_release(button_and_led_dict['triangle'])
 
         except (BluetoothError, OSError) as e:
-            print(f"Connection lost: {e}. Attempting to reconnect...")
+            # print(f"Connection lost: {e}. Attempting to reconnect...")
             sock.close()
             sock = connect_to_main(button_and_led_dict)
 
