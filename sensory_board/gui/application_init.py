@@ -6,6 +6,7 @@ from gui.pregame_screens import MemoryPregameScreen, FastTapPregameScreen, Memor
 from gui.memory_in_game_screen import MemoryInGameScreen
 from gui.fast_tap_in_game_screen import FastTapInGameScreen
 from gui.memory_mult_in_game_screen import MemoryMultInGameScreen
+from gui.tennis_in_game_screen import TennisInGameScreen
 from gui.pause_screen import PauseScreen
 from PyQt5.QtCore import QSettings
 import pygame
@@ -71,6 +72,9 @@ class ApplicationInit(QWidget):
         self.memory_mult_pause_screen = PauseScreen(self.stacked_widget, 15, 13, self)
         self.memory_mult_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 14)
         self.tennis_pregame_screen = TennisPregameScreen(self.stacked_widget, self)
+        self.tennis_ingame_screen = TennisInGameScreen(self.stacked_widget, self)
+        self.tennis_pause_screen = PauseScreen(self.stacked_widget, 19, 17, self)
+        self.tennis_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 18)
 
         # Index   Screen
         #   0     Main Menu
@@ -85,11 +89,14 @@ class ApplicationInit(QWidget):
         #   9     Fast Tap In-Game Screen
         #  10     Fast Tap Pause Screen
         #  11     Fast Tap Pause Settings Screen
-        #  12     Memory 2P Pregame Screen
-        #  13     Memory 2P In-Game Screen
-        #  14     Memory 2P Pause Screen
+        #  12     Memory Multiplayer Pregame Screen
+        #  13     Memory Multiplayer In-Game Screen
+        #  14     Memory Multiplayer Pause Screen
         #  15     Memory Pause Settings Screen
         #  16     Tennis Pregame Screen
+        #  17     Tennis In-Game Screen
+        #  18     Tennis Pause Menu
+        #  19     Tennis Pause Settings Screen
         self.stacked_widget.addWidget(self.main_menu)
         self.stacked_widget.addWidget(self.sp_screen)
         self.stacked_widget.addWidget(self.mp_screen)
@@ -107,6 +114,9 @@ class ApplicationInit(QWidget):
         self.stacked_widget.addWidget(self.memory_mult_pause_screen)
         self.stacked_widget.addWidget(self.memory_mult_pause_settings_screen)
         self.stacked_widget.addWidget(self.tennis_pregame_screen)
+        self.stacked_widget.addWidget(self.tennis_ingame_screen)
+        self.stacked_widget.addWidget(self.tennis_pause_screen)
+        self.stacked_widget.addWidget(self.tennis_pause_settings_screen)
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)

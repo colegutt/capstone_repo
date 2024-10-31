@@ -55,7 +55,7 @@ class TennisPregameScreen(QWidget):
             "Player 1 uses the [green] button, and Player 2 uses the [yellow] button. "
             "First player to 5 points wins the game. Good luck!"
         )
-        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 2))
+        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17))
 
 # General class that create pregame screens given certain parameters
 class PregameScreenCreator(QWidget):
@@ -195,6 +195,8 @@ class PregameScreenCreator(QWidget):
             self.app_init.fast_tap_ingame_screen.start_game()
         elif in_game_screen_index == 13:
             self.app_init.memory_mult_ingame_screen.start_game()
+        elif in_game_screen_index == 17:
+            self.app_init.tennis_ingame_screen.start_game()
     
     def decrease_player_count(self):
         if self.player_count > self.min_players:

@@ -34,7 +34,7 @@ class MPScreen(QWidget):
         super().__init__()
         self.app_init = app_init
         games_and_high_scores = {
-            'Tennis': 10,
+            'Tennis': ' -',
             'Memory Multiplayer': self.app_init.memory_mult_hs
         }
         self.hs_qlabels = {
