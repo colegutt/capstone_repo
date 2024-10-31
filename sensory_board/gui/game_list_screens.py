@@ -34,7 +34,7 @@ class MPScreen(QWidget):
         super().__init__()
         self.app_init = app_init
         games_and_high_scores = {
-            'Tennis': ' -',
+            'Tennis': self.app_init.tennis_hs,
             'Memory Multiplayer': self.app_init.memory_mult_hs
         }
         self.hs_qlabels = {
@@ -51,6 +51,8 @@ class MPScreen(QWidget):
     # Update high scores
     def update_displayed_values(self):
         self.hs_qlabels['Memory Multiplayer'].setText(f'{self.app_init.memory_mult_hs}')
+        self.hs_qlabels['Tennis'].setText(f'{self.app_init.tennis_hs}')
+
 
 # Common function for creating game list screens
 class GameListScreenCreator(QWidget):
@@ -127,7 +129,14 @@ class GameListScreenCreator(QWidget):
             temp_game_layout.addWidget(game_button)
             temp_game_layout.addSpacing(125)
             temp_game_layout.addWidget(self.hs_qlabels[game])
-            temp_game_layout.addSpacing(300) 
+            if game == 'Tennis':
+                rally_label = QLabel('(Rally)', self)
+                rally_label.setStyleSheet("color: white; font-size: 24px; font-weight: bold;")
+                temp_game_layout.addSpacing(10)
+                temp_game_layout.addWidget(rally_label)
+                temp_game_layout.addSpacing(220) 
+            else:
+                temp_game_layout.addSpacing(300) 
 
             game_layouts.append(temp_game_layout)
             i += 1

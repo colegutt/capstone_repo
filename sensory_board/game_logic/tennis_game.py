@@ -153,8 +153,16 @@ class TennisGame:
                 
             rally += 1
             self.sleep_time = self.sleep_time * SPEED_ACCELERATION
+        
+        self.save_high_score(rally)
 
         self.gen_funcs.fast_tap_wrong_led()
+
+    def save_high_score(self, rally):
+        if self.app_init.tennis_hs < rally:
+            self.app_init.tennis_hs = rally
+            self.app_init.mp_screen.update_displayed_values()
+            self.app_init.save_tennis_high_score()
 
     def determine_who_scores(self, dir=None, shape=None, update_score_callback=None):
         if dir == 'cw':

@@ -29,6 +29,7 @@ class ApplicationInit(QWidget):
         self.memory_hs = self.settings.value("memory_hs", 0, int)
         self.fast_tap_hs = self.settings.value("fast_tap_hs", 0, int)
         self.memory_mult_hs = self.settings.value("memory_mult_hs", 0, int)
+        self.tennis_hs = self.settings.value("tennis_hs", 0, int)
 
         # Sound initialization
         pygame.mixer.init()
@@ -164,4 +165,7 @@ class ApplicationInit(QWidget):
     # Save high score for memory 2p
     def save_memory_mult_high_score(self):
         self.settings.setValue("memory_mult_hs", self.memory_mult_hs)
+    
+    def save_tennis_high_score(self):
+        self.settings.setValue("tennis_hs", self.tennis_hs)
 
