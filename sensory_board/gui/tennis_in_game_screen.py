@@ -25,7 +25,7 @@ class TennisGameThread(QThread):
 
         # Show game over layout when signaled
         def on_game_over(player):
-            self.tennis_game.disconnect_bluetooth()
+            # self.tennis_game.disconnect_bluetooth()
             self.game_over.emit(player)  # Emit the winning player number
 
         self.tennis_game.run_game(update_score, on_game_over)

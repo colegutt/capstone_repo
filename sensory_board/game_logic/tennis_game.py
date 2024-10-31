@@ -19,7 +19,7 @@ class TennisGame:
         self.start_time = None
         self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
         self.gen_funcs.turn_off_all_leds()
-        self.client_sock, self.server_sock = self.connect_bluetooth()
+        # self.client_sock, self.server_sock = self.connect_bluetooth()
         self.thread_flag_1 = None
         self.thread_flag_2 = False
         self.player_1_score = 0
@@ -30,51 +30,51 @@ class TennisGame:
 
         self.sleep_time = STARTING_SPEED
 
-    def connect_bluetooth(self):
-        port = 1
-        server_sock = BluetoothSocket(RFCOMM)
-        try:
-            server_sock.bind(("", port))
-            server_sock.listen(1)
-            server_sock.setblocking(False)
-        except BluetoothError as e:
-            return None, server_sock
+    # def connect_bluetooth(self):
+    #     port = 1
+    #     server_sock = BluetoothSocket(RFCOMM)
+    #     try:
+    #         server_sock.bind(("", port))
+    #         server_sock.listen(1)
+    #         server_sock.setblocking(False)
+    #     except BluetoothError as e:
+    #         return None, server_sock
 
-        def attempt_accept():
-            client_sock = None
-            while client_sock is None:
-                try:
-                    client_sock, client_info = server_sock.accept()
-                    self.client_sock = client_sock
-                    return client_sock, server_sock
-                except BluetoothError as e:
-                    if e.errno == 11:
-                        sleep(0.01)
-                    else:
-                        break
-                sleep(CLIENT_SOCK_SLEEP_TIME)
-            return None, server_sock
+    #     def attempt_accept():
+    #         client_sock = None
+    #         while client_sock is None:
+    #             try:
+    #                 client_sock, client_info = server_sock.accept()
+    #                 self.client_sock = client_sock
+    #                 return client_sock, server_sock
+    #             except BluetoothError as e:
+    #                 if e.errno == 11:
+    #                     sleep(0.01)
+    #                 else:
+    #                     break
+    #             sleep(CLIENT_SOCK_SLEEP_TIME)
+    #         return None, server_sock
 
-        connection_thread = threading.Thread(target=attempt_accept, daemon=True)
-        connection_thread.start()
+    #     connection_thread = threading.Thread(target=attempt_accept, daemon=True)
+    #     connection_thread.start()
 
-        return None, server_sock
+    #     return None, server_sock
 
-    def disconnect_bluetooth(self):
-        if self.client_sock:
-            try:
-                self.client_sock.close()
-            except BluetoothError as e:
-                print(f"Error disconnecting Bluetooth: {e}")
-            finally:
-                self.client_sock = None
-        if self.server_sock:
-            try:
-                self.server_sock.close()
-            except BluetoothError as e:
-                print(f"Error closing Bluetooth server socket: {e}")
-            finally:
-                self.server_sock = None
+    # def disconnect_bluetooth(self):
+    #     if self.client_sock:
+    #         try:
+    #             self.client_sock.close()
+    #         except BluetoothError as e:
+    #             print(f"Error disconnecting Bluetooth: {e}")
+    #         finally:
+    #             self.client_sock = None
+    #     if self.server_sock:
+    #         try:
+    #             self.server_sock.close()
+    #         except BluetoothError as e:
+    #             print(f"Error closing Bluetooth server socket: {e}")
+    #         finally:
+    #             self.server_sock = None
 
     def run_game(self, update_score_callback, on_game_over_callback):
         while True:
@@ -117,8 +117,8 @@ class TennisGame:
             if self.wait_to_resume(shape_1) == 1:
                 GPIO.cleanup()
                 return 1
-            if self.check_for_controller_input(shape_1):
-                break
+            # if self.check_for_controller_input(shape_1):
+            #     break
             sleep(0.1)
 
         self.gen_funcs.turn_off_led(shape_1)
@@ -170,38 +170,38 @@ class TennisGame:
             if GPIO.input(self.button_dict[led_shape]) == GPIO.LOW:
                 success = True
                 break
-            if self.check_for_controller_input(led_shape):
-                success = True
-                break
+            # if self.check_for_controller_input(led_shape):
+            #     success = True
+            #     break
         self.gen_funcs.turn_off_led(led_shape)
         return success
     
-    def check_for_controller_input(self, led_shape):
-        button_pressed = False
-        if self.client_sock:
-            try:
-                self.client_sock.setblocking(False)
-                data = self.client_sock.recv(1024)
-                if data:
-                    received_button_shape = data.decode("utf-8")
-                    if received_button_shape == led_shape:
-                        button_pressed = True
-            except BluetoothError as e:
-                if e.errno == 11:
-                    pass
-                else:
-                    self.client_sock.close()
-                    self.client_sock = None
-        return button_pressed
+    # def check_for_controller_input(self, led_shape):
+    #     button_pressed = False
+    #     if self.client_sock:
+    #         try:
+    #             self.client_sock.setblocking(False)
+    #             data = self.client_sock.recv(1024)
+    #             if data:
+    #                 received_button_shape = data.decode("utf-8")
+    #                 if received_button_shape == led_shape:
+    #                     button_pressed = True
+    #         except BluetoothError as e:
+    #             if e.errno == 11:
+    #                 pass
+    #             else:
+    #                 self.client_sock.close()
+    #                 self.client_sock = None
+    #     return button_pressed
 
     def monitor_button_press(self, button_pressed_event, shape_traveling_to):
         while not button_pressed_event.is_set():
             if GPIO.input(self.button_dict[shape_traveling_to]) == GPIO.LOW:
                 button_pressed_event.set()
                 break
-            elif self.check_for_controller_input(shape_traveling_to):
-                button_pressed_event.set()
-                break
+            # elif self.check_for_controller_input(shape_traveling_to):
+            #     button_pressed_event.set()
+            #     break
             elif self.thread_flag_2:
                 return
 
@@ -250,7 +250,7 @@ class TennisGame:
 
     def stop(self):
         self.end_game = True
-        self.disconnect_bluetooth()
+        # self.disconnect_bluetooth()
         self.pause_event.set()
 
     def pause(self):
