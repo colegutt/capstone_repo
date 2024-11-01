@@ -31,6 +31,12 @@ class ApplicationInit(QWidget):
         self.memory_mult_hs = self.settings.value("memory_mult_hs", 0, int)
         self.tennis_hs = self.settings.value("tennis_hs", 0, int)
 
+        # Reset high scores (uncomment)
+        # self.settings.setValue("memory_hs", 0)
+        # self.settings.setValue("fast_tap_hs", 0)
+        # self.settings.setValue("memory_mult_hs", 0)
+        # self.settings.setValue("tennis_hs", 0)
+
         # Sound initialization
         pygame.mixer.init()
         self.beep_sounds = {
