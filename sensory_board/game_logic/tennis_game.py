@@ -152,11 +152,16 @@ class TennisGame:
                 break
                 
             rally += 1
-            self.sleep_time = self.sleep_time * SPEED_ACCELERATION
+
+            self.increase_ball_speed(rally)
         
         self.save_high_score(rally)
 
         self.gen_funcs.fast_tap_wrong_led()
+
+    def increase_ball_speed(self, rally):
+        if rally < 15:
+            self.sleep_time = self.sleep_time * SPEED_ACCELERATION
 
     def save_high_score(self, rally):
         if self.app_init.tennis_hs < rally:

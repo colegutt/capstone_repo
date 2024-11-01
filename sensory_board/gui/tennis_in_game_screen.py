@@ -135,7 +135,8 @@ class TennisInGameScreen(QWidget):
             self.game_thread.rally_updated.connect(self.update_rally)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
-        self.game_over_label.setVisible(False)  # This should be done only when starting a new game
+        self.rally_label.setVisible(True)
+        self.game_over_label.setVisible(False)
 
     def update_serving_label(self, player=None):
         self.player1_label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
