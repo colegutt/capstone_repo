@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import random
 from time import sleep, time
 import threading
 from general_functions import GeneralFunctions
@@ -141,6 +142,7 @@ class TennisGame:
                 break
 
             rally += 1
+            self.increase_ball_speed()
             update_rally_callback(rally)
 
             if not self.light_up_over_net(dir_2):
@@ -152,16 +154,27 @@ class TennisGame:
                 break
                 
             rally += 1
-
-            self.increase_ball_speed(rally)
+            self.increase_ball_speed()
         
         self.save_high_score(rally)
 
         self.gen_funcs.fast_tap_wrong_led()
 
-    def increase_ball_speed(self, rally):
-        if rally < 15:
-            self.sleep_time = self.sleep_time * SPEED_ACCELERATION
+    def increase_ball_speed(self):
+        decision = random.randint(1, 8)
+        if decision == 1:
+            # Slow down (12.5%)
+            self.sleep_time *= (SPEED_ACCELERATION * 1.5)
+        elif decision == 2 or decision == 3:
+            # Speed up (25%)
+            self.sleep_time *= SPEED_ACCELERATION
+        elif decision == 4 or decision == 5:
+            # Speed up faster (25%)
+            self.sleep_time *= (SPEED_ACCELERATION / 1.5)
+        elif decision == 6:
+            # Speed up very fast (12.5%)
+            self.sleep_time *= (SPEED_ACCELERATION / 2)
+        # If decision == 7 or 8; speed stays the same (25%)
 
     def save_high_score(self, rally):
         if self.app_init.tennis_hs < rally:
