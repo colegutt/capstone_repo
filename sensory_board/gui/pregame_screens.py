@@ -53,7 +53,7 @@ class TennisPregameScreen(QWidget):
         description_str = (
             "Grab an opponent and take turns hitting a ball back and forth. "
             "Player 1 uses the purple triangle button, and Player 2 uses the green square button. "
-            "First player to 5 points wins the game. Good luck!"
+            "First player to 3 points wins the game. Good luck!"
         )
         description_str = description_str + '\n\nNOTE: This game is not compatible with the controller'
         self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17))
