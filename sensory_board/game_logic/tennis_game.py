@@ -8,7 +8,7 @@ from PyQt5.QtCore import pyqtSignal
 CLIENT_SOCK_SLEEP_TIME = 0.25
 STARTING_SPEED = 0.75
 SPEED_ACCELERATION = 0.75
-POINTS_PLAYED_TO = 5
+POINTS_PLAYED_TO = 3
 
 class TennisGame:
     def __init__(self, app_init):
