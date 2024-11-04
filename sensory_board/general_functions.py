@@ -51,6 +51,8 @@ class GeneralFunctions(QWidget):
     
     # Function that goes back to the previous screen when button is clicked
     def go_back(self, index):
+        if self.led_slices != None:
+            self.turn_off_all_leds()
         self.stacked_widget.setCurrentIndex(index)
 
     def init_leds_and_buttons(self):
@@ -175,6 +177,14 @@ class GeneralFunctions(QWidget):
         if sound:
             self.play_beep_sound(led_shape)
         self.pixels.show()
+    
+    def light_up_settings_leds(self):
+        for p in self.led_slices['heart']:
+            self.pixels[p] = self.dim_color(self.rgb_colors['heart'], self.app_init.brightness_level / 100)
+        for p in self.led_slices['circle']:
+            self.pixels[p] = self.dim_color(self.rgb_colors['circle'], self.app_init.brightness_level / 100) 
+        for p in self.led_slices['star']:
+            self.pixels[p] = self.dim_color(self.rgb_colors['star'], self.app_init.brightness_level / 100) 
 
     def light_up_led_w_sleep(self, led_shape, sleep_time, sound=True):
         self.light_up_led(led_shape, sound)

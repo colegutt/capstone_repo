@@ -215,8 +215,9 @@ class MemoryGame:
 
     # Wait to resume if the game is paused
     def wait_to_resume(self):
-        while self.pause_event.is_set():
+        if self.pause_event.is_set():
             self.gen_funcs.turn_off_all_leds()
+        while self.pause_event.is_set():
             if self.end_game:
                 return 1
             sleep(0.25)

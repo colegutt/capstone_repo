@@ -9,6 +9,7 @@ class SettingsScreen(QWidget):
         self.stacked_widget = stacked_widget
         self.app_init = app_init
         self.gen_funcs = GeneralFunctions(app_init=self.app_init, stacked_widget=self.stacked_widget)
+        self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
         self.previous_index = previous_index
         self.create_screen()
         self.update_displayed_values() 
@@ -167,16 +168,14 @@ class SettingsScreen(QWidget):
         if self.app_init.brightness_level < 100:
             self.app_init.brightness_level += 10
             self.brightness_percentage.setText(f'{self.app_init.get_brightness_level()}%')
+            self.gen_funcs.light_up_settings_leds()
 
     # Function that handles decreasing the brightness level and updating it in real-time
     def decrease_brightness_level(self):
         if self.app_init.brightness_level > 0:
             self.app_init.brightness_level -= 10
             self.brightness_percentage.setText(f'{self.app_init.get_brightness_level()}%')
-
-    # Function that goes back to previous index
-    def go_back(self):
-        self.stacked_widget.setCurrentIndex(self.previous_index)
+            self.gen_funcs.light_up_settings_leds()
     
     # Update displayed settings values for sound, brightness, and narration
     def update_displayed_values(self):
