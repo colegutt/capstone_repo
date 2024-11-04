@@ -55,8 +55,7 @@ class TennisPregameScreen(QWidget):
             "Player 1 uses the purple triangle button, and Player 2 uses the green square button. "
             "First player to 3 points wins the game. Good luck!"
         )
-        description_str = description_str + '\n\nNOTE: This game is not compatible with the controller'
-        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17))
+        self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17, True))
 
 # General class that create pregame screens given certain parameters
 class PregameScreenCreator(QWidget):
@@ -76,11 +75,11 @@ class PregameScreenCreator(QWidget):
         self.app_init = app_init
 
     # Create pregame screen    
-    def create_pregame_screen(self, game_title, game_desc, button_color, game_index, in_game_screen_index):
+    def create_pregame_screen(self, game_title, game_desc, button_color, game_index, in_game_screen_index, tennis=False):
         self.setStyleSheet("background-color: black;")
         return self.set_layout(
             self.set_title(game_title),
-            self.set_description_layout(game_desc),
+            self.set_description_layout(game_desc, tennis),
             self.create_start_button(button_color, in_game_screen_index),
             self.gen_funcs.create_back_layout(game_index)
         )
@@ -93,9 +92,8 @@ class PregameScreenCreator(QWidget):
         return title
     
     # Return description label for the screen
-    def set_description_layout(self, game_desc):
+    def set_description_layout(self, game_desc, tennis=False):
         description_str = game_desc
-
         description = QLabel(description_str, self)
         description.setStyleSheet("color: white; font-size: 24px;")
         description.setAlignment(Qt.AlignCenter)
@@ -103,9 +101,20 @@ class PregameScreenCreator(QWidget):
         description_layout = QVBoxLayout()
         description_layout.addStretch()
         description_layout.addWidget(description)
+        if tennis:
+            description_layout.addSpacing(10)
+            description_layout.addWidget(self.get_tennis_additional_description())
         description_layout.addStretch()
         description_layout.setContentsMargins(25, 0, 25, 0)
         return description_layout
+
+    def get_tennis_additional_description(self):
+        descr_2_str = 'NOTE: This game is not compatible with the controller'
+        descr_2 = QLabel(descr_2_str, self)
+        descr_2.setStyleSheet("color: red; font-size: 24px;")
+        descr_2.setAlignment(Qt.AlignCenter)
+        descr_2.setWordWrap(True)
+        return descr_2
 
     # Create start button that starts the game when clicked
     def create_start_button(self, button_color, in_game_screen_index):
