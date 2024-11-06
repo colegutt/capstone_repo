@@ -185,6 +185,8 @@ class MemoryGame:
                     update_player_callback(self.player)
                     repeat_sequence = True
                 else:
+                    if self.elimination:
+                        self.gen_funcs.fast_tap_wrong_led()
                     self.gen_funcs.game_over_flash()
                     on_game_over_callback()
 
