@@ -130,6 +130,9 @@ class TennisGame:
         self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag_1 = 'on'
 
+        server_button_flashing.join()
+        del server_button_flashing
+
         self.app_init.tennis_ingame_screen.update_serving_label()
         self.app_init.tennis_ingame_screen.toggle_pause_button(False)
 
@@ -244,6 +247,7 @@ class TennisGame:
             #     break
             elif self.thread_flag_2:
                 return
+            sleep(0.1)
 
     def light_up_over_net(self, cw_or_ccw):
         success = True
@@ -279,7 +283,6 @@ class TennisGame:
         return success
 
     def flash_led(self, led_shape):
-
         while self.thread_flag_1 == 'off' or self.thread_flag_1 == 'pause':
             while self.thread_flag_1 == 'pause':
                 sleep(0.1)
@@ -291,7 +294,6 @@ class TennisGame:
     def stop(self):
         self.end_game = True
         # self.disconnect_bluetooth()
-        self.pause_event.set()
 
     def pause(self):
         self.pause_event.set()
