@@ -7,12 +7,12 @@ from general_functions import GeneralFunctions
 class GameThread(QThread):
     # Signals that allow screen parameters to change in real time
     score_updated = pyqtSignal(int)
-    game_over = pyqtSignal()
-    player_changed = pyqtSignal(int)
+    game_over = pyqtSignal(int)
+    player_changed = pyqtSignal(int, bool)
 
-    def __init__(self, app_init, player_count):
+    def __init__(self, app_init, player_count, game_mode):
         super().__init__()
-        self.memory_game = MemoryGame(app_init, True, player_count)
+        self.memory_game = MemoryGame(app_init, True, player_count, game_mode)
         
     # Function that runs when the thread starts
     def run(self):
@@ -22,12 +22,12 @@ class GameThread(QThread):
             self.score_updated.emit(num_round)
         
         # Update player number when signaled
-        def update_player(player_num):
-            self.player_changed.emit(player_num)
+        def update_player(player_num, eliminated=False):
+            self.player_changed.emit(player_num, eliminated)
         
         # Show game over layout when signaled
-        def on_game_over():
-            self.game_over.emit()
+        def on_game_over(player_num=None):
+            self.game_over.emit(player_num)
 
         # Run Memory 2P Game
         self.memory_game.run_game(update_score, on_game_over, update_player)
@@ -86,7 +86,7 @@ class MemoryMultInGameScreen(QWidget):
     # Start Memory 2P game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = GameThread(self.app_init, self.app_init.memory_mult_pregame_screen.get_player_count())
+            self.game_thread = GameThread(self.app_init, self.app_init.memory_mult_pregame_screen.get_player_count(), self.app_init.memory_mult_pregame_screen.get_game_mode())
             self.game_thread.score_updated.connect(self.update_score_from_game)
             self.game_thread.player_changed.connect(self.update_player_label)
             self.game_thread.game_over.connect(self.end_game)
@@ -107,31 +107,55 @@ class MemoryMultInGameScreen(QWidget):
         self.score_label.setText(f'Score: {self.score}')
 
     # Update "Player #'s Turn" label
-    def update_player_label(self, player_num):
+    def update_player_label(self, player_num, eliminated=False):
         if player_num == 1:
-            self.turn_label.setText("Player 1's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 1 Eliminated!")
+            else:
+                self.turn_label.setText("Player 1's Turn")
             self.turn_label.setStyleSheet("color: blue; font-size: 50px; font-weight: bold;")
         elif player_num == 2:
-            self.turn_label.setText("Player 2's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 2 Eliminated!")
+            else:
+                self.turn_label.setText("Player 2's Turn")
             self.turn_label.setStyleSheet("color: red; font-size: 50px; font-weight: bold;")
         elif player_num == 3:
-            self.turn_label.setText("Player 3's Turn")
-            self.turn_label.setStyleSheet("color: #E6E6FA; font-size: 50px; font-weight: bold;")
+            if eliminated:
+                self.turn_label.setText("Player 3 Eliminated!")
+            else:
+                self.turn_label.setText("Player 3's Turn")
+            self.turn_label.setStyleSheet("color: teal; font-size: 50px; font-weight: bold;")
         elif player_num == 4:
-            self.turn_label.setText("Player 4's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 4 Eliminated!")
+            else:
+                self.turn_label.setText("Player 4's Turn")
             self.turn_label.setStyleSheet("color: orange; font-size: 50px; font-weight: bold;")
         elif player_num == 5:
-            self.turn_label.setText("Player 5's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 5 Eliminated!")
+            else:
+                self.turn_label.setText("Player 5's Turn")
             self.turn_label.setStyleSheet("color: green; font-size: 50px; font-weight: bold;")
         elif player_num == 6:
-            self.turn_label.setText("Player 6's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 6 Eliminated!")
+            else:
+                self.turn_label.setText("Player 6's Turn")
             self.turn_label.setStyleSheet("color: cyan; font-size: 50px; font-weight: bold;")
         elif player_num == 7:
-            self.turn_label.setText("Player 7's Turn")
+            if eliminated:
+                self.turn_label.setText("Player 7 Eliminated!")
+            else:
+                self.turn_label.setText("Player 7's Turn")
             self.turn_label.setStyleSheet("color: pink; font-size: 50px; font-weight: bold;")
         elif player_num == 8:
-            self.turn_label.setText("Player 8's Turn")
-            self.turn_label.setStyleSheet("color: teal; font-size: 50px; font-weight: bold;")
+            if eliminated:
+                self.turn_label.setText("Player 8 Eliminated!")
+            else:
+                self.turn_label.setText("Player 8's Turn")
+            self.turn_label.setStyleSheet("color: #E6E6FA; font-size: 50px; font-weight: bold;")
     
     # Pause game and go to pause screen
     def pause_game(self):
@@ -147,13 +171,40 @@ class MemoryMultInGameScreen(QWidget):
             self.start_game()
 
     # End game by ending thread and hiding/showing needed labels and buttons
-    def end_game(self):
+    def end_game(self, winning_player=None):
         if self.game_thread and self.game_thread.isRunning():
             self.game_thread.memory_game.stop()
             self.game_thread.quit()
             self.game_thread.wait()
+        self.show_game_over(winning_player)
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, True)
         self.turn_label.setVisible(False)
+    
+    def show_game_over(self, winning_player):
+        if winning_player == 1:
+            self.game_over_label.setText('PLAYER 1 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: blue; font-size: 40px; font-weight: bold;")
+        elif winning_player == 2:
+            self.game_over_label.setText('PLAYER 2 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
+        elif winning_player == 3:
+            self.game_over_label.setText('PLAYER 3 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: teal; font-size: 40px; font-weight: bold;")
+        elif winning_player == 4:
+            self.game_over_label.setText('PLAYER 4 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: orange; font-size: 40px; font-weight: bold;")
+        elif winning_player == 5:
+            self.game_over_label.setText('PLAYER 5 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
+        elif winning_player == 6:
+            self.game_over_label.setText('PLAYER 6 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: cyan; font-size: 40px; font-weight: bold;")
+        elif winning_player == 7:
+            self.game_over_label.setText('PLAYER 7 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: pink; font-size: 40px; font-weight: bold;")
+        elif winning_player == 8:
+            self.game_over_label.setText('PLAYER 8 WINS! GAME OVER!')
+            self.game_over_label.setStyleSheet("color: #E6E6FA; font-size: 40px; font-weight: bold;")
     
     # Reset game if needed
     def reset_game(self):

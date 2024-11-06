@@ -222,21 +222,12 @@ class GeneralFunctions(QWidget):
         return title
     
     # Returns game over label for in-game screens
-    def create_game_over_label(self, winning_player=None):
-        if winning_player == 1:
-            game_over_label = QLabel(f'PLAYER 1 WINS! GAME OVER!', self)
-            game_over_label.setStyleSheet("color: purple; font-size: 40px; font-weight: bold;")
-        elif winning_player == 2:
-            game_over_label = QLabel(f'PLAYER 2 WINS! GAME OVER!', self)
-            game_over_label.setStyleSheet("color: green; font-size: 40px; font-weight: bold;")
-        else:
-            game_over_label = QLabel(f'GAME OVER!', self)
-            game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
-
+    def create_game_over_label(self):
+        game_over_label = QLabel(f'GAME OVER!', self)
+        game_over_label.setStyleSheet("color: red; font-size: 40px; font-weight: bold;")
         game_over_label.setAlignment(Qt.AlignCenter)
         game_over_label.setVisible(False)
         return game_over_label
-
     
     # Returns pause button for in-game screens
     def create_pause_button(self):

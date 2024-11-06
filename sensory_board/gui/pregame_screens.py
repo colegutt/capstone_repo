@@ -43,6 +43,9 @@ class MemoryMultPregameScreen(QWidget):
     
     def get_player_count(self):
         return self.ps_creator.get_player_count()
+    
+    def get_game_mode(self):
+        return self.ps_creator.get_game_mode()
 
 # Create Tennis Pregame Screen
 class TennisPregameScreen(QWidget):
@@ -60,7 +63,7 @@ class TennisPregameScreen(QWidget):
 # General class that create pregame screens given certain parameters
 class PregameScreenCreator(QWidget):
     def __init__(self, stacked_widget, app_init, twoplayer_opt=False):
-        # Intializations
+        # Initializations
         super().__init__()
         self.stacked_widget = stacked_widget
 
@@ -70,6 +73,11 @@ class PregameScreenCreator(QWidget):
         self.max_players = 8
         self.min_players = 2
         self.player_label = None
+
+        # Game mode options
+        self.game_modes = ["Cooperative", "Elimination"]
+        self.current_mode_index = 0
+        self.game_mode_label = None
 
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
@@ -145,11 +153,19 @@ class PregameScreenCreator(QWidget):
         final_layout.addWidget(title)
         final_layout.addSpacing(30)
         final_layout.addLayout(description_layout)
-        final_layout.addSpacing(30) 
-        # Add player count option if memory 2p
+        final_layout.addSpacing(30)
+
+        # Add player count and game mode option in a single horizontal layout if memory 2p
         if self.twoplayer_opt:
-            final_layout.addLayout(self.create_player_count_layout())
-            final_layout.addSpacing(10) 
+            player_and_mode_layout = QHBoxLayout()
+            player_and_mode_layout.addStretch()
+            player_and_mode_layout.addLayout(self.create_player_count_layout())
+            player_and_mode_layout.addSpacing(40)
+            player_and_mode_layout.addLayout(self.create_game_mode_layout())
+            player_and_mode_layout.addStretch()
+            final_layout.addLayout(player_and_mode_layout)
+            final_layout.addSpacing(10)
+
         final_layout.addLayout(start_button)
         final_layout.addStretch()
         final_layout.addLayout(back_button)
@@ -159,7 +175,7 @@ class PregameScreenCreator(QWidget):
     def create_player_count_layout(self):
         self.player_label = QLabel(f"{self.player_count} players")
         self.player_label.setStyleSheet("color: white; font-size: 22px; font-weight: bold;")
-        self.player_label.setAlignment(Qt.AlignCenter)  # Center the text
+        self.player_label.setAlignment(Qt.AlignCenter)
 
         minus_button = QPushButton('-', self)
         minus_button.setStyleSheet(self.button_style())
@@ -169,19 +185,41 @@ class PregameScreenCreator(QWidget):
         plus_button.setStyleSheet(self.button_style())
         plus_button.clicked.connect(self.increase_player_count)
 
-        # Create a layout with spacers to center the label between the buttons
         player_and_count_layout = QHBoxLayout()
-        
-        # Adding stretch for spacing to center the label between buttons
         player_and_count_layout.addStretch(1)
         player_and_count_layout.addWidget(minus_button)
-        player_and_count_layout.addSpacing(10)  # Small spacing between button and label
+        player_and_count_layout.addSpacing(10)
         player_and_count_layout.addWidget(self.player_label)
-        player_and_count_layout.addSpacing(10)  # Small spacing between label and plus button
+        player_and_count_layout.addSpacing(10)
         player_and_count_layout.addWidget(plus_button)
         player_and_count_layout.addStretch(1)
 
         return player_and_count_layout
+
+    def create_game_mode_layout(self):
+        # Create label to display the current game mode
+        self.game_mode_label = QLabel(self.game_modes[self.current_mode_index], self)
+        self.game_mode_label.setStyleSheet("color: white; font-size: 22px; font-weight: bold;")
+        self.game_mode_label.setAlignment(Qt.AlignCenter)
+
+        left_arrow = QPushButton('<', self)
+        left_arrow.setStyleSheet(self.button_style())
+        left_arrow.clicked.connect(self.previous_game_mode)
+
+        right_arrow = QPushButton('>', self)
+        right_arrow.setStyleSheet(self.button_style())
+        right_arrow.clicked.connect(self.next_game_mode)
+
+        game_mode_layout = QHBoxLayout()
+        game_mode_layout.addStretch(1)
+        game_mode_layout.addWidget(left_arrow)
+        game_mode_layout.addSpacing(10)
+        game_mode_layout.addWidget(self.game_mode_label)
+        game_mode_layout.addSpacing(10)
+        game_mode_layout.addWidget(right_arrow)
+        game_mode_layout.addStretch(1)
+
+        return game_mode_layout
 
     def button_style(self):
         return """
@@ -196,7 +234,18 @@ class PregameScreenCreator(QWidget):
             text-align: center;
         """
 
-    # If start button is clicked, go to corresponding in-game screen
+    # Cycle through game modes
+    def next_game_mode(self):
+        self.current_mode_index = (self.current_mode_index + 1) % len(self.game_modes)
+        self.update_game_mode_label()
+
+    def previous_game_mode(self):
+        self.current_mode_index = (self.current_mode_index - 1) % len(self.game_modes)
+        self.update_game_mode_label()
+
+    def update_game_mode_label(self):
+        self.game_mode_label.setText(self.game_modes[self.current_mode_index])
+
     def go_to_ingame_screen(self, in_game_screen_index):
         self.stacked_widget.setCurrentIndex(in_game_screen_index)
         if in_game_screen_index == 5:
@@ -207,16 +256,19 @@ class PregameScreenCreator(QWidget):
             self.app_init.memory_mult_ingame_screen.start_game()
         elif in_game_screen_index == 17:
             self.app_init.tennis_ingame_screen.start_game()
-    
-    def decrease_player_count(self):
-        if self.player_count > self.min_players:
-            self.player_count -= 1
-            self.player_label.setText(f"{self.player_count} players")
-    
+            
     def increase_player_count(self):
         if self.player_count < self.max_players:
             self.player_count += 1
             self.player_label.setText(f"{self.player_count} players")
-    
+
+    def decrease_player_count(self):
+        if self.player_count > self.min_players:
+            self.player_count -= 1
+            self.player_label.setText(f"{self.player_count} players")
+
     def get_player_count(self):
         return self.player_count
+
+    def get_game_mode(self):
+        return self.game_modes[self.current_mode_index]

@@ -11,7 +11,7 @@ CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class MemoryGame:
-    def __init__(self, app_init, multiplayer=False, player_count=1):
+    def __init__(self, app_init, multiplayer=False, player_count=1, game_mode='Cooperative'):
         # Initializations
         self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions(app_init=app_init)
@@ -21,8 +21,11 @@ class MemoryGame:
         self.player = 1
         self.multiplayer = multiplayer
         self.player_count = player_count
+        self.player_arr = self.get_player_arr()
+        self.elimination = False
+        if game_mode == 'Elimination':
+            self.elimination = True
 
-        
         # self.pin_dict, self.buttons, self.leds = self.gen_funcs.init_gpio()
         self.button_dict, self.led_shapes = self.gen_funcs.init_leds_and_buttons()
         self.gen_funcs.turn_off_all_leds()
@@ -91,18 +94,19 @@ class MemoryGame:
         game_is_playing = True
         num_round = 0
         led_sequence = []
+        repeat_sequence = False
 
         while game_is_playing:
-            num_round += 1
-            led_sequence.append(random.choice(self.led_shapes))
-
             # Light up LED sequence
-            for led_shape in led_sequence:
-                if self.wait_to_resume() == 1:
-                    GPIO.cleanup()
-                    return
-                self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
-                sleep(SPEED)
+            if not repeat_sequence:
+                num_round += 1
+                led_sequence.append(random.choice(self.led_shapes)) 
+                for led_shape in led_sequence:
+                    if self.wait_to_resume() == 1:
+                        GPIO.cleanup()
+                        return
+                    self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
+                    sleep(SPEED)
 
             # Get user input from buttons or Bluetooth controller
             i = 0
@@ -156,15 +160,33 @@ class MemoryGame:
 
             sleep(SPEED)
             if game_is_playing:
+                if repeat_sequence:
+                    repeat_sequence = False
                 self.gen_funcs.memory_correct_sequence_flash()
                 # Change player if playing the multiplayer version
                 if self.multiplayer:
-                    self.change_player()
-                    update_player_callback(self.player)
+                    if self.elimination and len(self.player_arr) == 1:
+                        self.gen_funcs.game_over_flash()
+                        game_is_playing = False
+                        on_game_over_callback(self.player)
+                    else:
+                        self.change_player()
+                        update_player_callback(self.player)
                 update_score_callback(num_round)
             else:
-                self.gen_funcs.game_over_flash()
-                on_game_over_callback()
+                if self.elimination and len(self.player_arr) > 1:
+                    eliminated_player = self.player
+                    self.change_player()
+                    self.player_arr.remove(eliminated_player)
+                    update_player_callback(eliminated_player, True)
+                    self.gen_funcs.fast_tap_wrong_led()
+                    sleep(1)
+                    game_is_playing = True
+                    update_player_callback(self.player)
+                    repeat_sequence = True
+                else:
+                    self.gen_funcs.game_over_flash()
+                    on_game_over_callback()
 
             # Attempt to reconnect Bluetooth if disconnected
             if not self.client_sock:
@@ -184,12 +206,18 @@ class MemoryGame:
 
     # Change player number
     def change_player(self):
-        next_player = self.player + 1
-        
-        if next_player > self.player_count:
-            next_player = 1
-        
-        self.player = next_player
+        current_index = self.player_arr.index(self.player)
+        next_index = (current_index + 1) % len(self.player_arr)
+        self.player = self.player_arr[next_index]
+    
+    def get_player_arr(self):
+        player_arr = []
+        all_players_arr = [
+            1, 2, 3, 4, 5, 6, 7, 8
+        ]
+        for i in range(0, self.player_count):
+            player_arr.append(all_players_arr[i])
+        return player_arr
     
     def check_for_controller_input(self, user_input):
         pressed_button = None
