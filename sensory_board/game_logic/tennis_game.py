@@ -162,7 +162,10 @@ class TennisGame:
 
     def increase_ball_speed(self, rally):
         if rally > 15:
-            self.sleep_time *= SPEED_ACCELERATION * 0.75
+            if self.sleep_time <= 0.0001:
+                self.sleep_time = 0.0001
+            else:
+                self.sleep_time *= SPEED_ACCELERATION * 0.75
         else:
             decision = random.randint(1, 7)
             if decision == 1:
