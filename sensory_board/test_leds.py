@@ -44,11 +44,11 @@ def turn_on_all_leds(dimming_factor):
     # Assign the same value to every LED in the named range
     # Turn on all sections
     for p in star:
-        pixels[p] = dim_color((255, 0, 0), dimming_factor)   # Dimmable Yellow
+        pixels[p] = dim_color((128, 0, 128), dimming_factor)   # Dimmable Yellow
     for p in circle:
         pixels[p] = dim_color((255, 100, 0), dimming_factor)  # Dimmable Orange
     for p in heart:
-        pixels[p] = dim_color((255, 0, 0), dimming_factor)    # Dimmable Red
+        pixels[p] = dim_color((128, 0, 128), dimming_factor)    # Dimmable Red
     for p in triangle:
         pixels[p] = dim_color((128, 0, 128), dimming_factor)  # Dimmable Purple
     for p in cloud:

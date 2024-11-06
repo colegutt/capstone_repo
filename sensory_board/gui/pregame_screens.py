@@ -9,9 +9,8 @@ class MemoryPregameScreen(QWidget):
         self.app_init = app_init
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "Match the sequence by pressing the buttons that light up. "
-            "The sequence will get longer the better you do. "
-            "How many can you get? Good luck!"
+            "Press the buttons in the right order as they light up! The better you do, "
+            "the longer the sequence gets. How many can you remember? Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory', description_str, 'blue', 1, 5))
 
@@ -22,9 +21,7 @@ class FastTapPregameScreen(QWidget):
         self.app_init = app_init
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "Press every button that lights up. Try"
-            " to get as many as you can before the "
-            "time runs out. Good luck!"
+            "Press each button as it lights up and see how many you can get before time runs out. Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Fast Tap', description_str, 'green', 1, 9))
 
@@ -35,9 +32,8 @@ class MemoryMultPregameScreen(QWidget):
         self.app_init = app_init
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init, True)
         description_str = (
-            "Grab some friends and work together by matching the sequence by pressing the buttons that light up. "
-            "The sequence will get longer the better your team does. "
-            "How many can you get together? Good luck!"
+            "Team up to match the light-up sequence! With each round, the pattern grows as your " 
+            "team gets better. How far can you go together? Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Memory Multiplayer', description_str, 'purple', 2, 13))
     
@@ -54,9 +50,8 @@ class TennisPregameScreen(QWidget):
         self.app_init = app_init
         self.ps_creator = PregameScreenCreator(stacked_widget, self.app_init)
         description_str = (
-            "Grab an opponent and take turns hitting a ball back and forth. "
-            "Player 1 uses the purple triangle button, and Player 2 uses the green square button. "
-            "First player to 3 points wins the game. Good luck!"
+            "Take turns hitting the ball back and forth! Player 1, press the purple triangle; "
+            "Player 2, press the green square. First to 3 points wins. Good luck!"
         )
         self.setLayout(self.ps_creator.create_pregame_screen('Tennis', description_str, 'orange', 2, 17, True))
 
@@ -73,11 +68,12 @@ class PregameScreenCreator(QWidget):
         self.max_players = 8
         self.min_players = 2
         self.player_label = None
+        self.description = None
 
         # Game mode options
         self.game_modes = ["Cooperative", "Elimination"]
         self.current_mode_index = 0
-        self.game_mode_label = None
+        self.game_mode_label = self.game_modes[0]
 
         self.gen_funcs = GeneralFunctions(self.stacked_widget)
         self.app_init = app_init
@@ -102,13 +98,13 @@ class PregameScreenCreator(QWidget):
     # Return description label for the screen
     def set_description_layout(self, game_desc, tennis=False):
         description_str = game_desc
-        description = QLabel(description_str, self)
-        description.setStyleSheet("color: white; font-size: 24px;")
-        description.setAlignment(Qt.AlignCenter)
-        description.setWordWrap(True)
+        self.description = QLabel(description_str, self)
+        self.description.setStyleSheet("color: white; font-size: 24px;")
+        self.description.setAlignment(Qt.AlignCenter)
+        self.description.setWordWrap(True)
         description_layout = QVBoxLayout()
         description_layout.addStretch()
-        description_layout.addWidget(description)
+        description_layout.addWidget(self.description)
         if tennis:
             description_layout.addSpacing(10)
             description_layout.addWidget(self.get_tennis_additional_description())
@@ -130,11 +126,11 @@ class PregameScreenCreator(QWidget):
         start_button.setStyleSheet(f"""
             background-color: {button_color}; 
             color: white; 
-            border-radius: 75px; 
-            font-size: 24px; 
+            border-radius: 85px; 
+            font-size: 26px; 
             font-weight: bold;
-            width: 150px; 
-            height: 150px;
+            width: 170px; 
+            height: 170px;
         """)
         start_button.clicked.connect(
             lambda checked, in_game_screen_index=in_game_screen_index: self.go_to_ingame_screen(in_game_screen_index)
@@ -238,10 +234,27 @@ class PregameScreenCreator(QWidget):
     def next_game_mode(self):
         self.current_mode_index = (self.current_mode_index + 1) % len(self.game_modes)
         self.update_game_mode_label()
+        self.update_game_description()
 
     def previous_game_mode(self):
         self.current_mode_index = (self.current_mode_index - 1) % len(self.game_modes)
         self.update_game_mode_label()
+        self.update_game_description()
+    
+    def update_game_description(self):
+        cooperative_descr = (
+            "Team up to match the light-up sequence! With each round, the pattern grows as your " 
+            "team gets better. How far can you go together? Good luck!"
+        )
+        elimination_descr = (
+            "Match the light-up sequence to stay in the game! Each round, the pattern gets tougher "
+            "as your opponents succeed. Miss a step, and you're out - but the next player has to "
+            "complete it to stay in the game!"
+        )
+        if self.current_mode_index == 0:
+            self.description.setText(cooperative_descr)
+        else:
+            self.description.setText(elimination_descr)
 
     def update_game_mode_label(self):
         self.game_mode_label.setText(self.game_modes[self.current_mode_index])
