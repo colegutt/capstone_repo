@@ -103,6 +103,8 @@ class MemoryGame:
                 led_sequence.append(random.choice(self.led_shapes)) 
                 for led_shape in led_sequence:
                     if self.wait_to_resume() == 1:
+                        self.pause_event.clear()
+                        del self.pause_event
                         GPIO.cleanup()
                         return
                     self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
@@ -115,6 +117,8 @@ class MemoryGame:
                 pressed_button = None
                 while not user_input:
                     if self.wait_to_resume() == 1:
+                        self.pause_event.clear()
+                        del self.pause_event
                         GPIO.cleanup()
                         return
 
@@ -204,6 +208,7 @@ class MemoryGame:
         if self.server_sock:
             self.server_sock.close()
         
+        self.pause_event.clear()
         GPIO.cleanup()
 
     # Change player number
@@ -250,6 +255,7 @@ class MemoryGame:
         while self.pause_event.is_set():
             if self.end_game:
                 GPIO.cleanup()
+                self.pause_event.clear()
                 return 1
             sleep(0.25)
         return 0

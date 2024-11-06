@@ -117,6 +117,8 @@ class TennisGame:
         # Wait to serve
         while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
             if self.wait_to_resume(shape_1) == 1:
+                self.pause_event.clear()
+                del self.pause_event
                 GPIO.cleanup()
                 return 1
             # if self.check_for_controller_input(shape_1):

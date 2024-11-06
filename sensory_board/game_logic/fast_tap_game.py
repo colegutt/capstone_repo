@@ -129,6 +129,7 @@ class FastTapGame:
 
         self.gen_funcs.game_over_flash()
         on_game_over_callback()
+        self.pause_event.clear()
         GPIO.cleanup()
 
     # Update time using the time that has passed
@@ -171,6 +172,8 @@ class FastTapGame:
             resume_opt = 'resume'
             if self.end_game:
                 GPIO.cleanup()
+                self.pause_event.clear()
+                del self.pause_event
                 return 'end'
             sleep(0.1)
         if resume_opt == 'resume':
