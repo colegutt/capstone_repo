@@ -123,13 +123,12 @@ class MainMenu(QWidget):
             color: white; 
             border-radius: 0px; 
             font-weight: bold;
-            width: 10px; 
-            height: 10px; 
+            width: 20px; 
+            height: 20px; 
             padding: 0;
             text-align: center;
-            line-height: 10px;
+            line-height: 20px;
         """)
-        index = 0
         exit_button.clicked.connect(self.exit_app)
         return exit_button
 

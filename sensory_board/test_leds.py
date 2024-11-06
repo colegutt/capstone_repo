@@ -41,10 +41,8 @@ square_slice = slice(25,30)
 square = np_array[square_slice]
 
 def turn_on_all_leds(dimming_factor):
-    # Assign the same value to every LED in the named range
-    # Turn on all sections
     for p in star:
-        pixels[p] = dim_color((128, 0, 128), dimming_factor)   # Dimmable Yellow
+        pixels[p] = dim_color((0, 0, 255), dimming_factor)   # Dimmable Yellow
     for p in circle:
         pixels[p] = dim_color((255, 100, 0), dimming_factor)  # Dimmable Orange
     for p in heart:
@@ -58,12 +56,31 @@ def turn_on_all_leds(dimming_factor):
 
     pixels.show()
 
-def turn_on_square():
-    for p in square:
-        pixels[p] = (0, 255, 0)    # Green
+def turn_on_test_strip(dimming_factor, color):
+    for p in star:
+        pixels[p] = dim_color(color, dimming_factor) 
 
-    pixels.show()
-
+def test_led_main(color):
+    try:
+        while True:
+            turn_off_leds()
+            turn_on_test_strip(0.1, color)
+            time.sleep(1)
+            turn_off_leds()
+            turn_on_test_strip(0.25, color)
+            time.sleep(1)
+            turn_off_leds()
+            turn_on_test_strip(0.5, color)
+            time.sleep(1)
+            turn_off_leds()
+            turn_on_test_strip(0.75, color)
+            time.sleep(1)
+            turn_off_leds()
+            turn_on_test_strip(1, color)
+            time.sleep(1)
+            turn_off_leds()
+    except KeyboardInterrupt:
+        turn_off_leds()
 
 def turn_off_leds():
     # Turn off all sections
@@ -82,21 +99,11 @@ def turn_off_leds():
 
     pixels.show()
 
-# while True:
-#     turn_off_leds()
-#     turn_on_all_leds(0.1)
-#     time.sleep(1)
-#     turn_off_leds()
-#     turn_on_all_leds(0.25)
-#     time.sleep(1)
-#     turn_off_leds()
-#     turn_on_all_leds(0.5)
-#     time.sleep(1)
-#     turn_off_leds()
-#     turn_on_all_leds(0.75)
-#     time.sleep(1)
-#     turn_off_leds()
-#     turn_on_all_leds(1)
-#     time.sleep(1)
-#     turn_off_leds()
-turn_off_leds()
+red_square_color = (0, 255, 0)
+blue_cloud_color = (0, 0, 255)
+purple_triangle_color = (128, 0, 128)
+red_heart_color = (255, 0, 0)
+orange_circle_color = (255, 100, 0)
+yellow_star_color = (255, 165, 0)
+
+test_led_main(blue_cloud_color)
