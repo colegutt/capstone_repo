@@ -170,8 +170,9 @@ class FastTapGame:
         while self.pause_event.is_set():
             resume_opt = 'resume'
             if self.end_game:
+                GPIO.cleanup()
                 return 'end'
-            sleep(0.25)
+            sleep(0.1)
         if resume_opt == 'resume':
             self.start_time = time()
         return resume_opt

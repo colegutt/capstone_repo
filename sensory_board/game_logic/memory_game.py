@@ -249,6 +249,7 @@ class MemoryGame:
             self.gen_funcs.turn_off_all_leds()
         while self.pause_event.is_set():
             if self.end_game:
+                GPIO.cleanup()
                 return 1
             sleep(0.25)
         return 0
