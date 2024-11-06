@@ -209,6 +209,7 @@ class MemoryGame:
             self.server_sock.close()
         
         self.pause_event.clear()
+        del self.pause_event
         GPIO.cleanup()
 
     # Change player number

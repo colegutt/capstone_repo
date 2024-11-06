@@ -130,6 +130,7 @@ class FastTapGame:
         self.gen_funcs.game_over_flash()
         on_game_over_callback()
         self.pause_event.clear()
+        del self.pause_event
         GPIO.cleanup()
 
     # Update time using the time that has passed

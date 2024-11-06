@@ -100,7 +100,9 @@ class TennisGame:
                 break
             
             sleep(0.5)
-            
+        
+        self.pause_event.clear()
+        del self.pause_event
         GPIO.cleanup()
     
     def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback, update_rally_callback):
@@ -159,7 +161,6 @@ class TennisGame:
             self.increase_ball_speed(rally)
         
         self.save_high_score(rally)
-
         self.gen_funcs.fast_tap_wrong_led()
 
     def increase_ball_speed(self, rally):
