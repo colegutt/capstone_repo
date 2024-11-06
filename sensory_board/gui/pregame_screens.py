@@ -126,11 +126,11 @@ class PregameScreenCreator(QWidget):
         start_button.setStyleSheet(f"""
             background-color: {button_color}; 
             color: white; 
-            border-radius: 85px; 
-            font-size: 26px; 
+            border-radius: 75px; 
+            font-size: 24px; 
             font-weight: bold;
-            width: 170px; 
-            height: 170px;
+            width: 150px; 
+            height: 150px;
         """)
         start_button.clicked.connect(
             lambda checked, in_game_screen_index=in_game_screen_index: self.go_to_ingame_screen(in_game_screen_index)
