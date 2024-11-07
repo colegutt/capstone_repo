@@ -273,6 +273,7 @@ class TennisGame:
                     success = False
                     self.gen_funcs.turn_off_led(led_shape)
                     monitoring_thread.join()
+                    del monitoring_thread
                     self.thread_flag_2 = True
                     return success
                 sleep(0.1)

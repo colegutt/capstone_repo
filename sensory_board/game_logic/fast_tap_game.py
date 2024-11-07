@@ -130,7 +130,6 @@ class FastTapGame:
         self.gen_funcs.game_over_flash()
         on_game_over_callback()
         self.pause_event.clear()
-        del self.pause_event
         GPIO.cleanup()
 
     # Update time using the time that has passed
@@ -185,7 +184,8 @@ class FastTapGame:
     def stop(self):
         self.end_game = True
         self.disconnect_bluetooth()
-        self.pause_event.set()
+        self.pause_event.clear()
+        del self.pause_event
 
     # Pause the game by setting the pause event
     def pause(self):
