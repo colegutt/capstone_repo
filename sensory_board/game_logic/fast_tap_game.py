@@ -171,11 +171,10 @@ class FastTapGame:
         while self.pause_event.is_set():
             resume_opt = 'resume'
             if self.end_game:
-                GPIO.cleanup()
                 self.pause_event.clear()
-                del self.pause_event
                 return 'end'
             sleep(0.1)
+        
         if resume_opt == 'resume':
             self.start_time = time()
         return resume_opt
@@ -184,8 +183,6 @@ class FastTapGame:
     def stop(self):
         self.end_game = True
         self.disconnect_bluetooth()
-        self.pause_event.clear()
-        del self.pause_event
 
     # Pause the game by setting the pause event
     def pause(self):
