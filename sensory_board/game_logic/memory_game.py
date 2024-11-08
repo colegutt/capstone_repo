@@ -265,7 +265,6 @@ class MemoryGame:
     def stop(self):
         self.end_game = True
         self.disconnect_bluetooth()
-        self.pause_event.set()
 
     # Pause game by setting pause_event
     def pause(self):

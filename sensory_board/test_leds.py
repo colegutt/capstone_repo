@@ -99,11 +99,11 @@ def turn_off_leds():
 
     pixels.show()
 
-red_square_color = (0, 255, 0)
+green_square_color = (0, 255, 0)
 blue_cloud_color = (0, 0, 255)
 purple_triangle_color = (128, 0, 128)
 red_heart_color = (255, 0, 0)
 orange_circle_color = (255, 100, 0)
 yellow_star_color = (255, 165, 0)
 
-test_led_main(blue_cloud_color)
+test_led_main(green_square_color)
