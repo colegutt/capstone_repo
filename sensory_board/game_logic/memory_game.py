@@ -91,116 +91,119 @@ class MemoryGame:
 
     # Start memory game
     def run_game(self, update_score_callback, on_game_over_callback, update_player_callback=None):
-        game_is_playing = True
-        num_round = 0
-        led_sequence = []
-        repeat_sequence = False
+        try:
+            game_is_playing = True
+            num_round = 0
+            led_sequence = []
+            repeat_sequence = False
 
-        while game_is_playing:
-            # Light up LED sequence
-            if not repeat_sequence:
-                num_round += 1
-                led_sequence.append(random.choice(self.led_shapes)) 
-                for led_shape in led_sequence:
-                    if self.wait_to_resume() == 1:
-                        self.pause_event.clear()
-                        del self.pause_event
-                        GPIO.cleanup()
-                        return
-                    self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
-                    sleep(SPEED)
+            while game_is_playing:
+                # Light up LED sequence
+                if not repeat_sequence:
+                    num_round += 1
+                    led_sequence.append(random.choice(self.led_shapes)) 
+                    for led_shape in led_sequence:
+                        if self.wait_to_resume() == 1:
+                            self.pause_event.clear()
+                            del self.pause_event
+                            GPIO.cleanup()
+                            return
+                        self.gen_funcs.light_up_led_w_sleep(led_shape, SPEED)
+                        sleep(SPEED)
 
-            # Get user input from buttons or Bluetooth controller
-            i = 0
-            while True:
-                user_input = False
-                pressed_button = None
-                while not user_input:
-                    if self.wait_to_resume() == 1:
-                        self.pause_event.clear()
-                        del self.pause_event
-                        GPIO.cleanup()
-                        return
+                # Get user input from buttons or Bluetooth controller
+                i = 0
+                while True:
+                    user_input = False
+                    pressed_button = None
+                    while not user_input:
+                        if self.wait_to_resume() == 1:
+                            self.pause_event.clear()
+                            del self.pause_event
+                            GPIO.cleanup()
+                            return
 
-                    # Check for button input
-                    if GPIO.input(self.button_dict['square']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('square', self.button_dict['square'])
-                        user_input = True
-                        pressed_button = self.button_dict['square']
-                    elif GPIO.input(self.button_dict['triangle']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('triangle', self.button_dict['triangle'])
-                        user_input = True
-                        pressed_button = self.button_dict['triangle']
-                    elif GPIO.input(self.button_dict['circle']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('circle', self.button_dict['circle'])
-                        user_input = True
-                        pressed_button = self.button_dict['circle']
-                    elif GPIO.input(self.button_dict['cloud']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('cloud', self.button_dict['cloud'])
-                        user_input = True
-                        pressed_button = self.button_dict['cloud']
-                    elif GPIO.input(self.button_dict['heart']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('heart', self.button_dict['heart'])
-                        user_input = True
-                        pressed_button = self.button_dict['heart']
-                    elif GPIO.input(self.button_dict['star']) == GPIO.LOW:
-                        self.gen_funcs.light_up_led_as_long_as_pressed('star', self.button_dict['star'])
-                        user_input = True
-                        pressed_button = self.button_dict['star']
+                        # Check for button input
+                        if GPIO.input(self.button_dict['square']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('square', self.button_dict['square'])
+                            user_input = True
+                            pressed_button = self.button_dict['square']
+                        elif GPIO.input(self.button_dict['triangle']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('triangle', self.button_dict['triangle'])
+                            user_input = True
+                            pressed_button = self.button_dict['triangle']
+                        elif GPIO.input(self.button_dict['circle']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('circle', self.button_dict['circle'])
+                            user_input = True
+                            pressed_button = self.button_dict['circle']
+                        elif GPIO.input(self.button_dict['cloud']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('cloud', self.button_dict['cloud'])
+                            user_input = True
+                            pressed_button = self.button_dict['cloud']
+                        elif GPIO.input(self.button_dict['heart']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('heart', self.button_dict['heart'])
+                            user_input = True
+                            pressed_button = self.button_dict['heart']
+                        elif GPIO.input(self.button_dict['star']) == GPIO.LOW:
+                            self.gen_funcs.light_up_led_as_long_as_pressed('star', self.button_dict['star'])
+                            user_input = True
+                            pressed_button = self.button_dict['star']
 
-                    # Check for Bluetooth input if connected
-                    if pressed_button == None:
-                        user_input, pressed_button = self.check_for_controller_input(user_input)
-                    
-                    sleep(0.1)
+                        # Check for Bluetooth input if connected
+                        if pressed_button == None:
+                            user_input, pressed_button = self.check_for_controller_input(user_input)
+                        
+                        sleep(0.1)
 
-                if self.button_dict[led_sequence[i]] != pressed_button:
-                    game_is_playing = False
-                    break
-
-                i += 1
-                if i == len(led_sequence):
-                    break
-
-            sleep(SPEED)
-            if game_is_playing:
-                if repeat_sequence:
-                    repeat_sequence = False
-                self.gen_funcs.memory_correct_sequence_flash()
-                # Change player if playing the multiplayer version
-                if self.multiplayer:
-                    if self.elimination and len(self.player_arr) == 1:
-                        self.gen_funcs.game_over_flash()
+                    if self.button_dict[led_sequence[i]] != pressed_button:
                         game_is_playing = False
-                        on_game_over_callback(self.player)
-                    else:
-                        self.change_player()
-                        update_player_callback(self.player)
-                update_score_callback(num_round)
-            else:
-                if self.elimination and len(self.player_arr) > 1:
-                    eliminated_player = self.player
-                    self.change_player()
-                    self.player_arr.remove(eliminated_player)
-                    update_player_callback(eliminated_player, True)
-                    self.gen_funcs.fast_tap_wrong_led()
-                    sleep(1)
-                    game_is_playing = True
-                    update_player_callback(self.player)
-                    repeat_sequence = True
-                else:
-                    if self.elimination:
-                        self.gen_funcs.fast_tap_wrong_led()
-                    self.gen_funcs.game_over_flash()
-                    on_game_over_callback()
+                        break
 
-            # Attempt to reconnect Bluetooth if disconnected
-            if not self.client_sock:
-                # print('Rechecking Bluetooth connection...')
-                self.client_sock, self.server_sock = self.connect_bluetooth()
-            if self.client_sock is None:
-                # print("No Bluetooth controller connected. You can continue playing without it.")
-                sleep(CLIENT_SOCK_SLEEP_TIME)
+                    i += 1
+                    if i == len(led_sequence):
+                        break
+
+                sleep(SPEED)
+                if game_is_playing:
+                    if repeat_sequence:
+                        repeat_sequence = False
+                    self.gen_funcs.memory_correct_sequence_flash()
+                    # Change player if playing the multiplayer version
+                    if self.multiplayer:
+                        if self.elimination and len(self.player_arr) == 1:
+                            self.gen_funcs.game_over_flash()
+                            game_is_playing = False
+                            on_game_over_callback(self.player)
+                        else:
+                            self.change_player()
+                            update_player_callback(self.player)
+                    update_score_callback(num_round)
+                else:
+                    if self.elimination and len(self.player_arr) > 1:
+                        eliminated_player = self.player
+                        self.change_player()
+                        self.player_arr.remove(eliminated_player)
+                        update_player_callback(eliminated_player, True)
+                        self.gen_funcs.fast_tap_wrong_led()
+                        sleep(1)
+                        game_is_playing = True
+                        update_player_callback(self.player)
+                        repeat_sequence = True
+                    else:
+                        if self.elimination:
+                            self.gen_funcs.fast_tap_wrong_led()
+                        self.gen_funcs.game_over_flash()
+                        on_game_over_callback()
+
+                # Attempt to reconnect Bluetooth if disconnected
+                if not self.client_sock:
+                    # print('Rechecking Bluetooth connection...')
+                    self.client_sock, self.server_sock = self.connect_bluetooth()
+                if self.client_sock is None:
+                    # print("No Bluetooth controller connected. You can continue playing without it.")
+                    sleep(CLIENT_SOCK_SLEEP_TIME)
+        except:
+            self.stacked_widget.setCurrentIndex(20)
 
         # Cleanup
         if self.client_sock:

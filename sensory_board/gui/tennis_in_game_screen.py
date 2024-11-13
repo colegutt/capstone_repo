@@ -81,12 +81,12 @@ class TennisInGameScreen(QWidget):
 
         # Player 1 Label
         self.player1_label = QLabel('Player 1', self)
-        self.player1_label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        self.player1_label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
         self.player1_label.setAlignment(Qt.AlignCenter)
 
         # Player 2 Label
         self.player2_label = QLabel('Player 2', self)
-        self.player2_label.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        self.player2_label.setStyleSheet("color: green; font-size: 56px; font-weight: bold;")
         self.player2_label.setAlignment(Qt.AlignCenter)
 
         player1_layout = QVBoxLayout()
@@ -137,17 +137,6 @@ class TennisInGameScreen(QWidget):
             self.game_thread.start()
         self.rally_label.setVisible(True)
         self.game_over_label.setVisible(False)
-
-    def update_serving_label(self, player=None):
-        self.player1_label.setStyleSheet("color: purple; font-size: 56px; font-weight: bold;")
-        self.player2_label.setStyleSheet("color: green; font-size: 56px; font-weight: bold;")
-        self.player1_label.setText("Player 1")
-        self.player2_label.setText("Player 2")
-        
-        if player == 1:
-            self.player1_label.setText("SERVING: Player 1")
-        elif player == 2:
-            self.player2_label.setText("SERVING: Player 2")
 
     def update_player1_score(self, score):
         self.player1_score = score

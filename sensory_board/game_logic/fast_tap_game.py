@@ -83,54 +83,57 @@ class FastTapGame:
 
     # Function that runs the fast tap game
     def run_game(self, update_score_callback, update_timer_callback, on_game_over_callback):
-        score = 0
-        self.start_time = time()
-        while not self.end_game and self.time_remaining > 0:
-            # Light up a random LED
-            current_led_shape = random.choice(self.led_shapes)
-            self.gen_funcs.light_up_led(current_led_shape)
-            user_input = False
-            while not user_input:
+        try:
+            score = 0
+            self.start_time = time()
+            while not self.end_game and self.time_remaining > 0:
+                # Light up a random LED
+                current_led_shape = random.choice(self.led_shapes)
+                self.gen_funcs.light_up_led(current_led_shape)
+                user_input = False
+                while not user_input:
+                    self.update_time()
+
+                    if self.time_remaining  == 0:
+                        break
+
+                    # Pause Condition
+                    resume_opt = self.wait_to_resume()
+                    if resume_opt == 'end':
+                        GPIO.cleanup()
+                        return
+                    elif resume_opt == 'resume':
+                        break
+
+                    # Check for button input
+                    if GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW and all(GPIO.input(self.button_dict[led_shape]) == GPIO.HIGH for led_shape in self.led_shapes if led_shape != current_led_shape):
+                        # Correct button is pressed
+                        user_input = True
+                        self.gen_funcs.turn_off_all_leds()
+                        score += 1
+                        update_score_callback(score)
+
+                    elif any(GPIO.input(self.button_dict[led_shape]) == GPIO.LOW for led_shape in self.led_shapes if led_shape != current_led_shape):
+                        # A wrong button is pressed
+                        user_input = True
+                        self.gen_funcs.fast_tap_wrong_led()
+
+                    # Check for Bluetooth input if connected
+                    if not user_input:
+                        user_input, score = self.check_for_controller_input(user_input, current_led_shape, update_score_callback, score)
+
                 self.update_time()
+                update_timer_callback(self.time_remaining)
 
-                if self.time_remaining  == 0:
-                    break
+                # Pause for next LED to light up
+                sleep(SPEED)
 
-                # Pause Condition
-                resume_opt = self.wait_to_resume()
-                if resume_opt == 'end':
-                    GPIO.cleanup()
-                    return
-                elif resume_opt == 'resume':
-                    break
-
-                # Check for button input
-                if GPIO.input(self.button_dict[current_led_shape]) == GPIO.LOW and all(GPIO.input(self.button_dict[led_shape]) == GPIO.HIGH for led_shape in self.led_shapes if led_shape != current_led_shape):
-                    # Correct button is pressed
-                    user_input = True
-                    self.gen_funcs.turn_off_all_leds()
-                    score += 1
-                    update_score_callback(score)
-
-                elif any(GPIO.input(self.button_dict[led_shape]) == GPIO.LOW for led_shape in self.led_shapes if led_shape != current_led_shape):
-                    # A wrong button is pressed
-                    user_input = True
-                    self.gen_funcs.fast_tap_wrong_led()
-
-                # Check for Bluetooth input if connected
-                if not user_input:
-                    user_input, score = self.check_for_controller_input(user_input, current_led_shape, update_score_callback, score)
-
-            self.update_time()
-            update_timer_callback(self.time_remaining)
-
-            # Pause for next LED to light up
-            sleep(SPEED)
-
-        self.gen_funcs.game_over_flash()
-        on_game_over_callback()
-        self.pause_event.clear()
-        GPIO.cleanup()
+            self.gen_funcs.game_over_flash()
+            on_game_over_callback()
+            self.pause_event.clear()
+            GPIO.cleanup()
+        except:
+            self.stacked_widget.setCurrentIndex(20)
 
     # Update time using the time that has passed
     def update_time(self):

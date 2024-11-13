@@ -8,6 +8,7 @@ from gui.fast_tap_in_game_screen import FastTapInGameScreen
 from gui.memory_mult_in_game_screen import MemoryMultInGameScreen
 from gui.tennis_in_game_screen import TennisInGameScreen
 from gui.pause_screen import PauseScreen
+from gui.error_screen import ErrorScreen
 from PyQt5.QtCore import QSettings
 import pygame
 
@@ -82,6 +83,7 @@ class ApplicationInit(QWidget):
         self.tennis_ingame_screen = TennisInGameScreen(self.stacked_widget, self)
         self.tennis_pause_screen = PauseScreen(self.stacked_widget, 19, 17, self)
         self.tennis_pause_settings_screen = SettingsScreen(self.stacked_widget, self, 18)
+        self.error_screen = ErrorScreen(self.stacked_widget, self)
 
         # Index   Screen
         #   0     Main Menu
@@ -104,6 +106,7 @@ class ApplicationInit(QWidget):
         #  17     Tennis In-Game Screen
         #  18     Tennis Pause Menu
         #  19     Tennis Pause Settings Screen
+        #  20     Error Screen
         self.stacked_widget.addWidget(self.main_menu)
         self.stacked_widget.addWidget(self.sp_screen)
         self.stacked_widget.addWidget(self.mp_screen)
@@ -124,6 +127,7 @@ class ApplicationInit(QWidget):
         self.stacked_widget.addWidget(self.tennis_ingame_screen)
         self.stacked_widget.addWidget(self.tennis_pause_screen)
         self.stacked_widget.addWidget(self.tennis_pause_settings_screen)
+        self.stacked_widget.addWidget(self.error_screen)
 
         layout = QVBoxLayout()
         layout.addWidget(self.stacked_widget)

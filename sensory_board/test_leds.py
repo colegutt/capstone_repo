@@ -22,22 +22,22 @@ np_array = list(range(num_leds+1))
 # Create slice objects corresponding to the LED indices for each area
 #   and give those ranges of your LED strand meaningful names
 
-star_slice = slice(0, 5)
+star_slice = slice(0, 30)
 star = np_array[star_slice]
 
-circle_slice = slice(5,10)
+circle_slice = slice(0,30)
 circle = np_array[circle_slice]
 
-heart_slice = slice(10, 15)
+heart_slice = slice(0, 30)
 heart = np_array[heart_slice]
 
-triangle_slice = slice(15,20)
+triangle_slice = slice(0,30)
 triangle = np_array[triangle_slice]
 
-cloud_slice = slice(20, 25)
+cloud_slice = slice(0, 30)
 cloud = np_array[cloud_slice]
 
-square_slice = slice(25,30)
+square_slice = slice(0,30)
 square = np_array[square_slice]
 
 def turn_on_all_leds(dimming_factor):
@@ -106,4 +106,4 @@ red_heart_color = (255, 0, 0)
 orange_circle_color = (255, 100, 0)
 yellow_star_color = (255, 165, 0)
 
-test_led_main(green_square_color)
+test_led_main(blue_cloud_color)
