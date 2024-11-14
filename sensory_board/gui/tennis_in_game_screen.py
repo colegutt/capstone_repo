@@ -4,15 +4,16 @@ from game_logic.tennis_game import TennisGame
 from general_functions import GeneralFunctions
 
 # Thread that runs the Tennis Game simultaneously
-class TennisGameThread(QThread):
+class GameThread(QThread):
     player1_score_updated = pyqtSignal(int)
     player2_score_updated = pyqtSignal(int)
+    pause_button_updating = pyqtSignal(bool)
     rally_updated = pyqtSignal(int)
     game_over = pyqtSignal(int)
 
-    def __init__(self, app_init):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.tennis_game = TennisGame(app_init)
+        self.tennis_game = TennisGame(stacked_widget, app_init)
 
     # Function that runs when the thread starts
     def run(self):
@@ -22,6 +23,9 @@ class TennisGameThread(QThread):
                 self.player1_score_updated.emit(score)
             elif player == 2:
                 self.player2_score_updated.emit(score)
+        
+        def toggle_pause_button(activate):
+            self.pause_button_updating.emit(activate)
 
         # Show game over layout when signaled
         def on_game_over(player):
@@ -31,7 +35,7 @@ class TennisGameThread(QThread):
         def update_rally(rally):
             self.rally_updated.emit(rally)  # Emit rally count to the screen
 
-        self.tennis_game.run_game(update_score, update_rally, on_game_over)
+        self.tennis_game.run_game(update_score, update_rally, toggle_pause_button, on_game_over)
 
     # Stops the Tennis Game
     def stop(self):
@@ -129,14 +133,54 @@ class TennisInGameScreen(QWidget):
     # Start Tennis game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = TennisGameThread(self.app_init)
+            self.game_thread = GameThread(self.stacked_widget, self.app_init)
             self.game_thread.player1_score_updated.connect(self.update_player1_score)
             self.game_thread.player2_score_updated.connect(self.update_player2_score)
+            self.game_thread.pause_button_updating.connect(self.toggle_pause_button)
             self.game_thread.rally_updated.connect(self.update_rally)
             self.game_thread.game_over.connect(self.end_game)
             self.game_thread.start()
         self.rally_label.setVisible(True)
         self.game_over_label.setVisible(False)
+    
+    # def update_serving_label(self, player=None):
+    #     self.player1_label.setText("Player 1")
+    #     self.player2_label.setText("Player 2")
+
+    #     if player == 1:
+    #         self.player1_label.setText("SERVING: Player 1")
+    #     elif player == 2:
+    #         self.player2_label.setText("SERVING: Player 2")
+    
+    def toggle_pause_button(self, activate):
+        if activate:
+            self.pause_button.setStyleSheet("""
+                background-color: orange; 
+                color: white; 
+                border-radius: 50px; 
+                font-size: 26px; 
+                font-weight: bold;
+                width: 100px;
+                height: 100px;
+                padding: 0;
+                text-align: center;
+                line-height: 100px;
+            """)
+            self.pause_button.clicked.connect(self.pause_game)
+        else:
+            self.pause_button.setStyleSheet("""
+                background-color: gray; 
+                color: white; 
+                border-radius: 50px; 
+                font-size: 26px; 
+                font-weight: bold;
+                width: 100px;
+                height: 100px;
+                padding: 0;
+                text-align: center;
+                line-height: 100px;
+            """)
+            self.pause_button.clicked.disconnect()
 
     def update_player1_score(self, score):
         self.player1_score = score
@@ -191,6 +235,3 @@ class TennisInGameScreen(QWidget):
         self.player2_score_label.setText(f'Score: {self.player2_score}')
         self.rally_label.setText("Rally: 0")
         self.gen_funcs.hide_or_show_end_game_buttons(self.game_over_label, self.play_again_button, self.go_back_button, False)
-
-    def toggle_pause_button(self, visible):
-        self.pause_button.setVisible(visible)

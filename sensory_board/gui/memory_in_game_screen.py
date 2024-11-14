@@ -9,9 +9,9 @@ class GameThread(QThread):
     score_updated = pyqtSignal(int)
     game_over = pyqtSignal()
 
-    def __init__(self, app_init):
+    def __init__(self, stacked_widget, app_init):
         super().__init__()
-        self.memory_game = MemoryGame(app_init)
+        self.memory_game = MemoryGame(stacked_widget, app_init)
 
     # Function that runs when the thread starts
     def run(self):
@@ -82,7 +82,7 @@ class MemoryInGameScreen(QWidget):
     # Start Memory game
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
-            self.game_thread = GameThread(self.app_init)
+            self.game_thread = GameThread(self.stacked_widget, self.app_init)
             self.game_thread.score_updated.connect(self.update_score_from_game)
             self.game_thread.game_over.connect(self.end_game) 
             self.game_thread.start()

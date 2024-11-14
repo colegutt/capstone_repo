@@ -11,8 +11,9 @@ CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class MemoryGame:
-    def __init__(self, app_init, multiplayer=False, player_count=1, game_mode='Cooperative'):
+    def __init__(self, stacked_widget, app_init, multiplayer=False, player_count=1, game_mode='Cooperative'):
         # Initializations
+        self.stacked_widget = stacked_widget
         self.pause_event = threading.Event()
         self.gen_funcs = GeneralFunctions(app_init=app_init)
         self.end_game = False

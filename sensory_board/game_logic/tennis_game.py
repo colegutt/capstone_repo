@@ -12,9 +12,10 @@ SPEED_ACCELERATION = 0.75
 POINTS_PLAYED_TO = 3
 
 class TennisGame:
-    def __init__(self, app_init):
+    def __init__(self, stacked_widget, app_init):
         self.pause_event = threading.Event()
         self.app_init = app_init
+        self.stacked_widget = stacked_widget
         self.gen_funcs = GeneralFunctions(app_init=app_init)
         self.end_game = False
         self.start_time = None
@@ -31,14 +32,14 @@ class TennisGame:
 
         self.sleep_time = STARTING_SPEED
 
-    def run_game(self, update_score_callback, update_rally_callback, on_game_over_callback):
+    def run_game(self, update_score_callback, update_rally_callback, toggle_pause_button_callback, on_game_over_callback):
         try:
             while True:
                 if self.serving_player == 1:
-                    if self.play_round('triangle', 'cw', 'ccw', 'square', update_score_callback, update_rally_callback) == 1:
+                    if self.play_round('triangle', 'cw', 'ccw', 'square', update_score_callback, toggle_pause_button_callback, update_rally_callback) == 1:
                         return
                 elif self.serving_player == 2:
-                    if self.play_round('square', 'ccw', 'cw', 'triangle', update_score_callback, update_rally_callback) == 1:
+                    if self.play_round('square', 'ccw', 'cw', 'triangle', update_score_callback, toggle_pause_button_callback, update_rally_callback) == 1:
                         return
 
                 self.sleep_time = STARTING_SPEED
@@ -61,8 +62,13 @@ class TennisGame:
         except:
             self.stacked_widget.setCurrentIndex(20)
     
-    def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback, update_rally_callback):
-        self.app_init.tennis_ingame_screen.toggle_pause_button(True)
+    def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback, toggle_pause_button_callback, update_rally_callback):
+        toggle_pause_button_callback(True)
+        # if self.serving_player == 1:
+        #     self.app_init.tennis_ingame_screen.update_serving_label(1)
+        # else:
+        #     self.app_init.tennis_ingame_screen.update_serving_label(2)
+
         self.thread_flag = 'off'
         server_button_flashing = threading.Thread(target=self.flash_led, args=(shape_1,))
         server_button_flashing.start()
@@ -74,16 +80,13 @@ class TennisGame:
                 del self.pause_event
                 GPIO.cleanup()
                 return 1
-            # if self.check_for_controller_input(shape_1):
-            #     break
             sleep(0.1)
 
         self.gen_funcs.turn_off_led(shape_1)
         self.thread_flag = 'on'
+        toggle_pause_button_callback(False)
 
         server_button_flashing.join()
-
-        self.app_init.tennis_ingame_screen.toggle_pause_button(False)
 
         rally = 1
 

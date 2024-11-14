@@ -12,9 +12,10 @@ CTLR_LIGHT_UP_SLEEP_TIME = 0.25
 CLIENT_SOCK_SLEEP_TIME = 0.25
 
 class FastTapGame:
-    def __init__(self, app_init):
+    def __init__(self, stacked_widget, app_init):
         # Create pause event
         self.pause_event = threading.Event()
+        self.stacked_widget = stacked_widget
 
         # Set parameters that control the game
         self.gen_funcs = GeneralFunctions(app_init=app_init)
