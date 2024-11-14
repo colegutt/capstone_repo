@@ -130,7 +130,7 @@ class TennisInGameScreen(QWidget):
         main_layout.addStretch()
         self.setLayout(main_layout)
 
-    # Start Tennis game
+    # Start Tennis games
     def start_game(self):
         if self.game_thread is None or not self.game_thread.isRunning():
             self.game_thread = GameThread(self.stacked_widget, self.app_init)

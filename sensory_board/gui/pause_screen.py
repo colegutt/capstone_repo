@@ -48,16 +48,19 @@ class PauseScreen(QWidget):
 
     # Resume game depending on the previous index
     def resume_game(self):
-        if self.previous_index == 5:
-            self.app_init.memory_ingame_screen.resume_game()
-        elif self.previous_index == 9:
-            self.app_init.fast_tap_ingame_screen.resume_game()
-        elif self.previous_index == 13:
-            self.app_init.memory_mult_ingame_screen.resume_game()
-        elif self.previous_index == 17:
-            self.app_init.tennis_ingame_screen.resume_game()
+        try:
+            if self.previous_index == 5:
+                self.app_init.memory_ingame_screen.resume_game()
+            elif self.previous_index == 9:
+                self.app_init.fast_tap_ingame_screen.resume_game()
+            elif self.previous_index == 13:
+                self.app_init.memory_mult_ingame_screen.resume_game()
+            elif self.previous_index == 17:
+                self.app_init.tennis_ingame_screen.resume_game()
 
-        self.stacked_widget.setCurrentIndex(self.previous_index)
+            self.stacked_widget.setCurrentIndex(self.previous_index)
+        except:
+            self.stacked_widget.setCurrentIndex(20) 
 
     # Return pause screen title label
     def set_title(self):
@@ -102,18 +105,27 @@ class PauseScreen(QWidget):
 
     # Navigate to pause settings screen
     def go_to_settings(self):
-        self.app_init.update_pause_settings_screen(self.previous_index) 
-        self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
+        try:
+            self.app_init.update_pause_settings_screen(self.previous_index) 
+            self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
+        except:
+            self.stacked_widget.setCurrentIndex(20) 
 
     # Navigate to corresponding game list screen and reset current game
     def select_new_game(self):
-        index = self.reset_specific_game()
-        self.stacked_widget.setCurrentIndex(index) 
+        try:
+            index = self.reset_specific_game()
+            self.stacked_widget.setCurrentIndex(index) 
+        except:
+            self.stacked_widget.setCurrentIndex(20) 
 
     # Navigate to main menu and reset current game
     def go_to_main_menu(self):
-        self.reset_specific_game()
-        self.stacked_widget.setCurrentIndex(0)
+        try:
+            self.reset_specific_game()
+            self.stacked_widget.setCurrentIndex(0)
+        except:
+            self.stacked_widget.setCurrentIndex(20) 
     
     # Reset specific game
     def reset_specific_game(self):
