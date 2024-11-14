@@ -116,7 +116,6 @@ class TennisInGameScreen(QWidget):
         score_layout.addStretch()
 
         main_layout.addLayout(top_layout)
-        main_layout.addStretch()
         main_layout.addWidget(self.title)
         main_layout.addStretch()
         main_layout.addLayout(score_layout)

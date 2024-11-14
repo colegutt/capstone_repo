@@ -78,6 +78,7 @@ class MemoryMultInGameScreen(QWidget):
         main_layout.addWidget(self.score_label, alignment=Qt.AlignCenter)
         main_layout.addWidget(self.turn_label, alignment=Qt.AlignCenter)
         main_layout.addWidget(self.game_over_label, alignment=Qt.AlignCenter)
+        main_layout.addSpacing(10)
         main_layout.addWidget(self.play_again_button, alignment=Qt.AlignCenter)
         main_layout.addWidget(self.go_back_button, alignment=Qt.AlignCenter)
         main_layout.addStretch()

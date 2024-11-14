@@ -123,8 +123,8 @@ class MainMenu(QWidget):
             color: white; 
             border-radius: 0px; 
             font-weight: bold;
-            width: 20px; 
-            height: 20px; 
+            width: 10px; 
+            height: 10px; 
             padding: 0;
             text-align: center;
             line-height: 20px;
