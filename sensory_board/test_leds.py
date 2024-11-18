@@ -31,13 +31,13 @@ circle = np_array[circle_slice]
 heart_slice = slice(11,17)
 heart = np_array[heart_slice]
 
-triangle_slice = slice(0,30)
+triangle_slice = slice(17,20)
 triangle = np_array[triangle_slice]
 
-cloud_slice = slice(0, 30)
+cloud_slice = slice(20, 26)
 cloud = np_array[cloud_slice]
 
-square_slice = slice(0,30)
+square_slice = slice(26,31)
 square = np_array[square_slice]
 
 def turn_on_all_leds(dimming_factor):
@@ -60,7 +60,7 @@ def turn_on_shape(shape, color, dimming_factor):
     for p in shape:
         pixels[p] = dim_color(color, dimming_factor) 
 
-def test_all_leds_main(shape, color):
+def test_shape_main(shape, color):
     try:
         while True:
             turn_off_leds()
@@ -152,4 +152,4 @@ def demo():
 
 
 # pattern()
-# test_all_leds_main(star, yellow_star_color)
+test_shape_main(square, green_square_color)
