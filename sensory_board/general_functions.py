@@ -66,8 +66,8 @@ class GeneralFunctions(QWidget):
             'square': self.led_slice_array[slice(25,30)],
             'cloud': self.led_slice_array[slice(20, 25)],
             'triangle': self.led_slice_array[slice(15,20)],
-            'heart': self.led_slice_array[slice(10, 15)],
-            'circle': self.led_slice_array[slice(5,10)],
+            'heart': self.led_slice_array[slice(11, 17)],
+            'circle': self.led_slice_array[slice(5,11)],
             'star': self.led_slice_array[slice(0, 5)]
         }
 
