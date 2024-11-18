@@ -100,7 +100,7 @@ def turn_off_leds():
     pixels.show()
 
 def turn_off_shape(shape):
-    for p in square:
+    for p in shape:
         pixels[p] = (0, 0, 0)  # Turn off (black)
     pixels.show()
 
@@ -123,7 +123,34 @@ def slowly_turn_on_shapes():
     except KeyboardInterrupt:
         turn_off_leds()
 
-def demo():
+def half_demo():
+    try:
+        while True:
+            turn_on_shape(triangle, purple_triangle_color, 1)
+            time.sleep(0.5)
+            turn_on_shape(cloud, blue_cloud_color, 1)
+            time.sleep(0.5)
+            turn_on_shape(square, green_square_color, 1)
+            time.sleep(0.5)
+            turn_off_leds()
+
+            for i in range(0,10):
+                turn_on_shape(triangle, purple_triangle_color, 1)
+                time.sleep(0.1)
+                turn_off_shape(triangle)
+                turn_on_shape(cloud, blue_cloud_color, 1)
+                time.sleep(0.1)
+                turn_off_shape(cloud)
+                turn_on_shape(square, green_square_color, 1)
+                time.sleep(0.1)
+                turn_off_shape(square)
+                turn_on_shape(cloud, blue_cloud_color, 1)
+                time.sleep(0.1)
+                turn_off_shape(cloud)
+    except KeyboardInterrupt:
+        turn_off_leds()
+
+def full_demo():
     try:
         while True:
             turn_on_shape(heart, red_heart_color, 1)
@@ -132,24 +159,39 @@ def demo():
             time.sleep(0.5)
             turn_on_shape(star, yellow_star_color, 1)
             time.sleep(0.5)
+            turn_on_shape(triangle, purple_triangle_color, 1)
+            time.sleep(0.5)
+            turn_on_shape(cloud, blue_cloud_color, 1)
+            time.sleep(0.5)
+            turn_on_shape(square, green_square_color, 1)
+            time.sleep(0.5)
             turn_off_leds()
 
-            for i in range(0,10):
+            for i in range(0,6):
                 turn_on_shape(heart, red_heart_color, 1)
-                time.sleep(0.1)
+                time.sleep(0.25)
                 turn_off_shape(heart)
                 turn_on_shape(circle, orange_circle_color, 1)
-                time.sleep(0.1)
+                time.sleep(0.25)
                 turn_off_shape(circle)
                 turn_on_shape(star, yellow_star_color, 1)
-                time.sleep(0.1)
+                time.sleep(0.25)
                 turn_off_shape(star)
-                turn_on_shape(circle, orange_circle_color, 1)
-                time.sleep(0.1)
-                turn_off_shape(circle)
+                turn_on_shape(triangle, purple_triangle_color, 1)
+                time.sleep(0.25)
+                turn_off_shape(triangle)
+                turn_on_shape(cloud, blue_cloud_color, 1)
+                time.sleep(0.25)
+                turn_off_shape(cloud)
+                turn_on_shape(square, green_square_color, 1)
+                time.sleep(0.25)
+                turn_off_shape(square)
+                turn_on_shape(cloud, blue_cloud_color, 1)
+                time.sleep(0.25)
+                turn_off_shape(cloud)
+            
+            time.sleep(5)
     except KeyboardInterrupt:
         turn_off_leds()
 
-
-# pattern()
-test_shape_main(square, green_square_color)
+# test_shape_main(square, green_square_color)
