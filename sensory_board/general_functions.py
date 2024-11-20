@@ -81,7 +81,7 @@ class GeneralFunctions(QWidget):
             'off': (0, 0, 0)
         }
 
-        square_button = 22
+        square_button = 26
         cloud_button = 27
         triangle_button = 17
         heart_button = 25
