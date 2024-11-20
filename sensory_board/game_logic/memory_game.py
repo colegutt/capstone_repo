@@ -125,27 +125,27 @@ class MemoryGame:
                             return
 
                         # Check for button input
-                        if GPIO.input(self.button_dict['square']) == GPIO.LOW:
+                        if self.gen_funcs.detect_button_press(self.button_dict['square']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('square', self.button_dict['square'])
                             user_input = True
                             pressed_button = self.button_dict['square']
-                        elif GPIO.input(self.button_dict['triangle']) == GPIO.LOW:
+                        elif self.gen_funcs.detect_button_press(self.button_dict['triangle']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('triangle', self.button_dict['triangle'])
                             user_input = True
                             pressed_button = self.button_dict['triangle']
-                        elif GPIO.input(self.button_dict['circle']) == GPIO.LOW:
+                        elif self.gen_funcs.detect_button_press(self.button_dict['circle']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('circle', self.button_dict['circle'])
                             user_input = True
                             pressed_button = self.button_dict['circle']
-                        elif GPIO.input(self.button_dict['cloud']) == GPIO.LOW:
+                        elif self.gen_funcs.detect_button_press(self.button_dict['cloud']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('cloud', self.button_dict['cloud'])
                             user_input = True
                             pressed_button = self.button_dict['cloud']
-                        elif GPIO.input(self.button_dict['heart']) == GPIO.LOW:
+                        elif self.gen_funcs.detect_button_press(self.button_dict['heart']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('heart', self.button_dict['heart'])
                             user_input = True
                             pressed_button = self.button_dict['heart']
-                        elif GPIO.input(self.button_dict['star']) == GPIO.LOW:
+                        elif self.gen_funcs.detect_button_press(self.button_dict['star']):
                             self.gen_funcs.light_up_led_as_long_as_pressed('star', self.button_dict['star'])
                             user_input = True
                             pressed_button = self.button_dict['star']

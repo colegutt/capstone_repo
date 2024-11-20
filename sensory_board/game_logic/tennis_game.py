@@ -75,7 +75,7 @@ class TennisGame:
         server_button_flashing.start()
 
         # Wait to serve
-        while GPIO.input(self.button_dict[shape_1]) == GPIO.HIGH:
+        while not self.gen_funcs.detect_button_press(self.button_dict[shape_1]):
             if self.wait_to_resume(shape_1) == 1:
                 self.pause_event.clear()
                 del self.pause_event
@@ -163,7 +163,7 @@ class TennisGame:
         start_time = time()
         success = False
         while time() - start_time < self.sleep_time:
-            if GPIO.input(self.button_dict[led_shape]) == GPIO.LOW:
+            if self.gen_funcs.detect_button_press(self.button_dict[led_shape]):
                 success = True
                 break
         self.gen_funcs.turn_off_led(led_shape)
@@ -184,7 +184,7 @@ class TennisGame:
 
             start_time = time()
             while time() - start_time < self.sleep_time:
-                if GPIO.input(self.button_dict[shape_traveling_to]) == GPIO.LOW:
+                if self.gen_funcs.detect_button_press(self.button_dict[shape_traveling_to]):
                     self.gen_funcs.turn_off_led(led_shape)
                     return False
                 sleep(0.1)

@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QPushButton, QLabel, QHBoxLayout 
 import RPi.GPIO as GPIO
+import time
 from time import sleep
 from bluetooth import *
 import board
@@ -82,7 +83,7 @@ class GeneralFunctions(QWidget):
         }
 
         square_button = 19
-        cloud_button = 6 # Turning off with cloud problems
+        cloud_button = 6 
         triangle_button = 17
         heart_button = 25
         circle_button = 14
@@ -90,7 +91,7 @@ class GeneralFunctions(QWidget):
 
         button_dict = {
             'square': square_button,
-            # 'cloud': cloud_button,
+            'cloud': cloud_button,
             'triangle': triangle_button,
             'heart': heart_button,
             'circle': circle_button,
@@ -122,6 +123,13 @@ class GeneralFunctions(QWidget):
             self.pixels[p] = (0, 0, 0)  
 
         self.pixels.show()
+    
+    def detect_button_press(self, button):
+        if GPIO.input(button) == GPIO.LOW:
+            sleep(0.01)
+            if GPIO.input(button) == GPIO.LOW:
+                return True
+        return False
 
     def light_up_all_leds(self):
         for p in self.led_slices['star']:
