@@ -108,7 +108,8 @@ class PauseScreen(QWidget):
         try:
             self.app_init.update_pause_settings_screen(self.previous_index) 
             self.stacked_widget.setCurrentIndex(self.pause_settings_screen)
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20) 
 
     # Navigate to corresponding game list screen and reset current game
@@ -116,7 +117,8 @@ class PauseScreen(QWidget):
         try:
             index = self.reset_specific_game()
             self.stacked_widget.setCurrentIndex(index) 
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20) 
 
     # Navigate to main menu and reset current game
@@ -124,7 +126,8 @@ class PauseScreen(QWidget):
         try:
             self.reset_specific_game()
             self.stacked_widget.setCurrentIndex(0)
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20) 
     
     # Reset specific game

@@ -203,7 +203,8 @@ class MemoryGame:
                 if self.client_sock is None:
                     # print("No Bluetooth controller connected. You can continue playing without it.")
                     sleep(CLIENT_SOCK_SLEEP_TIME)
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20)
 
         # Cleanup
@@ -251,7 +252,6 @@ class MemoryGame:
                     self.client_sock.close()
                     self.client_sock = None
         return user_input, pressed_button
-        
 
     # Wait to resume if the game is paused
     def wait_to_resume(self):

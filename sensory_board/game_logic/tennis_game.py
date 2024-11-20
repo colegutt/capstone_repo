@@ -59,7 +59,8 @@ class TennisGame:
             self.pause_event.clear()
             del self.pause_event
             GPIO.cleanup()
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20)
     
     def play_round(self, shape_1, dir_1, dir_2, shape_2, update_score_callback, toggle_pause_button_callback, update_rally_callback):

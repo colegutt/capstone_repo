@@ -133,7 +133,8 @@ class FastTapGame:
             on_game_over_callback()
             self.pause_event.clear()
             GPIO.cleanup()
-        except:
+        except Exception as e:
+            print(e)
             self.stacked_widget.setCurrentIndex(20)
 
     # Update time using the time that has passed
