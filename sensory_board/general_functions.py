@@ -81,16 +81,16 @@ class GeneralFunctions(QWidget):
             'off': (0, 0, 0)
         }
 
-        square_button = 26
-        cloud_button = 27
+        square_button = 19
+        cloud_button = 6 # Turning off with cloud problems
         triangle_button = 17
         heart_button = 25
-        circle_button = 24
-        star_button = 23
+        circle_button = 14
+        star_button = 24
 
         button_dict = {
             'square': square_button,
-            'cloud': cloud_button,
+            # 'cloud': cloud_button,
             'triangle': triangle_button,
             'heart': heart_button,
             'circle': circle_button,
