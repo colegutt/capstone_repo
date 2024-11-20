@@ -107,21 +107,24 @@ class FastTapGame:
                         break
 
                     # Check for button input
-                    if self.gen_funcs.detect_button_press(self.button_dict[current_led_shape]) and all(GPIO.input(self.button_dict[led_shape]) == GPIO.HIGH for led_shape in self.led_shapes if led_shape != current_led_shape):
+                    if self.gen_funcs.detect_button_press(self.button_dict[current_led_shape]) and all(self.gen_funcs.detect_button_press(self.button_dict[led_shape]) == False for led_shape in self.led_shapes if led_shape != current_led_shape):
                         # Correct button is pressed
                         user_input = True
                         self.gen_funcs.turn_off_all_leds()
                         score += 1
                         update_score_callback(score)
-
-                    elif any(self.gen_funcs.detect_button_press(self.button_dict[led_shape]) for led_shape in self.led_shapes if led_shape != current_led_shape):
-                        # A wrong button is pressed
-                        user_input = True
-                        self.gen_funcs.fast_tap_wrong_led()
+                    
+                    for led_shape in self.led_shapes:
+                        if led_shape != current_led_shape and self.gen_funcs.detect_button_press(self.button_dict[led_shape]):
+                            user_input = True
+                            self.gen_funcs.fast_tap_wrong_led()
+                            break 
 
                     # Check for Bluetooth input if connected
                     if not user_input:
                         user_input, score = self.check_for_controller_input(user_input, current_led_shape, update_score_callback, score)
+                    
+                    sleep(0.1)
 
                 self.update_time()
                 update_timer_callback(self.time_remaining)

@@ -212,15 +212,16 @@ class GeneralFunctions(QWidget):
             self.pixels[p] = self.rgb_colors['off']
         self.pixels.show()
 
-    def game_over_flash(self):
-        self.app_init.other_sounds['game over'].play()
+    def game_over_flash(self, sound=True):
+        if sound:
+            self.app_init.other_sounds['game over'].play()
         self.turn_off_all_leds()
-        self.light_up_led_w_sleep('square', 0.2, False)
         self.light_up_led_w_sleep('cloud', 0.2, False)
         self.light_up_led_w_sleep('triangle', 0.2, False)
         self.light_up_led_w_sleep('heart', 0.2, False)
-        self.light_up_led_w_sleep('star', 0.2, False)
         self.light_up_led_w_sleep('circle', 0.2, False)
+        self.light_up_led_w_sleep('star', 0.2, False)
+        self.light_up_led_w_sleep('square', 0.2, False)
     
     # Returns title label for screen
     def set_title(self, label):

@@ -10,6 +10,7 @@ from gui.tennis_in_game_screen import TennisInGameScreen
 from gui.pause_screen import PauseScreen
 from gui.error_screen import ErrorScreen
 from PyQt5.QtCore import QSettings
+from general_functions import GeneralFunctions
 import pygame
 
 class ApplicationInit(QWidget):
@@ -41,12 +42,12 @@ class ApplicationInit(QWidget):
         # Sound initialization
         pygame.mixer.init()
         self.beep_sounds = {
-            'star': pygame.mixer.Sound("sounds/beep_1.wav"),
-            'square': pygame.mixer.Sound("sounds/beep_2.wav"),
-            'circle': pygame.mixer.Sound("sounds/beep_3.wav"),
-            'heart': pygame.mixer.Sound("sounds/beep_4.wav"),
-            'triangle': pygame.mixer.Sound("sounds/beep_5.wav"),
-            'cloud': pygame.mixer.Sound("sounds/beep_6.wav"),
+            'cloud': pygame.mixer.Sound("sounds/beep_1.wav"),
+            'triangle': pygame.mixer.Sound("sounds/beep_2.wav"),
+            'heart': pygame.mixer.Sound("sounds/beep_3.wav"),
+            'circle': pygame.mixer.Sound("sounds/beep_4.wav"),
+            'star': pygame.mixer.Sound("sounds/beep_5.wav"),
+            'square': pygame.mixer.Sound("sounds/beep_6.wav"),
         }
         self.narration_sounds = {
             'star': pygame.mixer.Sound("sounds/yellow_star.wav"),
@@ -134,6 +135,13 @@ class ApplicationInit(QWidget):
         self.setLayout(layout)
 
         self.showFullScreen()
+
+        self.play_opening_sequence()
+
+    def play_opening_sequence(self):
+        self.gen_funcs = GeneralFunctions(app_init=self)
+        self.gen_funcs.init_leds_and_buttons()
+        self.gen_funcs.game_over_flash(False)
     
     # Returns the sound level in the settings
     def get_sound_level(self):
