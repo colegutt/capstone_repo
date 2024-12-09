@@ -119,8 +119,8 @@ class MainMenu(QWidget):
     def create_exit_button(self):
         exit_button = QPushButton()
         exit_button.setStyleSheet("""
-            background-color: white; 
-            color: white; 
+            background-color: black; 
+            color: black; 
             border-radius: 0px; 
             font-weight: bold;
             width: 10px; 
