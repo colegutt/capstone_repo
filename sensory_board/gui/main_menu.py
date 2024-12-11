@@ -16,6 +16,7 @@ class MainMenu(QWidget):
         self.multiplayer_button = self.create_multiplayer_button()
         self.settings_button = self.create_settings_button()
         # FOR DEBUGGING
+        self.exit_button = None
         # self.exit_button = self.create_exit_button()
 
         self.create_screen()
@@ -36,7 +37,8 @@ class MainMenu(QWidget):
         settings_layout.addStretch()
 
         exit_layout = QHBoxLayout()
-        exit_layout.addWidget(self.exit_button)
+        if self.exit_button != None:
+            exit_layout.addWidget(self.exit_button)
         exit_layout.addStretch()
         exit_layout.setContentsMargins(20, 20, 20, 20)
 
