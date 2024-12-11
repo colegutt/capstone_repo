@@ -15,7 +15,8 @@ class MainMenu(QWidget):
         self.single_player_button = self.create_single_player_button()
         self.multiplayer_button = self.create_multiplayer_button()
         self.settings_button = self.create_settings_button()
-        self.exit_button = self.create_exit_button()
+        # FOR DEBUGGING
+        # self.exit_button = self.create_exit_button()
 
         self.create_screen()
     
@@ -119,12 +120,12 @@ class MainMenu(QWidget):
     def create_exit_button(self):
         exit_button = QPushButton()
         exit_button.setStyleSheet("""
-            background-color: black; 
-            color: black; 
+            background-color: white; 
+            color: white; 
             border-radius: 0px; 
             font-weight: bold;
-            width: 10px; 
-            height: 10px; 
+            width: 30px; 
+            height: 30px; 
             padding: 0;
             text-align: center;
             line-height: 20px;
